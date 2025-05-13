@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "569022180053",
+    "project_id": "staypal-7ee25",
+    "storage_bucket": "staypal-7ee25.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569022180053:android:1676464ccbe24b8aba905c",
+        "android_client_info": {
+          "package_name": "com.example.staypal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGWc--hHZ1OLeAtyw8prMTlzK3D3DYF9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
