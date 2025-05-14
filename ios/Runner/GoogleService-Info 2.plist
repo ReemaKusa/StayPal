@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>569022180053-2qkgu67j0l5hgiq89mb74l7cuo08213n.apps.googleusercontent.com</string>
+	<string>569022180053-midklrqc5s9i07dg70d2olq0lp1tgh7l.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.569022180053-2qkgu67j0l5hgiq89mb74l7cuo08213n</string>
+	<string>com.googleusercontent.apps.569022180053-midklrqc5s9i07dg70d2olq0lp1tgh7l</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>569022180053-5h0n9debv66iek725piu8cefn899ugt7.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.staypal</string>
+	<string>com.hadi.staypal</string>
 	<key>PROJECT_ID</key>
 	<string>staypal-7ee25</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:569022180053:ios:9520ca6aa87ef4c4ba905c</string>
+	<string>1:569022180053:ios:434fc06f6f92a482ba905c</string>
 </dict>
 </plist>

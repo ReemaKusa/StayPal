@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'forgot_password_screen.dart';
 import 'signup_screen.dart';
 
@@ -10,7 +12,67 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _signInWithEmailAndPassword() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both email and password')),
+      );
+      return;
+    }
+
+    try {
+      final userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      print('✅ Logged in as: ${userCredential.user?.email}');
+      // TODO: Navigate to home screen
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message ?? 'Login failed')));
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        print('❌ User canceled Google Sign-In');
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
+
+      print('✅ Signed in: ${userCredential.user?.displayName}');
+      // TODO: Navigate to home screen
+    } catch (e) {
+      print('🔥 Google Sign-In error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +86,6 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 40),
-
                 const Text(
                   'StayPal',
                   textAlign: TextAlign.center,
@@ -35,9 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.black,
                   ),
                 ),
-
                 const SizedBox(height: 30),
-
                 const Text(
                   'Welcome Back!',
                   textAlign: TextAlign.center,
@@ -47,11 +106,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 40),
 
-                // Email Field
+                // Email
                 TextField(
+                  controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   style: const TextStyle(color: Colors.black),
@@ -76,8 +135,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 10),
 
-                // Password Field
+                // Password
                 TextField(
+                  controller: _passwordController,
                   obscureText: _obscurePassword,
                   style: const TextStyle(color: Colors.black),
                   decoration: InputDecoration(
@@ -112,9 +172,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 0),
-
-                // Forgot Password link aligned right
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -139,13 +196,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 20),
 
-                // Login Button
+                // Log In Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // TODO: Handle Login
-                    },
+                    onPressed: _signInWithEmailAndPassword,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orangeAccent,
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -166,7 +221,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 20),
 
-                // ---------- or ----------
                 Row(
                   children: const [
                     Expanded(
@@ -190,13 +244,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 20),
 
-                // Continue with Google Button
+                // Google Sign-In
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    onPressed: () {
-                      // TODO: Handle Google Sign-In
-                    },
+                    onPressed: _signInWithGoogle,
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.black12),
                       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -233,12 +285,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 12),
 
-                // Continue with Apple Button
+                // Apple Sign-In placeholder
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
                     onPressed: () {
-                      // TODO: Handle Apple Sign-In
+                      // TODO: Apple Sign-In
                     },
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.black12),
@@ -250,10 +302,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        Align(
+                        const Align(
                           alignment: Alignment.centerLeft,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 16.0),
+                            padding: EdgeInsets.only(left: 16.0),
                             child: Icon(
                               Icons.apple,
                               color: Colors.black,
