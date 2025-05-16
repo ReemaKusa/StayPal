@@ -1,5 +1,24 @@
 import 'package:flutter/material.dart';
 
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/home',
+      routes: {
+        '/home': (context) => HomePage(),
+        '/wishlist': (context) => WishlistPage(),
+      },
+    );
+  }
+}
+
 class HomePage extends StatelessWidget {
   final GlobalKey _searchKey = GlobalKey();
 
@@ -13,18 +32,16 @@ class HomePage extends StatelessWidget {
         unselectedItemColor: Colors.grey,
         currentIndex: 0,
         onTap: (index) {
-          if (index == 1) { // Search button
-            // Scroll to search bar
+          if (index == 1) { 
             Scrollable.ensureVisible(
               _searchKey.currentContext!,
               duration: Duration(milliseconds: 500),
               curve: Curves.easeInOut,
             );
-          } else if (index == 2) { // Wishlist button
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => WishlistPage()),
-            );
+          } else if (index == 0) { 
+            Navigator.pushNamed(context, '/home');
+          } else if (index == 2) { 
+            Navigator.pushNamed(context, '/wishlist');
           }
         },
         items: const [
@@ -41,7 +58,6 @@ class HomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Location + Notification
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -93,7 +109,6 @@ class HomePage extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // Upcoming Events (now with 4 cards)
                 const Text("Upcoming Events", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 Column(
@@ -130,7 +145,6 @@ class HomePage extends StatelessWidget {
 
                 const SizedBox(height: 28),
 
-                // Hotels Popular Now (now with 6 cards)
                 const Text("Hotels Popular Now", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 SizedBox(
@@ -150,7 +164,6 @@ class HomePage extends StatelessWidget {
 
                 const SizedBox(height: 28),
 
-                // Recommended for You (now vertical scroll with 5 cards)
                 const Text("Recommended for You", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 Column(
@@ -225,8 +238,8 @@ class HomePage extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-                foregroundColor: Colors.white, // White text
+                backgroundColor: const Color.fromRGBO(255, 87, 34, 1),
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -337,7 +350,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// Placeholder for WishlistPage
 class WishlistPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -347,6 +359,10 @@ class WishlistPage extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pushNamed(context, '/home'),
+        ),
       ),
       body: const Center(
         child: Text('Wishlist items will appear here'),
