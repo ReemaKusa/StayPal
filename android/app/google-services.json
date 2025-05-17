@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "569022180053",
+    "project_id": "staypal-7ee25",
+    "storage_bucket": "staypal-7ee25.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569022180053:android:1676464ccbe24b8aba905c",
+        "android_client_info": {
+          "package_name": "com.example.staypal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "569022180053-5h0n9debv66iek725piu8cefn899ugt7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.staypal",
+            "certificate_hash": "4102bcd4292a7173438d5b0e1914cd8f9cc240c9"
+          }
+        },
+        {
+          "client_id": "569022180053-iojlt9gd2r9oltnr25m0t116173m22bp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGWc--hHZ1OLeAtyw8prMTlzK3D3DYF9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "569022180053-iojlt9gd2r9oltnr25m0t116173m22bp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "569022180053-2qkgu67j0l5hgiq89mb74l7cuo08213n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.staypal"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
