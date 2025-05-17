@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:staypal/screens/profile.dart';
-class MyFav extends StatelessWidget{
+import 'package:staypal/screens/profile/profile.dart';
+class MyReview extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Favorite',
+        title: Text('My Review',
           style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold
