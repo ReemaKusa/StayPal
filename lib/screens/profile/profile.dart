@@ -2,12 +2,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:staypal/screens/log_out.dart';
-import 'package:staypal/screens/my_fav.dart';
-import 'package:staypal/screens/my_review.dart';
-import 'package:staypal/screens/payment_methods.dart';
-import 'package:staypal/screens/personal_details.dart';
-import 'package:staypal/screens/security_settings.dart';
+import 'package:staypal/screens/profile/log_out.dart';
+import 'package:staypal/screens/profile/my_fav.dart';
+import 'package:staypal/screens/profile/my_review.dart';
+import 'package:staypal/screens/profile/payment_methods.dart';
+import 'package:staypal/screens/profile/personal_details.dart';
+import 'package:staypal/screens/profile/security_settings.dart';
 
 import 'uploud_image.dart';
 

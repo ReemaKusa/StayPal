@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:staypal/screens/profile.dart';
-class MyReview extends StatelessWidget{
+import 'package:staypal/screens/profile/profile.dart';
+
+class SecuritySetting extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Review',
+        title: Text('Security Settings',
           style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold
+            fontWeight: FontWeight.bold,
+            fontSize: 20.0,
           ),),
         leading: IconButton(onPressed: (){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>MyProfile()));
         }, icon: Icon(Icons.arrow_back)),
+
       ),
     );
   }

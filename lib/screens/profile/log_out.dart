@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:staypal/screens/profile.dart';
+import 'package:staypal/screens/profile/profile.dart';
 class LogOut extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
