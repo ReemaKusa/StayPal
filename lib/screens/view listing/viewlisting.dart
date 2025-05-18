@@ -31,7 +31,8 @@ class _CombinedPageState extends State<CombinedPage> {
       'name': 'Moon Hotel',
       'images': ['assets/images/hotel1.jpg', 'assets/images/hotel2.jpg'],
       'location': 'Ramallah',
-      'description': 'A wonderful hotel in the heart of Ramallah with a stunning view.',
+      'description':
+          'A wonderful hotel in the heart of Ramallah with a stunning view.',
       'price': '120',
       'isFavorite': false,
     },
@@ -51,7 +52,8 @@ class _CombinedPageState extends State<CombinedPage> {
       'images': ['assets/images/hotel1.jpg', 'assets/images/hotel2.jpg'],
       'location': 'Bethlehem',
       'date': '2025-06-20',
-      'description': 'An amazing music event featuring local and international artists.',
+      'description':
+          'An amazing music event featuring local and international artists.',
       'price': '30',
       'isFavorite': false,
     },
@@ -80,7 +82,10 @@ class _CombinedPageState extends State<CombinedPage> {
             child: Stack(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.notifications_none, color: Colors.black),
+                  icon: const Icon(
+                    Icons.notifications_none,
+                    color: Colors.black,
+                  ),
                   onPressed: () {},
                 ),
                 Positioned(
@@ -113,7 +118,8 @@ class _CombinedPageState extends State<CombinedPage> {
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: showHotels ? Colors.orange : Colors.orange.shade200,
+                    backgroundColor:
+                        showHotels ? Colors.orange : Colors.orange.shade200,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -124,7 +130,8 @@ class _CombinedPageState extends State<CombinedPage> {
                 const SizedBox(width: 12),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: !showHotels ? Colors.orange : Colors.orange.shade200,
+                    backgroundColor:
+                        !showHotels ? Colors.orange : Colors.orange.shade200,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -150,7 +157,9 @@ class _CombinedPageState extends State<CombinedPage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HotelDetailPage(hotel: hotel)),
+              MaterialPageRoute(
+                builder: (context) => HotelDetailPage(hotel: hotel),
+              ),
             );
           },
           child: Card(
@@ -166,18 +175,30 @@ class _CombinedPageState extends State<CombinedPage> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(hotel['images'][0], width: 60, height: 60, fit: BoxFit.cover),
+                    child: Image.asset(
+                      hotel['images'][0],
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(hotel['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text(
+                          hotel['name'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            const Icon(Icons.location_on, size: 16, color: Colors.orange),
+                            const Icon(
+                              Icons.location_on,
+                              size: 16,
+                              color: Colors.orange,
+                            ),
                             const SizedBox(width: 4),
                             Text(hotel['location']),
                           ],
@@ -212,7 +233,9 @@ class _CombinedPageState extends State<CombinedPage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => EventDetailPage(event: event)),
+              MaterialPageRoute(
+                builder: (context) => EventDetailPage(event: event),
+              ),
             );
           },
           child: Card(
@@ -228,18 +251,30 @@ class _CombinedPageState extends State<CombinedPage> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(event['images'][0], width: 60, height: 60, fit: BoxFit.cover),
+                    child: Image.asset(
+                      event['images'][0],
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(event['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text(
+                          event['name'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            const Icon(Icons.location_on, size: 16, color: Colors.orange),
+                            const Icon(
+                              Icons.location_on,
+                              size: 16,
+                              color: Colors.orange,
+                            ),
                             const SizedBox(width: 4),
                             Text(event['location']),
                           ],
@@ -310,7 +345,9 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                     onPressed: () {
                       setState(() {
                         _currentImageIndex =
-                            ((_currentImageIndex - 1 + hotel['images'].length) % hotel['images'].length).toInt();
+                            ((_currentImageIndex - 1 + hotel['images'].length) %
+                                    hotel['images'].length)
+                                .toInt();
                       });
                     },
                   ),
@@ -319,11 +356,15 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                   right: 0,
                   top: 80,
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+                    icon: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white,
+                    ),
                     onPressed: () {
                       setState(() {
                         _currentImageIndex =
-                            ((_currentImageIndex + 1) % hotel['images'].length).toInt();
+                            ((_currentImageIndex + 1) % hotel['images'].length)
+                                .toInt();
                       });
                     },
                   ),
@@ -342,7 +383,11 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
             // السعر باللون الأسود بدون أيقونة
             Text(
               '${hotel['price']} ₪',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Colors.black,
+              ),
             ),
             const SizedBox(height: 16),
             Text(hotel['description'], style: const TextStyle(fontSize: 16)),
@@ -352,7 +397,9 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                 Expanded(child: const SizedBox()),
                 IconButton(
                   icon: Icon(
-                    hotel['isFavorite'] ? Icons.favorite : Icons.favorite_border,
+                    hotel['isFavorite']
+                        ? Icons.favorite
+                        : Icons.favorite_border,
                     color: hotel['isFavorite'] ? Colors.red : Colors.orange,
                   ),
                   onPressed: () {
@@ -370,13 +417,17 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                 children: [
                   ElevatedButton(
                     onPressed: () {},
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                    ),
                     child: const Text('Book Now'),
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton(
                     onPressed: () {},
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                    ),
                     child: const Text('More Details'),
                   ),
                 ],
@@ -433,7 +484,9 @@ class _EventDetailPageState extends State<EventDetailPage> {
                     onPressed: () {
                       setState(() {
                         _currentImageIndex =
-                            ((_currentImageIndex - 1 + event['images'].length) % event['images'].length).toInt();
+                            ((_currentImageIndex - 1 + event['images'].length) %
+                                    event['images'].length)
+                                .toInt();
                       });
                     },
                   ),
@@ -442,11 +495,15 @@ class _EventDetailPageState extends State<EventDetailPage> {
                   right: 0,
                   top: 80,
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+                    icon: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white,
+                    ),
                     onPressed: () {
                       setState(() {
                         _currentImageIndex =
-                            ((_currentImageIndex + 1) % event['images'].length).toInt();
+                            ((_currentImageIndex + 1) % event['images'].length)
+                                .toInt();
                       });
                     },
                   ),
@@ -473,7 +530,11 @@ class _EventDetailPageState extends State<EventDetailPage> {
             // السعر باللون الأسود بدون أيقونة
             Text(
               '${event['price']} ₪',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Colors.black,
+              ),
             ),
             const SizedBox(height: 16),
             Text(event['description'], style: const TextStyle(fontSize: 16)),
@@ -483,7 +544,9 @@ class _EventDetailPageState extends State<EventDetailPage> {
                 Expanded(child: const SizedBox()),
                 IconButton(
                   icon: Icon(
-                    event['isFavorite'] ? Icons.favorite : Icons.favorite_border,
+                    event['isFavorite']
+                        ? Icons.favorite
+                        : Icons.favorite_border,
                     color: event['isFavorite'] ? Colors.red : Colors.orange,
                   ),
                   onPressed: () {
