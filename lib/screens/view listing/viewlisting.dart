@@ -7,7 +7,10 @@ import 'hotelDetails.dart';
 import 'eventDetails.dart';
 
 class CombinedPage extends StatefulWidget {
-  const CombinedPage({super.key});
+  final String? searchQuery;
+  final String? filterBy;
+
+  const CombinedPage({super.key, this.searchQuery, this.filterBy});
 
   @override
   State<CombinedPage> createState() => _CombinedPageState();
@@ -93,6 +96,9 @@ class _CombinedPageState extends State<CombinedPage> {
         ],
       ),
       appBar: AppBar(
+        title: widget.searchQuery != null 
+            ? Text('Results for "${widget.searchQuery}"')
+            : const Text('Hotels & Events'),
         backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -158,15 +164,25 @@ class _CombinedPageState extends State<CombinedPage> {
               ],
             ),
           ),
-          Expanded(child: showHotels ? _buildHotelList() : _buildEventList()),
+          Expanded(
+            child: showHotels 
+                ? _buildHotelList(widget.searchQuery, widget.filterBy)
+                : _buildEventList(widget.searchQuery, widget.filterBy),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildHotelList() {
+  Widget _buildHotelList(String? searchQuery, String? filterBy) {
+    Query hotelsQuery = hotelsCollection;
+
+    if (searchQuery != null && filterBy == 'location') {
+      hotelsQuery = hotelsQuery.where('location', isEqualTo: searchQuery);
+    }
+
     return StreamBuilder<QuerySnapshot>(
-      stream: hotelsCollection.snapshots(),
+      stream: hotelsQuery.snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
@@ -177,7 +193,12 @@ class _CombinedPageState extends State<CombinedPage> {
         }
 
         if (snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text('No hotels available'));
+          return Center(
+            child: Text(
+              searchQuery != null
+                  ? 'No hotels found for "$searchQuery"'
+                  : 'No hotels available'),
+          );
         }
 
         final hotels = snapshot.data!.docs;
@@ -304,9 +325,15 @@ class _CombinedPageState extends State<CombinedPage> {
     );
   }
 
-  Widget _buildEventList() {
+  Widget _buildEventList(String? searchQuery, String? filterBy) {
+    Query eventsQuery = eventsCollection;
+
+    if (searchQuery != null && filterBy == 'location') {
+      eventsQuery = eventsQuery.where('location', isEqualTo: searchQuery);
+    }
+
     return StreamBuilder<QuerySnapshot>(
-      stream: eventsCollection.snapshots(),
+      stream: eventsQuery.snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
@@ -317,7 +344,12 @@ class _CombinedPageState extends State<CombinedPage> {
         }
 
         if (snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text('No events available'));
+          return Center(
+            child: Text(
+              searchQuery != null
+                  ? 'No events found for "$searchQuery"'
+                  : 'No events available'),
+          );
         }
 
         final events = snapshot.data!.docs;
