@@ -38,7 +38,6 @@ class MyApp extends StatelessWidget {
       // home: const TestFirestoreScreen(), // You can use this for testing
     );
   }
-
 }
 
 class MyHomePage extends StatefulWidget {
