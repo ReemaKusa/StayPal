@@ -289,134 +289,132 @@ class _WishListPageState extends State<WishListPage> {
     );
   }
 
-void _showDetailsBottomSheet(
-  BuildContext context,
-  Map<String, dynamic> item,
-  bool isHotel,
-  String id,
-) {
-  final imageUrl = _getImageUrl(item['images']);
-  final subtitle = _getSubtitle(item, isHotel);
-  final description = item['description'] ?? 'No description available';
-  final price = item['price']?.toString();
+  void _showDetailsBottomSheet(
+    BuildContext context,
+    Map<String, dynamic> item,
+    bool isHotel,
+    String id,
+  ) {
+    final imageUrl = _getImageUrl(item['images']);
+    final subtitle = _getSubtitle(item, isHotel);
+    final description = item['description'] ?? 'No description available';
+    final price = item['price']?.toString();
 
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    builder: (context) => SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              item['name'] ?? 'No name',
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              subtitle,
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                imageUrl,
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 180,
-                  color: Colors.grey[200],
-                  child: const Center(
-                    child: Icon(Icons.image, color: Colors.grey),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 16),
-            ),
-            if (price != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                '$price ₪',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepOrange,
-                ),
-              ),
-            ],
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  if (isHotel) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => HotelDetailsPage(
-                          hotel: item,
-                          hotelId: id,
-                          isInitiallyLiked: true,
-                        ),
-                      ),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => EventDetailsPage(
-                          event: item,
-                          eventId: id,
-                          isInitiallyLiked: true,
-                        ),
-                      ),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text(
-                  "More Details",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
-          ],
-        ),
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-    ),
-  );
-}
+      builder:
+          (context) => SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    item['name'] ?? 'No name',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(subtitle, style: TextStyle(color: Colors.grey[600])),
+                  const SizedBox(height: 16),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      imageUrl,
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder:
+                          (context, error, stackTrace) => Container(
+                            height: 180,
+                            color: Colors.grey[200],
+                            child: const Center(
+                              child: Icon(Icons.image, color: Colors.grey),
+                            ),
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(description, style: const TextStyle(fontSize: 16)),
+                  if (price != null) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      '$price ₪',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepOrange,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        if (isHotel) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => HotelDetailsPage(
+                                    hotel: item,
+                                    hotelId: id,
+                                    isInitiallyLiked: true,
+                                  ),
+                            ),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => EventDetailsPage(
+                                    event: item,
+                                    eventId: id,
+                                    isInitiallyLiked: true,
+                                  ),
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text(
+                        "More Details",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
+  }
 }

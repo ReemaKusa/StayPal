@@ -35,14 +35,26 @@ class _HomePageState extends State<HomePage> {
 
   void _fetchData() async {
     try {
-      final eventsQuery = await FirebaseFirestore.instance.collection('upcomingEvents').get();
-      final hotelsQuery = await FirebaseFirestore.instance.collection('popularHotels').get();
-      final recommendedQuery = await FirebaseFirestore.instance.collection('recommendedItems').get();
+      final eventsQuery =
+          await FirebaseFirestore.instance.collection('upcomingEvents').get();
+      final hotelsQuery =
+          await FirebaseFirestore.instance.collection('popularHotels').get();
+      final recommendedQuery =
+          await FirebaseFirestore.instance.collection('recommendedItems').get();
 
       setState(() {
-        upcomingEvents = eventsQuery.docs.map((doc) => {'id': doc.id, ...doc.data()}).toList();
-        popularHotels = hotelsQuery.docs.map((doc) => {'id': doc.id, ...doc.data()}).toList();
-        recommendedItems = recommendedQuery.docs.map((doc) => {'id': doc.id, ...doc.data()}).toList();
+        upcomingEvents =
+            eventsQuery.docs
+                .map((doc) => {'id': doc.id, ...doc.data()})
+                .toList();
+        popularHotels =
+            hotelsQuery.docs
+                .map((doc) => {'id': doc.id, ...doc.data()})
+                .toList();
+        recommendedItems =
+            recommendedQuery.docs
+                .map((doc) => {'id': doc.id, ...doc.data()})
+                .toList();
         isLoading = false;
       });
     } catch (e) {
@@ -60,10 +72,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.pushNamed(
       context,
       '/viewlisting',
-      arguments: {
-        'searchQuery': query,
-        'filterBy': 'location',
-      },
+      arguments: {'searchQuery': query, 'filterBy': 'location'},
     );
 
     _searchController.clear();
@@ -97,220 +106,274 @@ class _HomePageState extends State<HomePage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Wishlist'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Wishlist',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: isLoading
-              ? Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text("Find Events-Hotels", style: TextStyle(fontSize: 16, color: Colors.grey)),
-                              SizedBox(height: 4),
-                              Text("Palestine, Nablus", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                          Stack(
-                            children: [
-                              const Icon(Icons.notifications_none, size: 28),
-                              Positioned(
-                                right: 0,
-                                top: 0,
-                                child: Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
+          child:
+              isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  "Find Events-Hotels",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        key: widget._searchKey,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.search),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: TextField(
-                                controller: _searchController,
-                                decoration: const InputDecoration(
-                                  hintText: "Search by location (e.g. Jerusalem)",
-                                  border: InputBorder.none,
+                                SizedBox(height: 4),
+                                Text(
+                                  "Palestine, Nablus",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _searchQuery = value;
-                                  });
-                                },
-                                onSubmitted: (_) => _performSearch(),
-                              ),
+                              ],
                             ),
-                            if (_searchQuery.isNotEmpty)
-                              IconButton(
-                                icon: const Icon(Icons.clear),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  setState(() {
-                                    _searchQuery = '';
-                                  });
-                                },
-                              ),
+                            Stack(
+                              children: [
+                                const Icon(Icons.notifications_none, size: 28),
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: Container(
+                                    width: 10,
+                                    height: 10,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-                      ),
-                      if (_searchQuery.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        ElevatedButton(
-                          onPressed: _performSearch,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepOrange,
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 48),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                        const SizedBox(height: 16),
+                        Container(
+                          key: widget._searchKey,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Text('Search'),
-                        ),
-                      ],
-                      const SizedBox(height: 24),
-                      const Text("Upcoming Events", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 12),
-                      Column(
-                        children: upcomingEvents.map((event) {
-                          return Column(
+                          child: Row(
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => EventDetailsPage(
-                                        event: event,
-                                        eventId: event['id'],
-                                        isInitiallyLiked: event['isFavorite'] ?? false,
+                              const Icon(Icons.search),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: TextField(
+                                  controller: _searchController,
+                                  decoration: const InputDecoration(
+                                    hintText:
+                                        "Search by location (e.g. Jerusalem)",
+                                    border: InputBorder.none,
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _searchQuery = value;
+                                    });
+                                  },
+                                  onSubmitted: (_) => _performSearch(),
+                                ),
+                              ),
+                              if (_searchQuery.isNotEmpty)
+                                IconButton(
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() {
+                                      _searchQuery = '';
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (_searchQuery.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          ElevatedButton(
+                            onPressed: _performSearch,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepOrange,
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size(double.infinity, 48),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('Search'),
+                          ),
+                        ],
+                        const SizedBox(height: 24),
+                        const Text(
+                          "Upcoming Events",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Column(
+                          children:
+                              upcomingEvents.map((event) {
+                                return Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) => EventDetailsPage(
+                                                  event: event,
+                                                  eventId: event['id'],
+                                                  isInitiallyLiked:
+                                                      event['isFavorite'] ??
+                                                      false,
+                                                ),
+                                          ),
+                                        );
+                                      },
+                                      child: _buildEventCard(
+                                        event['title'],
+                                        event['subtitle'],
+                                        event['imageUrl'],
+                                        event['description'],
                                       ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                  ],
+                                );
+                              }).toList(),
+                        ),
+                        const SizedBox(height: 28),
+                        const Text(
+                          "Hotels Popular Now",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: 200,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children:
+                                popularHotels.map((hotel) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (_) => HotelDetailsPage(
+                                                hotel: hotel,
+                                                hotelId: hotel['id'],
+                                                isInitiallyLiked:
+                                                    hotel['isFavorite'] ??
+                                                    false,
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                    child: _buildHotelCard(
+                                      hotel['title'],
+                                      hotel['subtitle'],
+                                      hotel['imageUrl'],
                                     ),
                                   );
-                                },
-                                child: _buildEventCard(
-                                  event['title'],
-                                  event['subtitle'],
-                                  event['imageUrl'],
-                                  event['description'],
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 28),
-                      const Text("Hotels Popular Now", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        height: 200,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: popularHotels.map((hotel) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => HotelDetailsPage(
-                                      hotel: hotel,
-                                      hotelId: hotel['id'],
-                                      isInitiallyLiked: hotel['isFavorite'] ?? false,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: _buildHotelCard(
-                                hotel['title'],
-                                hotel['subtitle'],
-                                hotel['imageUrl'],
-                              ),
-                            );
-                          }).toList(),
+                                }).toList(),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 28),
-                      const Text("Recommended for You", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 12),
-                      Column(
-                        children: recommendedItems.map((item) {
-                          return Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  if (item['type'] == 'hotel') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => HotelDetailsPage(
-                                          hotel: item,
-                                          hotelId: item['id'],
-                                          isInitiallyLiked: item['isFavorite'] ?? false,
-                                        ),
+                        const SizedBox(height: 28),
+                        const Text(
+                          "Recommended for You",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Column(
+                          children:
+                              recommendedItems.map((item) {
+                                return Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        if (item['type'] == 'hotel') {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => HotelDetailsPage(
+                                                    hotel: item,
+                                                    hotelId: item['id'],
+                                                    isInitiallyLiked:
+                                                        item['isFavorite'] ??
+                                                        false,
+                                                  ),
+                                            ),
+                                          );
+                                        } else {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => EventDetailsPage(
+                                                    event: item,
+                                                    eventId: item['id'],
+                                                    isInitiallyLiked:
+                                                        item['isFavorite'] ??
+                                                        false,
+                                                  ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: _buildRecommendedCard(
+                                        item['title'],
+                                        item['subtitle'],
+                                        item['imageUrl'],
                                       ),
-                                    );
-                                  } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => EventDetailsPage(
-                                          event: item,
-                                          eventId: item['id'],
-                                          isInitiallyLiked: item['isFavorite'] ?? false,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: _buildRecommendedCard(
-                                  item['title'],
-                                  item['subtitle'],
-                                  item['imageUrl'],
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                  ],
+                                );
+                              }).toList(),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
         ),
       ),
     );
   }
 
-
-  Widget _buildEventCard(String title, String subtitle, String imageUrl, String description) {
+  Widget _buildEventCard(
+    String title,
+    String subtitle,
+    String imageUrl,
+    String description,
+  ) {
     return Container(
       height: 120,
       decoration: BoxDecoration(
@@ -329,12 +392,13 @@ class _HomePageState extends State<HomePage> {
               height: 120,
               width: 120,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 120,
-                width: 120,
-                color: Colors.grey[300],
-                child: const Icon(Icons.image, color: Colors.grey),
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Container(
+                    height: 120,
+                    width: 120,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, color: Colors.grey),
+                  ),
             ),
           ),
           const SizedBox(width: 12),
@@ -343,7 +407,10 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 4),
                 Text(subtitle, style: const TextStyle(color: Colors.grey)),
                 const SizedBox(height: 8),
@@ -396,12 +463,13 @@ class _HomePageState extends State<HomePage> {
               height: 100,
               width: 160,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 100,
-                width: 160,
-                color: Colors.grey[300],
-                child: const Icon(Icons.image, color: Colors.grey),
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Container(
+                    height: 100,
+                    width: 160,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, color: Colors.grey),
+                  ),
             ),
           ),
           Padding(
@@ -409,7 +477,10 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 4),
                 Text(subtitle, style: const TextStyle(color: Colors.grey)),
               ],
@@ -441,12 +512,13 @@ class _HomePageState extends State<HomePage> {
               height: 100,
               width: 100,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 100,
-                width: 100,
-                color: Colors.grey[300],
-                child: const Icon(Icons.image, color: Colors.grey),
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Container(
+                    height: 100,
+                    width: 100,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, color: Colors.grey),
+                  ),
             ),
           ),
           const SizedBox(width: 12),
@@ -456,7 +528,10 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 4),
                   Text(subtitle, style: const TextStyle(color: Colors.grey)),
                 ],
