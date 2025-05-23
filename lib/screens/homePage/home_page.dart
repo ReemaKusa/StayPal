@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,6 +23,8 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatelessWidget {
   final GlobalKey _searchKey = GlobalKey();
 
+  HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,22 +35,25 @@ class HomePage extends StatelessWidget {
         unselectedItemColor: Colors.grey,
         currentIndex: 0,
         onTap: (index) {
-          if (index == 1) { 
+          if (index == 1) {
             Scrollable.ensureVisible(
               _searchKey.currentContext!,
               duration: Duration(milliseconds: 500),
               curve: Curves.easeInOut,
             );
-          } else if (index == 0) { 
+          } else if (index == 0) {
             Navigator.pushNamed(context, '/home');
-          } else if (index == 2) { 
+          } else if (index == 2) {
             Navigator.pushNamed(context, '/wishlist');
           }
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Wishlist'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Wishlist',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
@@ -64,9 +70,18 @@ class HomePage extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
-                        Text("Find events-Hotels", style: TextStyle(fontSize: 16, color: Colors.grey)),
+                        Text(
+                          "Find events-Hotels",
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
                         SizedBox(height: 4),
-                        Text("Palestine, Nablus", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text(
+                          "Palestine, Nablus",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                     Stack(
@@ -109,7 +124,10 @@ class HomePage extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                const Text("Upcoming Events", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const Text(
+                  "Upcoming Events",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 12),
                 Column(
                   children: [
@@ -145,38 +163,88 @@ class HomePage extends StatelessWidget {
 
                 const SizedBox(height: 28),
 
-                const Text("Hotels Popular Now", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const Text(
+                  "Hotels Popular Now",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 12),
                 SizedBox(
                   height: 200,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: [
-                      _buildHotelCard("Grand Plaza", "Nablus • \$120", "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"),
-                      _buildHotelCard("Sea View", "Gaza • \$150", "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"),
-                      _buildHotelCard("Olive Tree", "Ramallah • \$110", "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"),
-                      _buildHotelCard("Heritage Inn", "Jericho • \$90", "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"),
-                      _buildHotelCard("Mountain View", "Hebron • \$130", "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"),
-                      _buildHotelCard("Desert Oasis", "Jenin • \$80", "https://images.unsplash.com/photo-1444201983204-c43cbd584d93?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"),
+                      _buildHotelCard(
+                        "Grand Plaza",
+                        "Nablus • \$120",
+                        "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                      ),
+                      _buildHotelCard(
+                        "Sea View",
+                        "Gaza • \$150",
+                        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                      ),
+                      _buildHotelCard(
+                        "Olive Tree",
+                        "Ramallah • \$110",
+                        "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                      ),
+                      _buildHotelCard(
+                        "Heritage Inn",
+                        "Jericho • \$90",
+                        "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                      ),
+                      _buildHotelCard(
+                        "Mountain View",
+                        "Hebron • \$130",
+                        "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                      ),
+                      _buildHotelCard(
+                        "Desert Oasis",
+                        "Jenin • \$80",
+                        "https://images.unsplash.com/photo-1444201983204-c43cbd584d93?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                      ),
                     ],
                   ),
                 ),
 
                 const SizedBox(height: 28),
 
-                const Text("Recommended for You", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const Text(
+                  "Recommended for You",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 12),
                 Column(
                   children: [
-                    _buildRecommendedCard("Cultural Tour", "Nablus • Jun 8", "https://images.unsplash.com/photo-1569437063952-e0d7d0aa45e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"),
+                    _buildRecommendedCard(
+                      "Cultural Tour",
+                      "Nablus • Jun 8",
+                      "https://images.unsplash.com/photo-1569437063952-e0d7d0aa45e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                    ),
                     const SizedBox(height: 16),
-                    _buildRecommendedCard("Cooking Class", "Bethlehem • Jun 15", "https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"),
+                    _buildRecommendedCard(
+                      "Cooking Class",
+                      "Bethlehem • Jun 15",
+                      "https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                    ),
                     const SizedBox(height: 16),
-                    _buildRecommendedCard("Hiking Trip", "Jericho • Jun 22", "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"),
+                    _buildRecommendedCard(
+                      "Hiking Trip",
+                      "Jericho • Jun 22",
+                      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                    ),
                     const SizedBox(height: 16),
-                    _buildRecommendedCard("Wine Tasting", "Ramallah • Jun 29", "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"),
+                    _buildRecommendedCard(
+                      "Wine Tasting",
+                      "Ramallah • Jun 29",
+                      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                    ),
                     const SizedBox(height: 16),
-                    _buildRecommendedCard("Photography Walk", "Hebron • Jul 6", "https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"),
+                    _buildRecommendedCard(
+                      "Photography Walk",
+                      "Hebron • Jul 6",
+                      "https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                    ),
                   ],
                 ),
               ],
@@ -187,7 +255,12 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildEventCard(String title, String subtitle, String imageUrl, String description) {
+  Widget _buildEventCard(
+    String title,
+    String subtitle,
+    String imageUrl,
+    String description,
+  ) {
     return Container(
       height: 120,
       decoration: BoxDecoration(
@@ -206,12 +279,13 @@ class HomePage extends StatelessWidget {
               height: 120,
               width: 120,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 120,
-                width: 120,
-                color: Colors.grey[300],
-                child: const Icon(Icons.image, color: Colors.grey),
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Container(
+                    height: 120,
+                    width: 120,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, color: Colors.grey),
+                  ),
             ),
           ),
           const SizedBox(width: 12),
@@ -220,7 +294,10 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 4),
                 Text(subtitle, style: const TextStyle(color: Colors.grey)),
                 const SizedBox(height: 8),
@@ -273,12 +350,13 @@ class HomePage extends StatelessWidget {
               height: 100,
               width: 160,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 100,
-                width: 160,
-                color: Colors.grey[300],
-                child: const Icon(Icons.image, color: Colors.grey),
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Container(
+                    height: 100,
+                    width: 160,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, color: Colors.grey),
+                  ),
             ),
           ),
           Padding(
@@ -286,7 +364,10 @@ class HomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 4),
                 Text(subtitle, style: const TextStyle(color: Colors.grey)),
               ],
@@ -318,12 +399,13 @@ class HomePage extends StatelessWidget {
               height: 100,
               width: 100,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 100,
-                width: 100,
-                color: Colors.grey[300],
-                child: const Icon(Icons.image, color: Colors.grey),
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Container(
+                    height: 100,
+                    width: 100,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, color: Colors.grey),
+                  ),
             ),
           ),
           const SizedBox(width: 12),
@@ -333,7 +415,10 @@ class HomePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 4),
                   Text(subtitle, style: const TextStyle(color: Colors.grey)),
                 ],
@@ -351,6 +436,8 @@ class HomePage extends StatelessWidget {
 }
 
 class WishlistPage extends StatelessWidget {
+  const WishlistPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -364,9 +451,7 @@ class WishlistPage extends StatelessWidget {
           onPressed: () => Navigator.pushNamed(context, '/home'),
         ),
       ),
-      body: const Center(
-        child: Text('Wishlist items will appear here'),
-      ),
+      body: const Center(child: Text('Wishlist items will appear here')),
     );
   }
 }

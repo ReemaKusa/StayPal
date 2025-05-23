@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:staypal/screens/profile/booking_complete.dart';
-import 'package:staypal/screens/profile/booking_details_payment.dart';
+import 'package:staypal/screens/auth/auth_entry_screen.dart';
 import 'package:staypal/screens/profile/profile.dart';
 import 'firebase_options.dart';
-import 'package:staypal/screens/auth/auth_entry_screen.dart';
 import 'package:staypal/screens/wishlistPage/wishlist_page.dart';
 import 'package:staypal/screens/homePage/home_page.dart';
-import 'package:staypal/screens/view listing/viewlisting.dart';
 // import 'package:staypal/screens/auth/test_firestore_screen.dart';
 
 void main() async {
@@ -31,12 +28,12 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: const AuthEntryScreen(),
-      //home: MyProfile(),
+      home: MyProfile(),
       //home: HomePage(),
       //home: DetailBooking(),
       //home: BookingCompleteScreen(isHotel: true),
-      home: MyApp(),
 
+      // home: MyApp(),
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/home': (context) => HomePage(),

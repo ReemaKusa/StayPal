@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BookingCompleteScreen extends StatelessWidget {
-  late final bool isHotel;
-  BookingCompleteScreen({required this.isHotel});
+  final bool isHotel;
+  const BookingCompleteScreen({super.key, required this.isHotel});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,9 +25,9 @@ class BookingCompleteScreen extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.only(top: 10),
-              child: Container(
-                child: Image.asset('assets/images/payment.png'),
+              child: SizedBox(
                 height: 300,
+                child: Image.asset('assets/images/payment.png'),
               ),
             ),
             Container(
@@ -63,7 +63,7 @@ class BookingCompleteScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            Container(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
@@ -91,7 +91,7 @@ class BookingCompleteScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 30),
-            Container(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {

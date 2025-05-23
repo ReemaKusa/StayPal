@@ -52,6 +52,8 @@ class WishListPage extends StatelessWidget {
     },
   ];
 
+   WishListPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

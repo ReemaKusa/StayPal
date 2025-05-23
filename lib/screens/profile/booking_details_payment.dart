@@ -8,6 +8,8 @@ class DetailBooking extends StatelessWidget {
     'd MMMM yyyy',
   ).format(DateTime.now());
 
+  DetailBooking({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
