@@ -25,6 +25,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   double _totalPrice = 0;
   bool _isLiked = false;
   late String _currentUserId;
+  bool _isEventExpired = false;
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     _totalPrice = eventPrice;
     _isLiked = widget.isInitiallyLiked;
     _getCurrentUser();
+    _checkEventDate();
   }
 
   Future<void> _getCurrentUser() async {
@@ -44,6 +46,29 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         _currentUserId = user.uid;
       });
     }
+  }
+
+  void _checkEventDate() {
+    final date = widget.event['date'];
+    if (date == null) return;
+
+    DateTime eventDate;
+    if (date is Timestamp) {
+      eventDate = date.toDate();
+    } else if (date is String) {
+      try {
+        eventDate = DateTime.parse(date);
+      } catch (e) {
+        return;
+      }
+    } else {
+      return;
+    }
+
+    final now = DateTime.now();
+    setState(() {
+      _isEventExpired = eventDate.isBefore(now);
+    });
   }
 
   Future<void> _toggleLike() async {
@@ -132,7 +157,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         : 0.0;
 
     return Scaffold(
-       appBar: AppBar(
+      appBar: AppBar(
         title: Text(name),
         backgroundColor: Colors.orange,
         actions: [
@@ -141,16 +166,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               _isLiked ? Icons.favorite : Icons.favorite_border,
               color: _isLiked ? Colors.red : Colors.black,
             ),
-            onPressed: () {
-              setState(() {
-                _isLiked = !_isLiked;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(_isLiked ? 'Added to favorites' : 'Removed from favorites'),
-                ),
-              );
-            },
+            onPressed: _toggleLike,
           ),
         ],
       ),
@@ -175,6 +191,30 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                if (_isEventExpired)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(bottom: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.red[100],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.warning, color: Colors.red),
+                        SizedBox(width: 8),
+                        Text(
+                          'This event has already passed',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 _buildDetailImage(images.isNotEmpty ? images[0] : null),
                 const SizedBox(height: 20),
                 Text(
@@ -286,63 +326,65 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-                      ),
-                      isScrollControlled: true,
-                      builder: (context) => DraggableScrollableSheet(
-                        expand: false,
-                        initialChildSize: 0.5,
-                        maxChildSize: 0.8,
-                        minChildSize: 0.3,
-                        builder: (_, controller) => Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: ListView(
-                            controller: controller,
-                            children: [
-                              const Center(
-                                child: Icon(Icons.star, size: 40, color: Colors.orange),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                "Rating: $rating",
-                                style: const TextStyle(fontSize: 18),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 20),
-                              Text(
-                                details,
-                                style: const TextStyle(fontSize: 16),
-                                textAlign: TextAlign.justify,
-                              ),
-                              const SizedBox(height: 20),
-                              const Text(
-                                "Event Highlights:",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.left,
-                              ),
-                              const SizedBox(height: 10),
-                              ...highlights.map<Widget>((highlight) => 
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 4),
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.check, color: Colors.orange),
-                                      const SizedBox(width: 8),
-                                      Text(highlight.toString()),
-                                    ],
-                                  ),
+                  onPressed: _isEventExpired
+                      ? null
+                      : () {
+                          showModalBottomSheet(
+                            context: context,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+                            ),
+                            isScrollControlled: true,
+                            builder: (context) => DraggableScrollableSheet(
+                              expand: false,
+                              initialChildSize: 0.5,
+                              maxChildSize: 0.8,
+                              minChildSize: 0.3,
+                              builder: (_, controller) => Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: ListView(
+                                  controller: controller,
+                                  children: [
+                                    const Center(
+                                      child: Icon(Icons.star, size: 40, color: Colors.orange),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      "Rating: $rating",
+                                      style: const TextStyle(fontSize: 18),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Text(
+                                      details,
+                                      style: const TextStyle(fontSize: 16),
+                                      textAlign: TextAlign.justify,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    const Text(
+                                      "Event Highlights:",
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    ...highlights.map<Widget>((highlight) => 
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 4),
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.check, color: Colors.orange),
+                                            const SizedBox(width: 8),
+                                            Text(highlight.toString()),
+                                          ],
+                                        ),
+                                      ),
+                                    ).toList(),
+                                  ],
                                 ),
-                              ).toList(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                              ),
+                            ),
+                          );
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
@@ -354,55 +396,57 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 ),
                 const SizedBox(height: 15),
                 ElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Confirm Booking'),
-                        content: Text(
-                            'You are about to book $_ticketCount tickets for ${_totalPrice.toStringAsFixed(0)} ₪'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Cancel'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              try {
-                                await FirebaseFirestore.instance
-                                    .collection('bookings')
-                                    .add({
-                                  'eventId': widget.eventId,
-                                  'userId': _currentUserId,
-                                  'tickets': _ticketCount,
-                                  'totalPrice': _totalPrice,
-                                  'createdAt': FieldValue.serverTimestamp(),
-                                  'status': 'confirmed',
-                                });
-                                Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Booking successful!'),
+                  onPressed: _isEventExpired
+                      ? null
+                      : () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Confirm Booking'),
+                              content: Text(
+                                  'You are about to book $_ticketCount tickets for ${_totalPrice.toStringAsFixed(0)} ₪'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    try {
+                                      await FirebaseFirestore.instance
+                                          .collection('bookings')
+                                          .add({
+                                        'eventId': widget.eventId,
+                                        'userId': _currentUserId,
+                                        'tickets': _ticketCount,
+                                        'totalPrice': _totalPrice,
+                                        'createdAt': FieldValue.serverTimestamp(),
+                                        'status': 'confirmed',
+                                      });
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Booking successful!'),
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Error: $e'),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.deepOrange,
                                   ),
-                                );
-                              } catch (e) {
-                                Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Error: $e'),
-                                  ),
-                                );
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepOrange,
+                                  child: const Text('Confirm'),
+                                ),
+                              ],
                             ),
-                            child: const Text('Confirm'),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                          );
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepOrange,
                     padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
@@ -449,4 +493,5 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ),
       ),
     );
-  }}
+  }
+}
