@@ -5,6 +5,7 @@ import 'firebase_options.dart'; // Make sure this file exists and was generated 
 import 'package:staypal/screens/auth/auth_entry_screen.dart';
 import 'package:staypal/screens/wishlistPage/wishlist_page.dart';
 import 'package:staypal/screens/homePage/home_page.dart';
+import 'package:staypal/screens/first_screen/firstscreen.dart';
 // import 'package:staypal/screens/auth/test_firestore_screen.dart'; // Uncomment if needed
 
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:  CombinedPage(),
+      home: const SplashScreen(),
   routes: {
     '/wishlist': (context) =>  WishListPage(),
     '/home': (context) => HomePage(),
