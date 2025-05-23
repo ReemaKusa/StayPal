@@ -1,5 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'email_verification_screen.dart';
 // import 'login_screen.dart';
 //
@@ -11,7 +12,6 @@
 // }
 //
 // class _SignUpScreenState extends State<SignUpScreen> {
-//
 //   final TextEditingController nameCtrl = TextEditingController();
 //   final TextEditingController emailCtrl = TextEditingController();
 //   final TextEditingController passCtrl = TextEditingController();
@@ -49,14 +49,21 @@
 //     }
 //
 //     try {
-//
 //       final creds = await FirebaseAuth.instance
 //           .createUserWithEmailAndPassword(email: email, password: pass);
 //
 //       await creds.user!.updateDisplayName(name);
 //
-//       await creds.user!.sendEmailVerification();
+//       await FirebaseFirestore.instance
+//           .collection('users')
+//           .doc(creds.user!.uid)
+//           .set({
+//         'fullName': name,
+//         'email': email,
+//         'createdAt': Timestamp.now(),
+//       });
 //
+//       await creds.user!.sendEmailVerification();
 //
 //       Navigator.pushReplacement(
 //         context,
@@ -91,8 +98,6 @@
 //                   ),
 //                 ),
 //                 const SizedBox(height: 40),
-//
-//
 //                 TextField(
 //                   controller: nameCtrl,
 //                   textInputAction: TextInputAction.next,
@@ -100,8 +105,6 @@
 //                   decoration: _inputDecoration('Full Name'),
 //                 ),
 //                 const SizedBox(height: 10),
-//
-//
 //                 TextField(
 //                   controller: emailCtrl,
 //                   keyboardType: TextInputType.emailAddress,
@@ -110,8 +113,6 @@
 //                   decoration: _inputDecoration('Email Address'),
 //                 ),
 //                 const SizedBox(height: 10),
-//
-//
 //                 TextField(
 //                   controller: passCtrl,
 //                   obscureText: hidePassword,
@@ -128,8 +129,6 @@
 //                   ),
 //                 ),
 //                 const SizedBox(height: 10),
-//
-//
 //                 TextField(
 //                   controller: confirmPassCtrl,
 //                   obscureText: hidePassword,
@@ -145,8 +144,6 @@
 //                   ),
 //                 ),
 //                 const SizedBox(height: 24),
-//
-//                 // Sign Up Button
 //                 ElevatedButton(
 //                   onPressed: signUpUser,
 //                   style: ElevatedButton.styleFrom(
@@ -165,9 +162,7 @@
 //                     ),
 //                   ),
 //                 ),
-//
 //                 const SizedBox(height: 20),
-//
 //                 Row(
 //                   mainAxisAlignment: MainAxisAlignment.center,
 //                   children: [
@@ -237,6 +232,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'email_verification_screen.dart';
 import 'login_screen.dart';
 
@@ -250,8 +246,8 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController nameCtrl = TextEditingController();
   final TextEditingController emailCtrl = TextEditingController();
-  final TextEditingController passCtrl = TextEditingController();
-  final TextEditingController confirmPassCtrl = TextEditingController();
+  final TextEditingController passwordCtrl = TextEditingController();
+  final TextEditingController confirmPasswordCtrl = TextEditingController();
 
   bool hidePassword = true;
 
@@ -259,25 +255,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void dispose() {
     nameCtrl.dispose();
     emailCtrl.dispose();
-    passCtrl.dispose();
-    confirmPassCtrl.dispose();
+    passwordCtrl.dispose();
+    confirmPasswordCtrl.dispose();
     super.dispose();
   }
 
+  // Function to handle sign up logic
   Future<void> signUpUser() async {
-    final name = nameCtrl.text.trim();
+    final fullName = nameCtrl.text.trim();
     final email = emailCtrl.text.trim();
-    final pass = passCtrl.text.trim();
-    final confirmPass = confirmPassCtrl.text.trim();
+    final password = passwordCtrl.text.trim();
+    final confirmPassword = confirmPasswordCtrl.text.trim();
 
-    if (name.isEmpty || email.isEmpty || pass.isEmpty || confirmPass.isEmpty) {
+    // Simple validation
+    if (fullName.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all the fields')),
       );
       return;
     }
 
-    if (pass != confirmPass) {
+    if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Passwords do not match')),
       );
@@ -285,26 +283,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     try {
-      final creds = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: pass);
+      // Create the user
+      final userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
 
-      await creds.user!.updateDisplayName(name);
+      final user = userCredential.user;
 
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(creds.user!.uid)
-          .set({
-        'fullName': name,
-        'email': email,
-        'createdAt': Timestamp.now(),
-      });
+      if (user != null) {
+        // Update user's display name
+        await user.updateDisplayName(fullName);
 
-      await creds.user!.sendEmailVerification();
+        // Save user info to Firestore
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'uid': user.uid,
+          'fullName': fullName,
+          'email': email,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const EmailVerificationScreen()),
-      );
+        // Send email verification
+        await user.sendEmailVerification();
+
+        // Navigate to verification screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const EmailVerificationScreen()),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
@@ -326,7 +331,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 40),
                 const Text(
                   'Create Account',
-                  textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 28,
                     color: Colors.black,
@@ -334,6 +338,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
+
+                // Full Name
                 TextField(
                   controller: nameCtrl,
                   textInputAction: TextInputAction.next,
@@ -341,6 +347,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   decoration: _inputDecoration('Full Name'),
                 ),
                 const SizedBox(height: 10),
+
+                // Email
                 TextField(
                   controller: emailCtrl,
                   keyboardType: TextInputType.emailAddress,
@@ -349,8 +357,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   decoration: _inputDecoration('Email Address'),
                 ),
                 const SizedBox(height: 10),
+
+                // Password
                 TextField(
-                  controller: passCtrl,
+                  controller: passwordCtrl,
                   obscureText: hidePassword,
                   textInputAction: TextInputAction.next,
                   style: const TextStyle(color: Colors.black),
@@ -365,8 +375,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
+
+                // Confirm Password
                 TextField(
-                  controller: confirmPassCtrl,
+                  controller: confirmPasswordCtrl,
                   obscureText: hidePassword,
                   style: const TextStyle(color: Colors.black),
                   decoration: _inputDecoration(
@@ -380,6 +392,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
+
+                // Sign Up Button
                 ElevatedButton(
                   onPressed: signUpUser,
                   style: ElevatedButton.styleFrom(
@@ -398,7 +412,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 20),
+
+                // Link to Login
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -434,6 +451,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  // Input styling for all fields
   InputDecoration _inputDecoration(
       String hint, {
         bool isPassword = false,
