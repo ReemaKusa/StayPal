@@ -1,6 +1,374 @@
+// import 'package:flutter/material.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'forgot_password_screen.dart';
+// import 'signup_screen.dart';
+//
+// class LoginScreen extends StatefulWidget {
+//   const LoginScreen({super.key});
+//
+//   @override
+//   State<LoginScreen> createState() => _LoginScreenState();
+// }
+//
+// class _LoginScreenState extends State<LoginScreen> {
+//   final TextEditingController _emailController = TextEditingController();
+//   final TextEditingController _passwordController = TextEditingController();
+//   bool _obscurePassword = true;
+//
+//   @override
+//   void dispose() {
+//     _emailController.dispose();
+//     _passwordController.dispose();
+//     super.dispose();
+//   }
+//
+//   Future<void> _signInWithEmailAndPassword() async {
+//     final email = _emailController.text.trim();
+//     final password = _passwordController.text;
+//
+//     if (email.isEmpty || password.isEmpty) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('Please enter both email and password')),
+//       );
+//       return;
+//     }
+//
+//     try {
+//       final userCredential = await FirebaseAuth.instance
+//           .signInWithEmailAndPassword(email: email, password: password);
+//
+//       print('✅ Logged in as: ${userCredential.user?.email}');
+//       // TODO: Navigate to home screen
+//     } on FirebaseAuthException catch (e) {
+//       ScaffoldMessenger.of(
+//         context,
+//       ).showSnackBar(SnackBar(content: Text(e.message ?? 'Login failed')));
+//     }
+//   }
+//
+//   Future<void> _signInWithGoogle() async {
+//     try {
+//       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+//       if (googleUser == null) {
+//         print('❌ User canceled Google Sign-In');
+//         return;
+//       }
+//
+//       final GoogleSignInAuthentication googleAuth =
+//           await googleUser.authentication;
+//
+//       final credential = GoogleAuthProvider.credential(
+//         accessToken: googleAuth.accessToken,
+//         idToken: googleAuth.idToken,
+//       );
+//
+//       final userCredential = await FirebaseAuth.instance.signInWithCredential(
+//         credential,
+//       );
+//
+//       print('✅ Signed in: ${userCredential.user?.displayName}');
+//       // TODO: Navigate to home screen
+//     } catch (e) {
+//       print('🔥 Google Sign-In error: $e');
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       body: SafeArea(
+//         child: Padding(
+//           padding: const EdgeInsets.symmetric(horizontal: 24.0),
+//           child: SingleChildScrollView(
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.stretch,
+//               children: [
+//                 const SizedBox(height: 40),
+//                 const Text(
+//                   'StayPal',
+//                   textAlign: TextAlign.center,
+//                   style: TextStyle(
+//                     fontFamily: 'Roboto Slab',
+//                     fontSize: 32,
+//                     fontWeight: FontWeight.w600,
+//                     color: Colors.black,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 30),
+//                 const Text(
+//                   'Welcome Back!',
+//                   textAlign: TextAlign.center,
+//                   style: TextStyle(
+//                     fontSize: 28,
+//                     color: Colors.black,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 40),
+//
+//                 // Email
+//                 TextField(
+//                   controller: _emailController,
+//                   keyboardType: TextInputType.emailAddress,
+//                   textInputAction: TextInputAction.next,
+//                   style: const TextStyle(color: Colors.black),
+//                   decoration: InputDecoration(
+//                     filled: true,
+//                     fillColor: Colors.white,
+//                     hintText: 'Email Address',
+//                     hintStyle: const TextStyle(color: Colors.black54),
+//                     enabledBorder: OutlineInputBorder(
+//                       borderRadius: BorderRadius.circular(12),
+//                       borderSide: const BorderSide(color: Colors.black12),
+//                     ),
+//                     focusedBorder: OutlineInputBorder(
+//                       borderRadius: BorderRadius.circular(12),
+//                       borderSide: const BorderSide(
+//                         color: Colors.orangeAccent,
+//                         width: 2,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//
+//                 const SizedBox(height: 10),
+//
+//                 // Password
+//                 TextField(
+//                   controller: _passwordController,
+//                   obscureText: _obscurePassword,
+//                   style: const TextStyle(color: Colors.black),
+//                   decoration: InputDecoration(
+//                     filled: true,
+//                     fillColor: Colors.white,
+//                     hintText: 'Password',
+//                     hintStyle: const TextStyle(color: Colors.black54),
+//                     enabledBorder: OutlineInputBorder(
+//                       borderRadius: BorderRadius.circular(12),
+//                       borderSide: const BorderSide(color: Colors.black12),
+//                     ),
+//                     focusedBorder: OutlineInputBorder(
+//                       borderRadius: BorderRadius.circular(12),
+//                       borderSide: const BorderSide(
+//                         color: Colors.orangeAccent,
+//                         width: 2,
+//                       ),
+//                     ),
+//                     suffixIcon: IconButton(
+//                       icon: Icon(
+//                         _obscurePassword
+//                             ? Icons.visibility_off
+//                             : Icons.visibility,
+//                         color: Colors.black12,
+//                       ),
+//                       onPressed: () {
+//                         setState(() {
+//                           _obscurePassword = !_obscurePassword;
+//                         });
+//                       },
+//                     ),
+//                   ),
+//                 ),
+//
+//                 Align(
+//                   alignment: Alignment.centerRight,
+//                   child: TextButton(
+//                     onPressed: () {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => const ForgotPasswordScreen(),
+//                         ),
+//                       );
+//                     },
+//                     child: const Text(
+//                       'Forgot Password?',
+//                       style: TextStyle(
+//                         color: Colors.black54,
+//                         fontSize: 14,
+//                         fontWeight: FontWeight.w500,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//
+//                 const SizedBox(height: 20),
+//
+//                 // Log In Button
+//                 SizedBox(
+//                   width: double.infinity,
+//                   child: ElevatedButton(
+//                     onPressed: _signInWithEmailAndPassword,
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: Colors.orangeAccent,
+//                       padding: const EdgeInsets.symmetric(vertical: 10),
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(8),
+//                       ),
+//                     ),
+//                     child: const Text(
+//                       'Log In',
+//                       style: TextStyle(
+//                         fontSize: 16,
+//                         color: Colors.white,
+//                         fontWeight: FontWeight.bold,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//
+//                 const SizedBox(height: 20),
+//
+//                 Row(
+//                   children: const [
+//                     Expanded(
+//                       child: Divider(thickness: 1, color: Colors.black26),
+//                     ),
+//                     Padding(
+//                       padding: EdgeInsets.symmetric(horizontal: 8.0),
+//                       child: Text(
+//                         'or',
+//                         style: TextStyle(
+//                           color: Colors.black45,
+//                           fontWeight: FontWeight.w500,
+//                         ),
+//                       ),
+//                     ),
+//                     Expanded(
+//                       child: Divider(thickness: 1, color: Colors.black26),
+//                     ),
+//                   ],
+//                 ),
+//
+//                 const SizedBox(height: 20),
+//
+//                 // Google Sign-In
+//                 SizedBox(
+//                   width: double.infinity,
+//                   child: OutlinedButton(
+//                     onPressed: _signInWithGoogle,
+//                     style: OutlinedButton.styleFrom(
+//                       side: const BorderSide(color: Colors.black12),
+//                       padding: const EdgeInsets.symmetric(vertical: 8),
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(8),
+//                       ),
+//                     ),
+//                     child: Stack(
+//                       alignment: Alignment.center,
+//                       children: [
+//                         Align(
+//                           alignment: Alignment.centerLeft,
+//                           child: Padding(
+//                             padding: const EdgeInsets.only(left: 12.0),
+//                             child: Image.asset(
+//                               'assets/images/google_28.png',
+//                               height: 28,
+//                               width: 28,
+//                             ),
+//                           ),
+//                         ),
+//                         const Text(
+//                           'Continue with Google',
+//                           style: TextStyle(
+//                             fontSize: 16,
+//                             fontWeight: FontWeight.bold,
+//                             color: Colors.black,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//
+//                 const SizedBox(height: 12),
+//
+//                 // Apple Sign-In placeholder
+//                 SizedBox(
+//                   width: double.infinity,
+//                   child: OutlinedButton(
+//                     onPressed: () {
+//                       // TODO: Apple Sign-In
+//                     },
+//                     style: OutlinedButton.styleFrom(
+//                       side: const BorderSide(color: Colors.black12),
+//                       padding: const EdgeInsets.symmetric(vertical: 8),
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(8),
+//                       ),
+//                     ),
+//                     child: Stack(
+//                       alignment: Alignment.center,
+//                       children: [
+//                         const Align(
+//                           alignment: Alignment.centerLeft,
+//                           child: Padding(
+//                             padding: EdgeInsets.only(left: 16.0),
+//                             child: Icon(
+//                               Icons.apple,
+//                               color: Colors.black,
+//                               size: 28,
+//                             ),
+//                           ),
+//                         ),
+//                         const Text(
+//                           'Continue with Apple',
+//                           style: TextStyle(
+//                             fontSize: 16,
+//                             color: Colors.black,
+//                             fontWeight: FontWeight.bold,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//
+//                 const SizedBox(height: 20),
+//
+//                 // Sign Up Link
+//                 Row(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     const Text(
+//                       "Don't have an account?",
+//                       style: TextStyle(color: Colors.black87),
+//                     ),
+//                     TextButton(
+//                       onPressed: () {
+//                         Navigator.pushReplacement(
+//                           context,
+//                           MaterialPageRoute(
+//                             builder: (context) => const SignUpScreen(),
+//                           ),
+//                         );
+//                       },
+//                       child: const Text(
+//                         'Sign Up',
+//                         style: TextStyle(
+//                           color: Colors.orangeAccent,
+//                           fontWeight: FontWeight.bold,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'forgot_password_screen.dart';
 import 'signup_screen.dart';
 
@@ -12,20 +380,21 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  final TextEditingController emailCtrl = TextEditingController();
+  final TextEditingController passwordCtrl = TextEditingController();
+  bool hidePassword = true;
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
     super.dispose();
   }
 
-  Future<void> _signInWithEmailAndPassword() async {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
+  // Email & Password Login
+  Future<void> loginWithEmail() async {
+    final email = emailCtrl.text.trim();
+    final password = passwordCtrl.text;
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -41,34 +410,56 @@ class _LoginScreenState extends State<LoginScreen> {
       print('✅ Logged in as: ${userCredential.user?.email}');
       // TODO: Navigate to home screen
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.message ?? 'Login failed')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Login failed')),
+      );
     }
   }
 
-  Future<void> _signInWithGoogle() async {
+  // Save user data to Firestore if not already there
+  Future<void> saveUserToFirestore(User user) async {
+    final userRef =
+    FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+    final doc = await userRef.get();
+    if (!doc.exists) {
+      await userRef.set({
+        'uid': user.uid,
+        'name': user.displayName ?? '',
+        'email': user.email ?? '',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      print('✅ New user saved to Firestore');
+    } else {
+      print('📌 User already exists in Firestore');
+    }
+  }
+
+  // Google Sign-In Logic
+  Future<void> loginWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
         print('❌ User canceled Google Sign-In');
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final googleAuth = await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(
-        credential,
-      );
+      final userCredential =
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
-      print('✅ Signed in: ${userCredential.user?.displayName}');
-      // TODO: Navigate to home screen
+      final user = userCredential.user;
+      if (user != null) {
+        print('✅ Google sign-in success: ${user.displayName}');
+        await saveUserToFirestore(user);
+        // TODO: Navigate to home screen
+      }
     } catch (e) {
       print('🔥 Google Sign-In error: $e');
     }
@@ -108,9 +499,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 40),
 
-                // Email
+                // Email field
                 TextField(
-                  controller: _emailController,
+                  controller: emailCtrl,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   style: const TextStyle(color: Colors.black),
@@ -135,10 +526,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 10),
 
-                // Password
+                // Password field
                 TextField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
+                  controller: passwordCtrl,
+                  obscureText: hidePassword,
                   style: const TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     filled: true,
@@ -158,14 +549,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword
+                        hidePassword
                             ? Icons.visibility_off
                             : Icons.visibility,
                         color: Colors.black12,
                       ),
                       onPressed: () {
                         setState(() {
-                          _obscurePassword = !_obscurePassword;
+                          hidePassword = !hidePassword;
                         });
                       },
                     ),
@@ -200,7 +591,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _signInWithEmailAndPassword,
+                    onPressed: loginWithEmail,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orangeAccent,
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -248,7 +639,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    onPressed: _signInWithGoogle,
+                    onPressed: loginWithGoogle,
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.black12),
                       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -285,7 +676,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 12),
 
-                // Apple Sign-In placeholder
+                // Apple Sign-In Placeholder
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
