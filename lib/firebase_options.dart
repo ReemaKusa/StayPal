@@ -88,3 +88,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'staypal-7ee25.firebasestorage.app',
   );
 }
+
