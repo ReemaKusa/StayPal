@@ -7,9 +7,7 @@ import 'firebase_options.dart';
 import 'package:staypal/screens/auth/auth_entry_screen.dart';
 import 'package:staypal/screens/wishlistPage/wishlist_page.dart';
 import 'package:staypal/screens/homePage/home_page.dart';
-import 'package:staypal/screens/view listing/viewlisting.dart';
-// import 'package:staypal/screens/auth/test_firestore_screen.dart';
-import 'package:staypal/screens/auth/email_verification_screen.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,20 +29,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      //home: const AuthEntryScreen(),
-      //home: MyProfile(),
-      //home: HomePage(),
-      //home: DetailBooking(),
-      //home: BookingCompleteScreen(isHotel: true),
-      home: AuthEntryScreen(),
-      //home:EmailVerificationScreen(),
 
-
-      routes: {
-        '/wishlist': (context) => WishListPage(),
-        '/home': (context) => HomePage(),
-      },
-      // home: const TestFirestoreScreen(),
     );
   }
 }
