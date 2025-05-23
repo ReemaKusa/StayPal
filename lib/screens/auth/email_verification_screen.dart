@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'login_screen.dart';
 
 class EmailVerificationScreen extends StatelessWidget {
   const EmailVerificationScreen({super.key});
@@ -6,84 +8,112 @@ class EmailVerificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
                 'Verify Your Email',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 28,
-                  color: Colors.white,
+                  color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 20),
               const Text(
-                'A verification email has been sent to your email address. Please check your inbox and verify your account.',
+                'We sent a verification email to your inbox. Once you’ve verified, tap the button below to continue.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70),
+                style: TextStyle(color: Colors.black87),
               ),
               const SizedBox(height: 40),
 
-              // Resend Email Button
-              ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.white),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                    ),
-                    child: const Text(
-                      'Resend Email',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
+              OutlinedButton(
+                onPressed: () async {
+                  try {
+                    await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('📨 Verification email sent again.')),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: ${e.toString()}')),
+                    );
+                  }
+                },
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.black12),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                ),
+                child: const Text(
+                  'Resend Email',
+                  style: TextStyle(color: Colors.black87, fontSize: 16),
                 ),
               ),
 
               const SizedBox(height: 16),
 
-              // Check Again Button
-              ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightBlueAccent,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                    ),
+              ElevatedButton(
+                onPressed: () async {
+                  await FirebaseAuth.instance.currentUser?.reload();
+                  final user = FirebaseAuth.instance.currentUser;
+                  if (user != null && user.emailVerified) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Your email is not verified yet.')),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orangeAccent,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'I Verified My Email',
+                  style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Need to switch accounts?', style: TextStyle(color: Colors.black87)),
+                  TextButton(
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      );
+                    },
                     child: const Text(
-                      'I Verified My Email',
+                      'Log Out',
                       style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
+                        fontSize: 16,
+                        color: Colors.orangeAccent,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Log Out Button
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'Log Out',
-                  style: TextStyle(color: Colors.white60, fontSize: 16),
-                ),
-              ),
+                ],
+              )
             ],
           ),
         ),
