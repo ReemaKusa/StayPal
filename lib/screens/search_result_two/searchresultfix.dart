@@ -4,9 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../search_result/hotelDetails.dart';
 import '../search_result/eventDetails.dart';
+import '../homePage/custom_nav_bar.dart';
 
 class CombinedPage extends StatefulWidget {
-  const CombinedPage({super.key});
+
+  final GlobalKey _searchKey = GlobalKey();
+  CombinedPage({super.key});
 
   @override
   State<CombinedPage> createState() => _CombinedPageState();
@@ -126,21 +129,9 @@ class _CombinedPageState extends State<CombinedPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.deepOrange,
-        unselectedItemColor: Colors.grey,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Wishlist',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
+      bottomNavigationBar: CustomNavBar(
+        currentIndex: 0, ////////////////////////////////////
+        searchKey: widget._searchKey, 
       ),
       appBar: AppBar(
         title:
