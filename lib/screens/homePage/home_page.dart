@@ -7,10 +7,10 @@ import '../search_result/hotelDetails.dart';
 import '../search_result/eventDetails.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staypal/screens/auth/auth_entry_screen.dart';
+import './custom_nav_bar.dart';
 
 class HomePage extends StatefulWidget {
   final GlobalKey _searchKey = GlobalKey();
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -20,8 +20,20 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> popularHotels = [];
   List<Map<String, dynamic>> recommendedItems = [];
   bool isLoading = true;
+  final GlobalKey _searchKey = GlobalKey();
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  final ScrollController _scrollController = ScrollController();
+
+  void _scrollToSearch() {
+    if (_searchKey.currentContext != null) {
+      Scrollable.ensureVisible(
+        _searchKey.currentContext!,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -87,51 +99,19 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.deepOrange,
-        unselectedItemColor: Colors.grey,
+      bottomNavigationBar: CustomNavBar(
         currentIndex: 0,
-        onTap: (index) async{
-          if (index == 1) {
-            Scrollable.ensureVisible(
-              widget._searchKey.currentContext!,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-            );
-          } else if (index == 0) {
-            Navigator.pushNamed(context, '/home');
-          } else if (index == 2) {
-            Navigator.pushNamed(context, '/wishlist');
-          }else if (index == 3) {
-            final user = FirebaseAuth.instance.currentUser;
-            if (user != null) {
-              Navigator.pushNamed(context, '/profile');
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AuthEntryScreen()),
-              );
-            }
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Wishlist',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
+        searchKey: _searchKey,
+        onSearchPressed: _scrollToSearch,
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child:
               isLoading
-                  ? Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : SingleChildScrollView(
+                    controller: _scrollController, // Added scroll controller
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -179,7 +159,8 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(height: 16),
                         Container(
-                          key: widget._searchKey,
+                          key:
+                              _searchKey, // Changed from widget._searchKey to _searchKey
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: BoxDecoration(
                             color: Colors.grey[200],
