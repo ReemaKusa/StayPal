@@ -64,5 +64,10 @@
 			</array>
 		</dict>
 	</array>
+	<key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>google</string>
+      <string>com.googleusercontent.apps.YOUR_REVERSED_CLIENT_ID</string>
+    </array>
 </dict>
 </plist>
