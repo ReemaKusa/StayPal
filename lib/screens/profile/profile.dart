@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:staypal/screens/profile/log_out.dart';
 import 'package:staypal/screens/profile/my_fav.dart';
-import 'package:staypal/screens/profile/my_review.dart';
+import 'package:staypal/screens/profile/my_bookings_screen.dart';
 import 'package:staypal/screens/profile/payment_methods.dart';
 import 'package:staypal/screens/profile/personal_details.dart';
 import 'package:staypal/screens/profile/security_settings.dart';
@@ -148,9 +148,9 @@ class _MyProfileState extends State<MyProfile> {
 
                     _buildCard('My Favorite', Icons.favorite, MyFav()),
                     //تحويل لبوكننج انتباههه
-                    _buildCard('My Booking', Icons.event_available, MyFav()),
 
-                    _buildCard('My Review', Icons.rate_review, MyReview()),
+
+                    _buildCard('My Bookings', Icons.event_available, const MyBookingsScreen()),
                     _buildCard(
                       'Security Settings',
                       Icons.lock,

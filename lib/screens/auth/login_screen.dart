@@ -1,6 +1,8 @@
 // import 'package:flutter/material.dart';
 // import 'package:google_sign_in/google_sign_in.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+//
 // import 'forgot_password_screen.dart';
 // import 'signup_screen.dart';
 //
@@ -12,20 +14,21 @@
 // }
 //
 // class _LoginScreenState extends State<LoginScreen> {
-//   final TextEditingController _emailController = TextEditingController();
-//   final TextEditingController _passwordController = TextEditingController();
-//   bool _obscurePassword = true;
+//   final TextEditingController emailCtrl = TextEditingController();
+//   final TextEditingController passwordCtrl = TextEditingController();
+//   bool hidePassword = true;
 //
 //   @override
 //   void dispose() {
-//     _emailController.dispose();
-//     _passwordController.dispose();
+//     emailCtrl.dispose();
+//     passwordCtrl.dispose();
 //     super.dispose();
 //   }
 //
-//   Future<void> _signInWithEmailAndPassword() async {
-//     final email = _emailController.text.trim();
-//     final password = _passwordController.text;
+//   // Email & Password Login
+//   Future<void> loginWithEmail() async {
+//     final email = emailCtrl.text.trim();
+//     final password = passwordCtrl.text;
 //
 //     if (email.isEmpty || password.isEmpty) {
 //       ScaffoldMessenger.of(context).showSnackBar(
@@ -41,34 +44,56 @@
 //       print('✅ Logged in as: ${userCredential.user?.email}');
 //       // TODO: Navigate to home screen
 //     } on FirebaseAuthException catch (e) {
-//       ScaffoldMessenger.of(
-//         context,
-//       ).showSnackBar(SnackBar(content: Text(e.message ?? 'Login failed')));
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text(e.message ?? 'Login failed')),
+//       );
 //     }
 //   }
 //
-//   Future<void> _signInWithGoogle() async {
+//   // Save user data to Firestore if not already there
+//   Future<void> saveUserToFirestore(User user) async {
+//     final userRef =
+//     FirebaseFirestore.instance.collection('users').doc(user.uid);
+//
+//     final doc = await userRef.get();
+//     if (!doc.exists) {
+//       await userRef.set({
+//         'uid': user.uid,
+//         'name': user.displayName ?? '',
+//         'email': user.email ?? '',
+//         'createdAt': FieldValue.serverTimestamp(),
+//       });
+//       print('✅ New user saved to Firestore');
+//     } else {
+//       print('📌 User already exists in Firestore');
+//     }
+//   }
+//
+//   // Google Sign-In Logic
+//   Future<void> loginWithGoogle() async {
 //     try {
-//       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+//       final googleUser = await GoogleSignIn().signIn();
 //       if (googleUser == null) {
 //         print('❌ User canceled Google Sign-In');
 //         return;
 //       }
 //
-//       final GoogleSignInAuthentication googleAuth =
-//           await googleUser.authentication;
+//       final googleAuth = await googleUser.authentication;
 //
 //       final credential = GoogleAuthProvider.credential(
 //         accessToken: googleAuth.accessToken,
 //         idToken: googleAuth.idToken,
 //       );
 //
-//       final userCredential = await FirebaseAuth.instance.signInWithCredential(
-//         credential,
-//       );
+//       final userCredential =
+//       await FirebaseAuth.instance.signInWithCredential(credential);
 //
-//       print('✅ Signed in: ${userCredential.user?.displayName}');
-//       // TODO: Navigate to home screen
+//       final user = userCredential.user;
+//       if (user != null) {
+//         print('✅ Google sign-in success: ${user.displayName}');
+//         await saveUserToFirestore(user);
+//         // TODO: Navigate to home screen
+//       }
 //     } catch (e) {
 //       print('🔥 Google Sign-In error: $e');
 //     }
@@ -108,9 +133,9 @@
 //                 ),
 //                 const SizedBox(height: 40),
 //
-//                 // Email
+//                 // Email field
 //                 TextField(
-//                   controller: _emailController,
+//                   controller: emailCtrl,
 //                   keyboardType: TextInputType.emailAddress,
 //                   textInputAction: TextInputAction.next,
 //                   style: const TextStyle(color: Colors.black),
@@ -135,10 +160,10 @@
 //
 //                 const SizedBox(height: 10),
 //
-//                 // Password
+//                 // Password field
 //                 TextField(
-//                   controller: _passwordController,
-//                   obscureText: _obscurePassword,
+//                   controller: passwordCtrl,
+//                   obscureText: hidePassword,
 //                   style: const TextStyle(color: Colors.black),
 //                   decoration: InputDecoration(
 //                     filled: true,
@@ -158,14 +183,14 @@
 //                     ),
 //                     suffixIcon: IconButton(
 //                       icon: Icon(
-//                         _obscurePassword
+//                         hidePassword
 //                             ? Icons.visibility_off
 //                             : Icons.visibility,
 //                         color: Colors.black12,
 //                       ),
 //                       onPressed: () {
 //                         setState(() {
-//                           _obscurePassword = !_obscurePassword;
+//                           hidePassword = !hidePassword;
 //                         });
 //                       },
 //                     ),
@@ -200,7 +225,7 @@
 //                 SizedBox(
 //                   width: double.infinity,
 //                   child: ElevatedButton(
-//                     onPressed: _signInWithEmailAndPassword,
+//                     onPressed: loginWithEmail,
 //                     style: ElevatedButton.styleFrom(
 //                       backgroundColor: Colors.orangeAccent,
 //                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -248,7 +273,7 @@
 //                 SizedBox(
 //                   width: double.infinity,
 //                   child: OutlinedButton(
-//                     onPressed: _signInWithGoogle,
+//                     onPressed: loginWithGoogle,
 //                     style: OutlinedButton.styleFrom(
 //                       side: const BorderSide(color: Colors.black12),
 //                       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -285,7 +310,7 @@
 //
 //                 const SizedBox(height: 12),
 //
-//                 // Apple Sign-In placeholder
+//                 // Apple Sign-In Placeholder
 //                 SizedBox(
 //                   width: double.infinity,
 //                   child: OutlinedButton(
@@ -371,6 +396,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'forgot_password_screen.dart';
 import 'signup_screen.dart';
+import 'package:staypal/screens/homePage/home_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -391,7 +417,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  // Email & Password Login
   Future<void> loginWithEmail() async {
     final email = emailCtrl.text.trim();
     final password = passwordCtrl.text;
@@ -406,9 +431,10 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
-
-      print('✅ Logged in as: ${userCredential.user?.email}');
-      // TODO: Navigate to home screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? 'Login failed')),
@@ -416,11 +442,9 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // Save user data to Firestore if not already there
   Future<void> saveUserToFirestore(User user) async {
     final userRef =
     FirebaseFirestore.instance.collection('users').doc(user.uid);
-
     final doc = await userRef.get();
     if (!doc.exists) {
       await userRef.set({
@@ -429,20 +453,13 @@ class _LoginScreenState extends State<LoginScreen> {
         'email': user.email ?? '',
         'createdAt': FieldValue.serverTimestamp(),
       });
-      print('✅ New user saved to Firestore');
-    } else {
-      print('📌 User already exists in Firestore');
     }
   }
 
-  // Google Sign-In Logic
   Future<void> loginWithGoogle() async {
     try {
       final googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        print('❌ User canceled Google Sign-In');
-        return;
-      }
+      if (googleUser == null) return;
 
       final googleAuth = await googleUser.authentication;
 
@@ -456,12 +473,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final user = userCredential.user;
       if (user != null) {
-        print('✅ Google sign-in success: ${user.displayName}');
         await saveUserToFirestore(user);
-        // TODO: Navigate to home screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
       }
     } catch (e) {
-      print('🔥 Google Sign-In error: $e');
+      print('Google Sign-In error: $e');
     }
   }
 
@@ -498,8 +517,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-
-                // Email field
                 TextField(
                   controller: emailCtrl,
                   keyboardType: TextInputType.emailAddress,
@@ -523,10 +540,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // Password field
                 TextField(
                   controller: passwordCtrl,
                   obscureText: hidePassword,
@@ -562,7 +576,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -570,7 +583,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ForgotPasswordScreen(),
+                          builder: (context) =>
+                          const ForgotPasswordScreen(),
                         ),
                       );
                     },
@@ -584,16 +598,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
-                // Log In Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: loginWithEmail,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orangeAccent,
+                      backgroundColor: Color.fromRGBO(255, 87, 34, 1),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -609,9 +620,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 Row(
                   children: const [
                     Expanded(
@@ -632,10 +641,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 20),
-
-                // Google Sign-In
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
@@ -673,16 +679,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 12),
-
-                // Apple Sign-In Placeholder
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    onPressed: () {
-                      // TODO: Apple Sign-In
-                    },
+                    onPressed: () {},
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.black12),
                       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -716,10 +717,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
-                // Sign Up Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -739,7 +737,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: const Text(
                         'Sign Up',
                         style: TextStyle(
-                          color: Colors.orangeAccent,
+                          color: Color.fromRGBO(255, 87, 34, 1),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
