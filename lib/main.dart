@@ -8,6 +8,7 @@ import 'package:staypal/screens/homePage/home_page.dart';
 import 'package:staypal/screens/profile/profile.dart';
 import 'package:staypal/screens/first_screen/firstscreen.dart';
 // import 'package:staypal/screens/auth/test_firestore_screen.dart'; // Uncomment if needed
+import 'package:staypal/screens/search_result_two/searchresultfix.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
       home: const SplashScreen(),
       routes: {
         '/wishlist': (context) => WishListPage(),
+        '/searchresult': (ctx) => CombinedPage(),
         '/home': (context) => HomePage(),
       },
       // home: const TestFirestoreScreen(), // You can use this for testing

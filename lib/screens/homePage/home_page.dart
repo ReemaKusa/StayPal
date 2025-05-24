@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
 
     Navigator.pushNamed(
       context,
-      '/viewlisting',
+      '/searchresult',
       arguments: {'searchQuery': query, 'filterBy': 'location'},
     );
 
