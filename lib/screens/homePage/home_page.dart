@@ -5,6 +5,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../search_result/hotelDetails.dart';
 import '../search_result/eventDetails.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:staypal/screens/auth/auth_entry_screen.dart';
 
 class HomePage extends StatefulWidget {
   final GlobalKey _searchKey = GlobalKey();
@@ -90,7 +92,7 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Colors.deepOrange,
         unselectedItemColor: Colors.grey,
         currentIndex: 0,
-        onTap: (index) {
+        onTap: (index) async{
           if (index == 1) {
             Scrollable.ensureVisible(
               widget._searchKey.currentContext!,
@@ -101,6 +103,16 @@ class _HomePageState extends State<HomePage> {
             Navigator.pushNamed(context, '/home');
           } else if (index == 2) {
             Navigator.pushNamed(context, '/wishlist');
+          }else if (index == 3) {
+            final user = FirebaseAuth.instance.currentUser;
+            if (user != null) {
+              Navigator.pushNamed(context, '/profile');
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AuthEntryScreen()),
+              );
+            }
           }
         },
         items: const [

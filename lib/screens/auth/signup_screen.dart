@@ -397,7 +397,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ElevatedButton(
                   onPressed: signUpUser,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orangeAccent,
+                    backgroundColor: Color.fromRGBO(255, 87, 34, 1),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -436,7 +436,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         'Log In',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.orangeAccent,
+                          color: Color.fromRGBO(255, 87, 34, 1),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -468,7 +468,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.orangeAccent, width: 2),
+        borderSide: const BorderSide(color: Color.fromRGBO(255, 87, 34, 1), width: 2),
       ),
       suffixIcon: isPassword
           ? IconButton(

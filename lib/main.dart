@@ -7,6 +7,7 @@ import 'package:staypal/screens/wishlistPage/wishlist_page.dart';
 import 'package:staypal/screens/homePage/home_page.dart';
 import 'package:staypal/screens/profile/profile.dart';
 import 'package:staypal/screens/first_screen/firstscreen.dart';
+import 'package:staypal/screens/admin/dynamic_admin_panel.dart';
 // import 'package:staypal/screens/auth/test_firestore_screen.dart'; // Uncomment if needed
 
 void main() async {
@@ -29,12 +30,16 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SplashScreen(),
+      //home:  MyProfile(),
+      home: HomePage(),
+      //home:MainScreen(),
+      //home:AuthEntryScreen(),
+      //home:const DynamicAdminPanel(),
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/home': (context) => HomePage(),
+        '/profile': (context) =>MyProfile(),
       },
-      // home: const TestFirestoreScreen(), // You can use this for testing
     );
   }
 }

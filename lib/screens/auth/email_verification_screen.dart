@@ -77,7 +77,7 @@ class EmailVerificationScreen extends StatelessWidget {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orangeAccent,
+                  backgroundColor: Color.fromRGBO(255, 87, 34, 1),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -107,7 +107,7 @@ class EmailVerificationScreen extends StatelessWidget {
                       'Log Out',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.orangeAccent,
+                        color: Color.fromRGBO(255, 87, 34, 1),
                         fontWeight: FontWeight.bold,
                       ),
                     ),

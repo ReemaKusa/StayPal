@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:staypal/screens/auth/auth_entry_screen.dart';
 
 class HotelDetailsPage extends StatefulWidget {
   final Map<String, dynamic> hotel;
@@ -211,15 +213,45 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
                           ),
                           ElevatedButton(
                             onPressed: () async {
+                              final user = FirebaseAuth.instance.currentUser;
+
+                              if (user == null) {
+                                Navigator.pop(context);
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Not Logged In'),
+                                    content: const Text('You must be logged in to book this hotel.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(backgroundColor: Colors.deepOrange),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => const AuthEntryScreen()),
+                                          );
+                                        },
+                                        child: const Text('Log In'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                return;
+                              }
+
                               try {
-                                await FirebaseFirestore.instance
-                                    .collection('bookings')
-                                    .add({
+                                await FirebaseFirestore.instance.collection('bookings').add({
                                   'hotelId': widget.hotelId,
-                                  'userId': 'currentUserId', 
+                                  'userId': user.uid,
                                   'createdAt': FieldValue.serverTimestamp(),
                                   'status': 'pending',
                                 });
+
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -229,9 +261,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
                               } catch (e) {
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Error: $e'),
-                                  ),
+                                  SnackBar(content: Text('Error: $e')),
                                 );
                               }
                             },
