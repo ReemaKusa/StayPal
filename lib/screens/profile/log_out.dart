@@ -1,63 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:staypal/screens/profile/profile.dart';
-import 'package:staypal/screens/auth//logout.dart';
+import 'package:staypal/screens/auth/logout.dart';
 
-class LogOut extends StatelessWidget {
-  const LogOut({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+class LogOut {
+  static void show(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.deepPurple.shade50,
-        elevation: 1,
-        title: const Text(
-          'Log Out',
-          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black),
-        ),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyProfile()),
-            );
-          },
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-        ),
+      isDismissible: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
+      builder: (BuildContext ctx) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.logout, size: 80, color: Colors.redAccent),
-              const SizedBox(height: 20),
-              const Text(
-                'Are you sure you want to log out?',
-                style: TextStyle(fontSize: 18),
-                textAlign: TextAlign.center,
+              Container(
+                width: 50,
+                height: 5,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              const SizedBox(height: 30),
+              const Text(
+                'Log Out',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 12),
+              Text(
+                'Are you sure you want to log out?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+              ),
+              SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
+                  Navigator.of(ctx).pop();
                   signOutUser(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
+                  backgroundColor: Colors.orange[700],
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  minimumSize: const Size.fromHeight(48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text('Log Out', style: TextStyle(fontSize: 16)),
+                child: Text('Log Out', style: TextStyle(fontSize: 16)),
+              ),
+              SizedBox(height: 12),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.black87),
+                ),
               ),
             ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

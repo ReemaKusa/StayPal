@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:staypal/screens/profile/profile.dart';
 
 class SecuritySetting extends StatelessWidget {
   const SecuritySetting({super.key});
@@ -101,16 +100,13 @@ class SecuritySetting extends StatelessWidget {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Security Settings',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
         ),
         leading: IconButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyProfile()),
-            );
+            Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back),
         ),

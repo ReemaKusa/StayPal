@@ -3,11 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:intl/intl.dart'; 
+import 'package:intl/intl.dart';
 import '../search_result/hotelDetails.dart';
 import '../search_result/eventDetails.dart';
 import '../homePage/custom_nav_bar.dart';
-
 
 class WishListPage extends StatefulWidget {
   const WishListPage({super.key});
@@ -58,8 +57,8 @@ class _WishListPageState extends State<WishListPage> {
             'My Wishlist',
             style: TextStyle(
               color: Colors.black,
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
