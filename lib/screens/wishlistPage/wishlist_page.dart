@@ -17,7 +17,7 @@ class WishListPage extends StatefulWidget {
 
 class _WishListPageState extends State<WishListPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final DateFormat _dateFormat = DateFormat('MMM d'); // Date formatter
+  final DateFormat _dateFormat = DateFormat('MMM d');
 
   String _getImageUrl(dynamic images) {
     if (images is List && images.isNotEmpty) {

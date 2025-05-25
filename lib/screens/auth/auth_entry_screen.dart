@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
-import 'signup_screen.dart';
+import 'package:staypal/screens/auth/login_screen.dart';
+import 'package:staypal/screens/auth/signup_screen.dart';
 
 class AuthEntryScreen extends StatelessWidget {
   const AuthEntryScreen({super.key});
@@ -92,7 +92,6 @@ class AuthEntryScreen extends StatelessWidget {
           ),
         ),
       ),
-      //bottomNavigationBar: const BottomNavWidget(selectedIndex: 2),
     );
   }
 }
