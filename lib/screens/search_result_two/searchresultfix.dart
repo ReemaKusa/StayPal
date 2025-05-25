@@ -456,3 +456,4 @@ Widget _buildEventImage(String imageUrl) {
         ),
   );
 }
+
