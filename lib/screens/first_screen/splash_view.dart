@@ -1,26 +1,5 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const StayPalApp());
-}
-
-class StayPalApp extends StatelessWidget {
-  const StayPalApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'StayPal',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Tajawal',
-      ),
-      home: const SplashScreen(),
-    );
-  }
-}
+import 'splash_viewmodel.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,56 +10,29 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-  late DateTime _startTime;
+  late final SplashViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
-    _startTime = DateTime.now();
+    _viewModel = SplashViewModel();
+    _viewModel.initAnimations(this);
+    _viewModel.addListener(_onViewModelChange);
+  }
 
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -0.1),
-      end: const Offset(0, 0.1),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
-
-    Future.delayed(const Duration(seconds: 5), () {
-      if (mounted) {
-        setState(() {});
-      }
-    });
+  void _onViewModelChange() {
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _viewModel.removeListener(_onViewModelChange);
+    _viewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final showLoader =
-        DateTime.now().difference(_startTime) > const Duration(seconds: 5);
-
     return Scaffold(
       backgroundColor: Colors.orange[50],
       body: Center(
@@ -88,9 +40,9 @@ class _SplashScreenState extends State<SplashScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SlideTransition(
-              position: _slideAnimation,
+              position: _viewModel.slideAnimation,
               child: FadeTransition(
-                opacity: _fadeAnimation,
+                opacity: _viewModel.fadeAnimation,
                 child: ClipOval(
                   child: Container(
                     width: 120,
@@ -118,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen>
             ),
             const SizedBox(height: 20),
             ScaleTransition(
-              scale: _scaleAnimation,
+              scale: _viewModel.scaleAnimation,
               child: Column(
                 children: [
                   ShaderMask(
@@ -162,12 +114,12 @@ class _SplashScreenState extends State<SplashScreen>
                 ],
               ),
             ),
-            if (showLoader)
+            if (_viewModel.model.showLoader)
               Padding(
                 padding: const EdgeInsets.only(top: 30),
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    Colors.orange[700]!,
+                    Colors.deepOrange[700]!,
                   ),
                   strokeWidth: 3,
                 ),

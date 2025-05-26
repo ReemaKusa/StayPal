@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:intl/intl.dart'; // Add this import for date formatting
-import '../search_result/hotelDetails.dart';
-import '../search_result/eventDetails.dart';
+import '../search_result/hotel/hotel_details_view.dart';
+import '../search_result/event/event_details_view.dart';
 
 class WishListPage extends StatefulWidget {
   const WishListPage({super.key});

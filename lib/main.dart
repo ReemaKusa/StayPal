@@ -6,7 +6,7 @@ import 'package:staypal/screens/auth/auth_entry_screen.dart';
 import 'package:staypal/screens/wishlistPage/wishlist_page.dart';
 import 'package:staypal/screens/search_result_two/searchresultfix.dart';
 import 'package:staypal/screens/homePage/home_page.dart';
-import 'package:staypal/screens/first_screen/firstscreen.dart';
+import 'package:staypal/screens/first_screen/splash_model.dart';
 // import 'package:staypal/screens/auth/test_firestore_screen.dart'; // Uncomment if needed
 
 
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
     '/home': (context) => HomePage(),
     
   },
-      home:  HomePage(), // You can use this for testing
+      home: CombinedPage(), // You can use this for testing
     );
   }
 }

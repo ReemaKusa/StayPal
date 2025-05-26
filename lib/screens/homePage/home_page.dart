@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../search_result/hotelDetails.dart';
-import '../search_result/eventDetails.dart';
+import '../search_result/hotel/hotel_details_view.dart';
+import '../search_result/event/event_details_view.dart';
 
 class HomePage extends StatefulWidget {
   final GlobalKey _searchKey = GlobalKey();
@@ -240,11 +240,14 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => HotelDetailsPage(
-                                      hotel: hotel,
-                                      hotelId: hotel['id'],
-                                      isInitiallyLiked: hotel['isFavorite'] ?? false,
-                                    ),
+                                    builder: (_) => HotelDetailsView(
+                                viewModel: HotelDetailsViewModel(
+                                            hotel: data,
+                                              hotelId: hotelId,
+                                                isInitiallyLiked: isFavorite,
+  ),
+),
+
                                   ),
                                 );
                               },
