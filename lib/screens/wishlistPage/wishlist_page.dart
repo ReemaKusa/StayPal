@@ -18,7 +18,7 @@ class WishListPage extends StatefulWidget {
 
 class _WishListPageState extends State<WishListPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final DateFormat _dateFormat = DateFormat('MMM d'); // Date formatter
+  final DateFormat _dateFormat = DateFormat('MMM d');
 
   String _getImageUrl(dynamic images) {
     if (images is List && images.isNotEmpty) {
@@ -33,7 +33,7 @@ class _WishListPageState extends State<WishListPage> {
     if (isHotel) {
       return item['location'] ?? '';
     } else {
-      // Handle Timestamp for events
+
       if (item['date'] is Timestamp) {
         return _dateFormat.format((item['date'] as Timestamp).toDate());
       }
@@ -46,8 +46,7 @@ class _WishListPageState extends State<WishListPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: const CustomNavBar(
-        currentIndex: 2, // Set correct index for each page
-        // No need to pass searchKey
+        currentIndex: 2, 
       ),
       appBar: AppBar(
         backgroundColor: Colors.white,

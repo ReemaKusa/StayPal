@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
               isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : SingleChildScrollView(
-                    controller: _scrollController, // Added scroll controller
+                    controller: _scrollController, 
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(height: 16),
                         Container(
                           key:
-                              _searchKey, // Changed from widget._searchKey to _searchKey
+                              _searchKey,
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: BoxDecoration(
                             color: Colors.grey[200],

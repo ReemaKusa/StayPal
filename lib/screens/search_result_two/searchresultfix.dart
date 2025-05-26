@@ -6,6 +6,7 @@ import '../search_result/hotelDetails.dart';
 import '../search_result/eventDetails.dart';
 import '../homePage/custom_nav_bar.dart';
 
+
 class CombinedPage extends StatefulWidget {
 
   final GlobalKey _searchKey = GlobalKey();
@@ -41,7 +42,7 @@ class _CombinedPageState extends State<CombinedPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // ——— Safe route arguments cast ———
+
     final routeArgs = ModalRoute.of(context)?.settings.arguments;
     if (_searchQuery == null && routeArgs is Map<String, dynamic>) {
       _searchQuery = routeArgs['searchQuery'] as String?;
