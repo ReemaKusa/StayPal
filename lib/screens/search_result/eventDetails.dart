@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class EventDetailsPage extends StatefulWidget {
-  final Map<String, dynamic> event;
+  final dynamic  event;
   final String eventId;
   final bool isInitiallyLiked;
 
