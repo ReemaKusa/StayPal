@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:staypal/screens/auth/viewmodels/logout_viewmodel.dart';
 import 'package:staypal/screens/profile/profile.dart';
-import 'package:staypal/screens/auth//logout.dart';
+//import 'package:staypal/screens/auth//logout.dart';
+import 'package:staypal/screens/auth/views/logout_view.dart';
+
 
 class LogOut extends StatelessWidget {
   const LogOut({super.key});
@@ -42,7 +45,7 @@ class LogOut extends StatelessWidget {
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  signOutUser(context);
+                  LogoutViewModel().logout(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:staypal/screens/auth/login_screen.dart';
-import 'package:staypal/screens/auth/signup_screen.dart';
+import 'package:staypal/screens/auth/viewmodels/auth_entry_viewmodel.dart';
+import 'package:staypal/screens/auth/views/signup_view.dart';
+import 'package:staypal/screens/auth/views/login_view.dart';
 
-class AuthEntryScreen extends StatelessWidget {
-  const AuthEntryScreen({super.key});
+class AuthEntryView extends StatelessWidget {
+  const AuthEntryView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = AuthEntryViewModel();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -34,16 +37,9 @@ class AuthEntryScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SignUpScreen(),
-                      ),
-                    );
-                  },
+                  onPressed: () => viewModel.goToSignUp(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromRGBO(255, 87, 34, 1),
+                    backgroundColor: const Color.fromRGBO(255, 87, 34, 1),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -63,16 +59,9 @@ class AuthEntryScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ),
-                    );
-                  },
+                  onPressed: () => viewModel.goToLogin(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromRGBO(255, 87, 34, 1),
+                    backgroundColor: const Color.fromRGBO(255, 87, 34, 1),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),

@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../search_result/hotelDetails.dart';
 import '../search_result/eventDetails.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:staypal/screens/auth/auth_entry_screen.dart';
+//import 'package:staypal/screens/auth/auth_entry_screen.dart';
 import './custom_nav_bar.dart';
 
 class HomePage extends StatefulWidget {

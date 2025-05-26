@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:staypal/screens/auth/auth_entry_screen.dart';
+//import 'package:staypal/screens/auth/auth_entry_screen.dart';
+import 'package:staypal/screens/auth/views/auth_entry_view.dart';
+
+
 
 class HotelDetailsPage extends StatefulWidget {
   final Map<String, dynamic> hotel;
@@ -233,7 +236,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
                                           Navigator.pop(context);
                                           Navigator.push(
                                             context,
-                                            MaterialPageRoute(builder: (context) => const AuthEntryScreen()),
+                                            MaterialPageRoute(builder: (context) => const AuthEntryView()),
                                           );
                                         },
                                         child: const Text('Log In'),

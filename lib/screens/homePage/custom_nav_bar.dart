@@ -61,8 +61,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:staypal/screens/auth/auth_entry_screen.dart';
-
+//import 'package:staypal/screens/auth/auth_entry_screen.dart';
+import 'package:staypal/screens/auth/views/auth_entry_view.dart';
 class CustomNavBar extends StatelessWidget {
   final int currentIndex;
   final GlobalKey? searchKey; 
@@ -159,7 +159,7 @@ class CustomNavBar extends StatelessWidget {
         } else {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const AuthEntryScreen()),
+            MaterialPageRoute(builder: (_) => const AuthEntryView()),
           );
         }
         break;
