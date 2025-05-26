@@ -1,11 +1,12 @@
-// The Dynmaic V of the Wishlist P after the Static one was pushed
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:intl/intl.dart'; // Add this import for date formatting
+import 'package:intl/intl.dart';
 import '../search_result/hotel/hotel_details_view.dart';
 import '../search_result/event/event_details_view.dart';
+import '../search_result/hotel/hotel_details_model.dart';
+import '../search_result/hotel/hotel_details_viewmodel.dart';
+
 
 class WishListPage extends StatefulWidget {
   const WishListPage({super.key});
@@ -16,7 +17,7 @@ class WishListPage extends StatefulWidget {
 
 class _WishListPageState extends State<WishListPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final DateFormat _dateFormat = DateFormat('MMM d'); // Date formatter
+  final DateFormat _dateFormat = DateFormat('MMM d');
 
   String _getImageUrl(dynamic images) {
     if (images is List && images.isNotEmpty) {
@@ -31,7 +32,6 @@ class _WishListPageState extends State<WishListPage> {
     if (isHotel) {
       return item['location'] ?? '';
     } else {
-      // Handle Timestamp for events
       if (item['date'] is Timestamp) {
         return _dateFormat.format((item['date'] as Timestamp).toDate());
       }
@@ -164,13 +164,12 @@ class _WishListPageState extends State<WishListPage> {
                 final subtitle = _getSubtitle(item, isHotel);
 
                 return GestureDetector(
-                  onTap:
-                      () => _showDetailsBottomSheet(
-                        context,
-                        item,
-                        isHotel,
-                        doc.id,
-                      ),
+                  onTap: () => _showDetailsBottomSheet(
+                    context,
+                    item,
+                    isHotel,
+                    doc.id,
+                  ),
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
@@ -196,16 +195,15 @@ class _WishListPageState extends State<WishListPage> {
                             height: 100,
                             width: 100,
                             fit: BoxFit.cover,
-                            errorBuilder:
-                                (context, error, stackTrace) => Container(
-                                  height: 100,
-                                  width: 100,
-                                  color: Colors.grey[200],
-                                  child: const Icon(
-                                    Icons.image,
-                                    color: Colors.grey,
-                                  ),
-                                ),
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              height: 100,
+                              width: 100,
+                              color: Colors.grey[200],
+                              child: const Icon(
+                                Icons.image,
+                                color: Colors.grey,
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -264,17 +262,16 @@ class _WishListPageState extends State<WishListPage> {
                               );
                             }
                           },
-                          itemBuilder:
-                              (BuildContext context) => [
-                                const PopupMenuItem(
-                                  value: 'remove',
-                                  child: Text('Remove'),
-                                ),
-                                const PopupMenuItem(
-                                  value: 'share',
-                                  child: Text('Share'),
-                                ),
-                              ],
+                          itemBuilder: (BuildContext context) => [
+                            const PopupMenuItem(
+                              value: 'remove',
+                              child: Text('Remove'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'share',
+                              child: Text('Share'),
+                            ),
+                          ],
                           icon: const Icon(Icons.more_vert, color: Colors.grey),
                         ),
                       ],
@@ -289,134 +286,138 @@ class _WishListPageState extends State<WishListPage> {
     );
   }
 
-void _showDetailsBottomSheet(
-  BuildContext context,
-  Map<String, dynamic> item,
-  bool isHotel,
-  String id,
-) {
-  final imageUrl = _getImageUrl(item['images']);
-  final subtitle = _getSubtitle(item, isHotel);
-  final description = item['description'] ?? 'No description available';
-  final price = item['price']?.toString();
+  void _showDetailsBottomSheet(
+    BuildContext context,
+    Map<String, dynamic> item,
+    bool isHotel,
+    String id,
+  ) {
+    final imageUrl = _getImageUrl(item['images']);
+    final subtitle = _getSubtitle(item, isHotel);
+    final description = item['description'] ?? 'No description available';
+    final price = item['price']?.toString();
 
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    builder: (context) => SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              item['name'] ?? 'No name',
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              subtitle,
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                imageUrl,
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 180,
-                  color: Colors.grey[200],
-                  child: const Center(
-                    child: Icon(Icons.image, color: Colors.grey),
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 16),
-            ),
-            if (price != null) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               Text(
-                '$price ₪',
+                item['name'] ?? 'No name',
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.deepOrange,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                subtitle,
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 16),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  imageUrl,
+                  height: 180,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: 180,
+                    color: Colors.grey[200],
+                    child: const Center(
+                      child: Icon(Icons.image, color: Colors.grey),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                description,
+                style: const TextStyle(fontSize: 16),
+              ),
+              if (price != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  '$price ₪',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepOrange,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    if (isHotel) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => HotelDetailsView(
+                            viewModel: HotelDetailsViewModel(
+                              HotelDetailsModel(
+                                hotelId: id,
+                                hotel: item,
+                                isInitiallyLiked: true,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => EventDetailsPage(
+                            event: item,
+                            eventId: id,
+                            isInitiallyLiked: true,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrange,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text(
+                    "More Details",
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ),
               ),
             ],
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  if (isHotel) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => HotelDetailsPage(
-                          hotel: item,
-                          hotelId: id,
-                          isInitiallyLiked: true,
-                        ),
-                      ),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => EventDetailsPage(
-                          event: item,
-                          eventId: id,
-                          isInitiallyLiked: true,
-                        ),
-                      ),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text(
-                  "More Details",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

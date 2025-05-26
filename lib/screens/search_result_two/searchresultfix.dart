@@ -4,6 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../search_result/hotel/hotel_details_view.dart';
 import '../search_result/event/event_details_view.dart';
+import 'package:staypal/screens/search_result/hotel/hotel_details_model.dart';
+import 'package:staypal/screens/search_result/hotel/hotel_details_viewmodel.dart';
+
+
 
 class CombinedPage extends StatefulWidget {
   const CombinedPage({super.key});
@@ -265,12 +269,16 @@ class _CombinedPageState extends State<CombinedPage> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => HotelDetailsPage(
-                      hotel: data,
-                      hotelId: id,
-                      isInitiallyLiked: isLiked,
-                    ),
-                  ),
+                          builder: (_) => HotelDetailsView(
+                            viewModel: HotelDetailsViewModel(
+                              HotelDetailsModel(
+                                hotelId: id,
+                                hotel: data,
+                                isInitiallyLiked: true,
+                              ),
+                            ),
+                          ),
+                        ),
                 ),
                 onLike: () => _toggleHotelLike(id, data),
                 isLiked: isLiked,

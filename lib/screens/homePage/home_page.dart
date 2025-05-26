@@ -1,9 +1,9 @@
-// The Dynmaic V of the Home P after the Static one was pushed
-
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../search_result/hotel/hotel_details_view.dart';
+import '../search_result/hotel/hotel_details_viewmodel.dart';
+import '../search_result/hotel/hotel_details_model.dart';
 import '../search_result/event/event_details_view.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,6 +21,13 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
+  List<String> _convertToList(dynamic value) {
+    if (value == null) return [];
+    if (value is List) return List<String>.from(value);
+    if (value is String) return [value];
+    return [];
+  }
+
   @override
   void initState() {
     super.initState();
@@ -33,16 +40,82 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  void _fetchData() async {
+ List<String> _ensureList(dynamic value) {
+    if (value == null) return [];
+    if (value is List) return List<String>.from(value.whereType<String>());
+    if (value is String) return [value];
+    return [];
+  }
+
+  // دالة مساعدة للحصول على أول عنصر من قائمة أو قيمة افتراضية
+  String _getFirstImage(dynamic value) {
+    final list = _ensureList(value);
+    return list.isNotEmpty ? list.first : '';
+  }
+
+  Future<void> _fetchData() async {
     try {
-      final eventsQuery = await FirebaseFirestore.instance.collection('upcomingEvents').get();
-      final hotelsQuery = await FirebaseFirestore.instance.collection('popularHotels').get();
-      final recommendedQuery = await FirebaseFirestore.instance.collection('recommendedItems').get();
+      final eventsSnapshot = await FirebaseFirestore.instance
+          .collection('upcomingEvents')
+          .get();
+      final hotelsSnapshot = await FirebaseFirestore.instance
+          .collection('popularHotels')
+          .get();
+      final recommendedSnapshot = await FirebaseFirestore.instance
+          .collection('recommendedItems')
+          .get();
 
       setState(() {
-        upcomingEvents = eventsQuery.docs.map((doc) => {'id': doc.id, ...doc.data()}).toList();
-        popularHotels = hotelsQuery.docs.map((doc) => {'id': doc.id, ...doc.data()}).toList();
-        recommendedItems = recommendedQuery.docs.map((doc) => {'id': doc.id, ...doc.data()}).toList();
+        upcomingEvents = eventsSnapshot.docs.map((doc) {
+          final data = doc.data();
+          return {
+            'id': doc.id,
+            'title': data['title']?.toString() ?? 'No Title',
+            'subtitle': data['subtitle']?.toString() ?? 'No Subtitle',
+            'imageUrl': _getFirstImage(data['imageUrl']),
+            'description': data['description']?.toString() ?? 'No Description',
+            'highlights': _ensureList(data['highlights']),
+            'date': data['date']?.toString() ?? 'No Date',
+            'time': data['time']?.toString() ?? 'No Time',
+            'price': (data['price'] as num?)?.toDouble() ?? 0.0,
+            'rating': (data['rating'] as num?)?.toDouble() ?? 0.0,
+            'isFavorite': data['isFavorite'] ?? false,
+          };
+        }).toList();
+
+        popularHotels = hotelsSnapshot.docs.map((doc) {
+          final data = doc.data();
+          return {
+            'id': doc.id,
+            'title': data['title']?.toString() ?? 'No Title',
+            'subtitle': data['subtitle']?.toString() ?? 'No Location',
+            'imageUrl': _getFirstImage(data['imageUrl']),
+            'price': (data['price'] as num?)?.toDouble() ?? 0.0,
+            'description': data['description']?.toString() ?? 'No Description',
+            'rating': (data['rating'] as num?)?.toDouble() ?? 0.0,
+            'details': data['details']?.toString() ?? 'No Details',
+            'facilities': _ensureList(data['facilities']),
+            'isFavorite': data['isFavorite'] ?? false,
+          };
+        }).toList();
+
+        recommendedItems = recommendedSnapshot.docs.map((doc) {
+          final data = doc.data();
+          return {
+            'id': doc.id,
+            'type': data['type']?.toString() ?? 'event',
+            'title': data['title']?.toString() ?? 'No Title',
+            'subtitle': data['subtitle']?.toString() ?? 'No Subtitle',
+            'imageUrl': _getFirstImage(data['imageUrl']),
+            'price': (data['price'] as num?)?.toDouble() ?? 0.0,
+            'description': data['description']?.toString() ?? 'No Description',
+            'rating': (data['rating'] as num?)?.toDouble() ?? 0.0,
+            'details': data['details']?.toString() ?? 'No Details',
+            'facilities': _ensureList(data['facilities']),
+            'isFavorite': data['isFavorite'] ?? false,
+          };
+        }).toList();
+
         isLoading = false;
       });
     } catch (e) {
@@ -85,13 +158,15 @@ class _HomePageState extends State<HomePage> {
           if (index == 1) {
             Scrollable.ensureVisible(
               widget._searchKey.currentContext!,
-              duration: Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOut,
             );
           } else if (index == 0) {
             Navigator.pushNamed(context, '/home');
           } else if (index == 2) {
             Navigator.pushNamed(context, '/wishlist');
+          } else if (index == 3) {
+            Navigator.pushNamed(context, '/profile');
           }
         },
         items: const [
@@ -105,205 +180,30 @@ class _HomePageState extends State<HomePage> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text("Find Events-Hotels", style: TextStyle(fontSize: 16, color: Colors.grey)),
-                              SizedBox(height: 4),
-                              Text("Palestine, Nablus", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                          Stack(
-                            children: [
-                              const Icon(Icons.notifications_none, size: 28),
-                              Positioned(
-                                right: 0,
-                                top: 0,
-                                child: Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                      _buildHeaderSection(),
                       const SizedBox(height: 16),
-                      Container(
-                        key: widget._searchKey,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.search),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: TextField(
-                                controller: _searchController,
-                                decoration: const InputDecoration(
-                                  hintText: "Search by location (e.g. Jerusalem)",
-                                  border: InputBorder.none,
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _searchQuery = value;
-                                  });
-                                },
-                                onSubmitted: (_) => _performSearch(),
-                              ),
-                            ),
-                            if (_searchQuery.isNotEmpty)
-                              IconButton(
-                                icon: const Icon(Icons.clear),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  setState(() {
-                                    _searchQuery = '';
-                                  });
-                                },
-                              ),
-                          ],
-                        ),
-                      ),
+                      _buildSearchSection(),
                       if (_searchQuery.isNotEmpty) ...[
                         const SizedBox(height: 8),
-                        ElevatedButton(
-                          onPressed: _performSearch,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepOrange,
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 48),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text('Search'),
-                        ),
+                        _buildSearchButton(),
                       ],
                       const SizedBox(height: 24),
-                      const Text("Upcoming Events", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      _buildSectionTitle("Upcoming Events"),
                       const SizedBox(height: 12),
-                      Column(
-                        children: upcomingEvents.map((event) {
-                          return Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => EventDetailsPage(
-                                        event: event,
-                                        eventId: event['id'],
-                                        isInitiallyLiked: event['isFavorite'] ?? false,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: _buildEventCard(
-                                  event['title'],
-                                  event['subtitle'],
-                                  event['imageUrl'],
-                                  event['description'],
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                            ],
-                          );
-                        }).toList(),
-                      ),
+                      _buildEventsList(),
                       const SizedBox(height: 28),
-                      const Text("Hotels Popular Now", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      _buildSectionTitle("Hotels Popular Now"),
                       const SizedBox(height: 12),
-                      SizedBox(
-                        height: 200,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: popularHotels.map((hotel) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => HotelDetailsView(
-                                viewModel: HotelDetailsViewModel(
-                                            hotel: data,
-                                              hotelId: hotelId,
-                                                isInitiallyLiked: isFavorite,
-  ),
-),
-
-                                  ),
-                                );
-                              },
-                              child: _buildHotelCard(
-                                hotel['title'],
-                                hotel['subtitle'],
-                                hotel['imageUrl'],
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
+                      _buildHotelsList(),
                       const SizedBox(height: 28),
-                      const Text("Recommended for You", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      _buildSectionTitle("Recommended for You"),
                       const SizedBox(height: 12),
-                      Column(
-                        children: recommendedItems.map((item) {
-                          return Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  if (item['type'] == 'hotel') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => HotelDetailsPage(
-                                          hotel: item,
-                                          hotelId: item['id'],
-                                          isInitiallyLiked: item['isFavorite'] ?? false,
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => EventDetailsPage(
-                                          event: item,
-                                          eventId: item['id'],
-                                          isInitiallyLiked: item['isFavorite'] ?? false,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: _buildRecommendedCard(
-                                  item['title'],
-                                  item['subtitle'],
-                                  item['imageUrl'],
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                            ],
-                          );
-                        }).toList(),
-                      ),
+                      _buildRecommendedList(),
                     ],
                   ),
                 ),
@@ -312,6 +212,239 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildHeaderSection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text("Find Events-Hotels", 
+                style: TextStyle(fontSize: 16, color: Colors.grey)),
+            SizedBox(height: 4),
+            Text("Palestine, Nablus", 
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        Stack(
+          children: [
+            const Icon(Icons.notifications_none, size: 28),
+            Positioned(
+              right: 0,
+              top: 0,
+              child: Container(
+                width: 10,
+                height: 10,
+                decoration: const BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSearchSection() {
+    return Container(
+      key: widget._searchKey,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.search),
+          const SizedBox(width: 8),
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                hintText: "Search by location (e.g. Jerusalem)",
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+              onSubmitted: (_) => _performSearch(),
+            ),
+          ),
+          if (_searchQuery.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                _searchController.clear();
+                setState(() {
+                  _searchQuery = '';
+                });
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchButton() {
+    return ElevatedButton(
+      onPressed: _performSearch,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.deepOrange,
+        foregroundColor: Colors.white,
+        minimumSize: const Size(double.infinity, 48),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      child: const Text('Search'),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    );
+  }
+
+  Widget _buildEventsList() {
+    return Column(
+      children: upcomingEvents.map((event) {
+        return Column(
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => EventDetailsPage(
+                      event: event,
+                      eventId: event['id'],
+                      isInitiallyLiked: event['isFavorite'] ?? false,
+                    ),
+                  ),
+                );
+              },
+              child: _buildEventCard(
+                event['title'],
+                event['subtitle'],
+                event['imageUrl'],
+                event['description'],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildHotelsList() {
+    return SizedBox(
+      height: 200,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: popularHotels.map((hotel) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => HotelDetailsView(
+                    viewModel: HotelDetailsViewModel(
+                      HotelDetailsModel(
+                        hotelId: hotel['id'],
+                        hotel: {
+                          'name': hotel['title'],
+                          'location': hotel['subtitle'],
+                          'price': hotel['price'],
+                          'description': hotel['description'],
+                          'rating': hotel['rating'],
+                          'details': hotel['details'],
+                          'facilities': hotel['facilities'],
+                          'images': [hotel['imageUrl']],
+                          'isFavorite': hotel['isFavorite'] ?? false,
+                        },
+                        isInitiallyLiked: hotel['isFavorite'] ?? false,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+            child: _buildHotelCard(
+              hotel['title'],
+              hotel['subtitle'],
+              hotel['imageUrl'],
+              hotel['price'].toString(),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildRecommendedList() {
+    return Column(
+      children: recommendedItems.map((item) {
+        return Column(
+          children: [
+            GestureDetector(
+              onTap: () {
+                if (item['type'] == 'hotel') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => HotelDetailsView(
+                        viewModel: HotelDetailsViewModel(
+                          HotelDetailsModel(
+                            hotelId: item['id'],
+                            hotel: {
+                              'name': item['title'],
+                              'location': item['subtitle'],
+                              'price': item['price'],
+                              'description': item['description'],
+                              'rating': item['rating'],
+                              'details': item['details'],
+                              'facilities': item['facilities'],
+                              'images': [item['imageUrl']],
+                              'isFavorite': item['isFavorite'] ?? false,
+                            },
+                            isInitiallyLiked: item['isFavorite'] ?? false,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => EventDetailsPage(
+                        event: item,
+                        eventId: item['id'],
+                        isInitiallyLiked: item['isFavorite'] ?? false,
+                      ),
+                    ),
+                  );
+                }
+              },
+              child: _buildRecommendedCard(
+                item['title'],
+                item['subtitle'],
+                item['imageUrl'],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        );
+      }).toList(),
+    );
+  }
 
   Widget _buildEventCard(String title, String subtitle, String imageUrl, String description) {
     return Container(
@@ -327,16 +460,22 @@ class _HomePageState extends State<HomePage> {
               topLeft: Radius.circular(16),
               bottomLeft: Radius.circular(16),
             ),
-            child: Image.network(
-              imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
               height: 120,
               width: 120,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
+              placeholder: (context, url) => Container(
                 height: 120,
                 width: 120,
                 color: Colors.grey[300],
                 child: const Icon(Icons.image, color: Colors.grey),
+              ),
+              errorWidget: (context, url, error) => Container(
+                height: 120,
+                width: 120,
+                color: Colors.grey[300],
+                child: const Icon(Icons.error, color: Colors.grey),
               ),
             ),
           ),
@@ -378,7 +517,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHotelCard(String title, String subtitle, String imageUrl) {
+  Widget _buildHotelCard(String title, String subtitle, String imageUrl, String price) {
     return Container(
       width: 160,
       margin: const EdgeInsets.only(right: 16),
@@ -394,16 +533,22 @@ class _HomePageState extends State<HomePage> {
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.network(
-              imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
               height: 100,
               width: 160,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
+              placeholder: (context, url) => Container(
                 height: 100,
                 width: 160,
                 color: Colors.grey[300],
                 child: const Icon(Icons.image, color: Colors.grey),
+              ),
+              errorWidget: (context, url, error) => Container(
+                height: 100,
+                width: 160,
+                color: Colors.grey[300],
+                child: const Icon(Icons.error, color: Colors.grey),
               ),
             ),
           ),
@@ -415,6 +560,14 @@ class _HomePageState extends State<HomePage> {
                 Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Text(subtitle, style: const TextStyle(color: Colors.grey)),
+                const SizedBox(height: 4),
+                Text(
+                  '$price ₪ per night',
+                  style: const TextStyle(
+                    color: Colors.orange,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ),
@@ -439,16 +592,22 @@ class _HomePageState extends State<HomePage> {
               topLeft: Radius.circular(16),
               bottomLeft: Radius.circular(16),
             ),
-            child: Image.network(
-              imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
               height: 100,
               width: 100,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
+              placeholder: (context, url) => Container(
                 height: 100,
                 width: 100,
                 color: Colors.grey[300],
                 child: const Icon(Icons.image, color: Colors.grey),
+              ),
+              errorWidget: (context, url, error) => Container(
+                height: 100,
+                width: 100,
+                color: Colors.grey[300],
+                child: const Icon(Icons.error, color: Colors.grey),
               ),
             ),
           ),

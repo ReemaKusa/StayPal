@@ -4,7 +4,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'hotel_details_viewmodel.dart';
-import 'hotel_details_model.dart';
 
 class HotelDetailsView extends StatefulWidget {
   final HotelDetailsViewModel viewModel;
@@ -73,24 +72,6 @@ class _HotelDetailsViewState extends State<HotelDetailsView> {
                 Navigator.pop(context);
               },
             ),
-            ListTile(
-              leading: const FaIcon(FontAwesomeIcons.telegram, color: Colors.blueAccent),
-              title: const Text('Telegram'),
-              onTap: () {
-                final uri = Uri.parse("https://t.me/share/url?url=${Uri.encodeComponent(message)}");
-                _launchUrl(uri);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const FaIcon(FontAwesomeIcons.xTwitter, color: Colors.black),
-              title: const Text('Twitter'),
-              onTap: () {
-                final uri = Uri.parse("https://twitter.com/intent/tweet?text=${Uri.encodeComponent(message)}");
-                _launchUrl(uri);
-                Navigator.pop(context);
-              },
-            ),
           ],
         ),
       ),
@@ -113,7 +94,7 @@ class _HotelDetailsViewState extends State<HotelDetailsView> {
         backgroundColor: Colors.deepOrange,
         actions: [
           IconButton(
-            icon: const Icon(Icons.share, color: Colors.white),
+            icon: const Icon(Icons.ios_share, color: Colors.white),
             onPressed: _shareOptions,
           ),
           IconButton(
@@ -155,7 +136,7 @@ class _HotelDetailsViewState extends State<HotelDetailsView> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildDetailImage(_viewModel.model.images.isNotEmpty ? _viewModel.model.images[0] : null),
+                _buildDetailImage(),
                 const SizedBox(height: 20),
                 Text(
                   _viewModel.model.name,
@@ -191,63 +172,7 @@ class _HotelDetailsViewState extends State<HotelDetailsView> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-                      ),
-                      isScrollControlled: true,
-                      builder: (context) => DraggableScrollableSheet(
-                        expand: false,
-                        initialChildSize: 0.5,
-                        maxChildSize: 0.8,
-                        minChildSize: 0.3,
-                        builder: (_, controller) => Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: ListView(
-                            controller: controller,
-                            children: [
-                              const Center(
-                                child: Icon(Icons.star, size: 40, color: Colors.deepOrange),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                "Rating: ${_viewModel.model.rating}",
-                                style: const TextStyle(fontSize: 18),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 20),
-                              Text(
-                                _viewModel.model.details,
-                                style: const TextStyle(fontSize: 16),
-                                textAlign: TextAlign.justify,
-                              ),
-                              const SizedBox(height: 20),
-                              const Text(
-                                "Facilities:",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.left,
-                              ),
-                              const SizedBox(height: 10),
-                              ..._viewModel.model.facilities.map<Widget>((facility) => 
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 4),
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.check, color: Colors.deepOrange),
-                                      const SizedBox(width: 8),
-                                      Text(facility.toString()),
-                                    ],
-                                  ),
-                                ),
-                              ).toList(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                  onPressed: () => _showDetailsSheet(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepOrange,
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
@@ -264,7 +189,7 @@ class _HotelDetailsViewState extends State<HotelDetailsView> {
                       context: context,
                       builder: (context) => AlertDialog(
                         title: const Text('Book Hotel'),
-                        content: const Text('Confirm your booking for this hotel?'),
+                        content: const Text('Confirm your booking?'),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
@@ -276,16 +201,12 @@ class _HotelDetailsViewState extends State<HotelDetailsView> {
                                 await _viewModel.bookHotel();
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Booking successful!'),
-                                  ),
+                                  const SnackBar(content: Text('Booking successful!')),
                                 );
                               } catch (e) {
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Error: $e'),
-                                  ),
+                                  SnackBar(content: Text('Error: $e')),
                                 );
                               }
                             },
@@ -315,8 +236,10 @@ class _HotelDetailsViewState extends State<HotelDetailsView> {
     );
   }
 
-  Widget _buildDetailImage(String? imageUrl) {
-    if (imageUrl == null || imageUrl.isEmpty) {
+  Widget _buildDetailImage() {
+    final imageUrl = _viewModel.model.images.isNotEmpty ? _viewModel.model.images[0].toString() : '';
+    
+    if (imageUrl.isEmpty) {
       return Container(
         width: double.infinity,
         height: 200,
@@ -341,6 +264,64 @@ class _HotelDetailsViewState extends State<HotelDetailsView> {
           height: 200,
           color: Colors.grey[200],
           child: const Icon(Icons.hotel, size: 100, color: Colors.grey),
+        ),
+      ),
+    );
+  }
+
+  void _showDetailsSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.5,
+        maxChildSize: 0.8,
+        minChildSize: 0.3,
+        builder: (_, controller) => Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            controller: controller,
+            children: [
+              const Center(
+                child: Icon(Icons.star, size: 40, color: Colors.deepOrange),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Rating: ${_viewModel.model.rating}",
+                style: const TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                _viewModel.model.details,
+                style: const TextStyle(fontSize: 16),
+                textAlign: TextAlign.justify,
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "Facilities:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.left,
+              ),
+              const SizedBox(height: 10),
+              ..._viewModel.model.facilities.map<Widget>((facility) => 
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.check, color: Colors.deepOrange),
+                      const SizedBox(width: 8),
+                      Text(facility.toString()),
+                    ],
+                  ),
+                ),
+              ).toList(),
+            ],
+          ),
         ),
       ),
     );

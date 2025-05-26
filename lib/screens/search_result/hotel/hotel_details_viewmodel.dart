@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'hotel_details_model.dart';
+import 'package:staypal/screens/search_result/hotel/hotel_details_model.dart';
+
+
 
 class HotelDetailsViewModel {
   final HotelDetailsModel _model;
@@ -29,12 +31,10 @@ class HotelDetailsViewModel {
 
   String getShareMessage() {
     return '''
-🏨 Check out this hotel: ${_model.name}
-📍 Location: ${_model.location}
-💸 Price: ${_model.price} ₪ per night
-📄 Description: ${_model.description}
-
-Book your stay now!
+🏨 ${_model.name}
+📍 ${_model.location}
+💸 ${_model.price} ₪ per night
+📄 ${_model.description}
 ''';
   }
 }
