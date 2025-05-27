@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:intl/intl.dart';
-import '../screens/search_result/hotelDetails.dart';
-import '../screens/search_result/eventDetails.dart';
-import '../../widgets/custom_nav_bar.dart';
+import '../../search_result/hotelDetails.dart';
+import '../../search_result/eventDetails.dart';
+import '../../homePageTwo/widgets/custom_nav_bar.dart';
 import '../viewmodels/wishlist_view_model.dart';
 
 class WishListPage extends StatefulWidget {

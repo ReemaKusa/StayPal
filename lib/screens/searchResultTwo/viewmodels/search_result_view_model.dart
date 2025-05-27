@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../screens/search_result/eventDetails.dart';
-import '../screens/search_result/hotelDetails.dart';
+import '../../search_result/eventDetails.dart';
+import '../../search_result/hotelDetails.dart';
 
 class SearchResultViewModel {
   bool showHotels = true;
@@ -99,7 +99,7 @@ Future<void> _toggleEventLike(
       SnackBar(content: Text('Failed to update favorite status: $e')),
     );
   }
-  
+
 }
 
 

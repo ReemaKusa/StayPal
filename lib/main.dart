@@ -11,10 +11,10 @@ import 'package:staypal/screens/admin/dynamic_admin_panel.dart';
 // import 'package:staypal/screens/auth/test_firestore_screen.dart'; // Uncomment if needed
 //import 'package:staypal/screens/search_result_two/searchresultfix.dart';
 import 'package:provider/provider.dart';
-import 'package:staypal/viewmodels/home_view_model.dart';
-import 'package:staypal/views/home_page.dart';
-import "package:staypal/views/wishlist_view.dart";
-import 'package:staypal/views/search_result_page.dart';
+import 'package:staypal/screens/homePageTwo/viewmodels/home_view_model.dart';
+import 'package:staypal/screens/homePageTwo/views/home_page.dart';
+import "package:staypal/screens/wishlistPageTwo/views/wishlist_view.dart";
+import 'package:staypal/screens/searchResultTwo/views/search_result_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

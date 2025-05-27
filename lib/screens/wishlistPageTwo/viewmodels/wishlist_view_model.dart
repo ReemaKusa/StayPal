@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
-import '../screens/search_result/hotelDetails.dart';
-import '../screens/search_result/eventDetails.dart';
+import '../../search_result/hotelDetails.dart';
+import '../../search_result/eventDetails.dart';
 
 class WishListViewModel {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

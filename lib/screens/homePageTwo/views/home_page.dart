@@ -4,8 +4,8 @@ import '../viewmodels/home_view_model.dart';
 import '../models/popular_hotels_model.dart';
 import '../models/recommended_item_model.dart';
 import '../models/upcoming_events_model.dart';
-import '../screens/search_result/eventDetails.dart';
-import '../screens/search_result/hotelDetails.dart';
+import '../../search_result/eventDetails.dart';
+import '../../search_result/hotelDetails.dart';
 import '../widgets/custom_nav_bar.dart';
 
 class HomePage extends StatelessWidget {
