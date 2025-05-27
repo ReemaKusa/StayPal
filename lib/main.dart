@@ -11,7 +11,7 @@ import 'package:staypal/screens/first_screen/firstscreen.dart';
 import 'package:staypal/screens/admin/dynamic_admin_panel.dart';
 // import 'package:staypal/screens/auth/test_firestore_screen.dart'; // Uncomment if needed
 import 'package:staypal/screens/search_result_two/searchresultfix.dart';
-import 'package:staypal/views/my_profile.dart';
+import 'package:staypal/screens/profile/views/my_profile.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

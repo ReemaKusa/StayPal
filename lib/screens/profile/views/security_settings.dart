@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:staypal/viewmodels/security_settings_viewmodel.dart';
+import 'package:staypal/screens/profile/viewmodels/security_settings_viewmodel.dart';
 
 class SecuritySetting extends StatelessWidget {
   const SecuritySetting({super.key});

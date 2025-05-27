@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:staypal/screens/profile/edit_address_screen.dart';
 import 'package:staypal/screens/profile/edit_name_screen.dart';
 import 'package:staypal/screens/profile/edit_phone_screen.dart';
-import 'package:staypal/viewmodels/personal_details_viewmodel.dart';
+import 'package:staypal/screens/profile/viewmodels/personal_details_viewmodel.dart';
 
 class PersonalDetails extends StatefulWidget {
   const PersonalDetails({super.key});
