@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+/*import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -63,7 +63,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
               child: Column(
                 children: [
                   RadioListTile<String>(
-                    activeColor: Colors.orange[700],
+                    activeColor: Colors.deepOrange,
                     title: const Text(
                       "Male",
                       style: TextStyle(
@@ -78,7 +78,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                     },
                   ),
                   RadioListTile<String>(
-                    activeColor: Colors.orange[700],
+                    activeColor: Colors.deepOrange,
                     title: const Text(
                       "Female",
                       style: TextStyle(
@@ -97,7 +97,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size.fromHeight(50),
-                        backgroundColor: Colors.orange[700],
+                        backgroundColor: Colors.deepOrange,
                       ),
                       onPressed: () async {
                         if (selectedGender != null) {
@@ -149,7 +149,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                 padding: EdgeInsets.all(16.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange[700],
+                    backgroundColor: Colors.deepOrange,
                     minimumSize: const Size.fromHeight(50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -281,3 +281,4 @@ class _PersonalDetailsState extends State<PersonalDetails> {
     );
   }
 }
+*/

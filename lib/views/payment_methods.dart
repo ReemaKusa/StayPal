@@ -1,7 +1,7 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'add_card_screen.dart';
+import 'package:staypal/screens/profile/add_card_screen.dart';
 
 class PaymentMethods extends StatefulWidget {
   const PaymentMethods({super.key});
@@ -96,11 +96,12 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                       ),
                       subtitle: Text(
                         number.toString().length >= 4
-                            ? '**** **** **** ${number.toString().substring(number.toString().length - 4)}'
+                            ? "**** **** **** ${number.toString().substring(number.toString().length - 4)}"
                             : 'Invalid number',
                       ),
+
                       trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Colors.orange[700]),
+                        icon: Icon(Icons.delete, color: Colors.deepOrange),
                         onPressed: () async {
                           await doc.reference.delete();
                         },
@@ -117,7 +118,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange[700],
+                  backgroundColor: Colors.deepOrange,
                   minimumSize: const Size.fromHeight(50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -145,4 +146,3 @@ class _PaymentMethodsState extends State<PaymentMethods> {
     );
   }
 }
-*/
