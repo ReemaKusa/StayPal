@@ -10,7 +10,7 @@ import 'package:staypal/DB/firebase_options.dart'; // Make sure this file exists
 //import 'package:staypal/screens/wishlistPage/wishlist_page.dart';
 //import 'package:staypal/screens/homePage/home_page.dart';
 import 'package:staypal/screens/profile/profile.dart';
-import 'package:staypal/screens/first_screen/firstscreen.dart';
+//import 'package:staypal/screens/first_screen/firstscreen.dart';
 import 'package:staypal/screens/admin/dynamic_admin_panel.dart';
 import 'package:staypal/screens/wishlistPageTwo/views/wishlist_view.dart';
 
