@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:intl/intl.dart';
 import 'event_details_viewmodel.dart';
 import 'event_details_model.dart';
 
@@ -52,9 +54,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_viewModel.model.name),
+        backgroundColor: Colors.deepOrange,
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
+            icon: const Icon(Icons.share, color: Colors.white),
             onPressed: _shareEvent,
           ),
           IconButton(
@@ -90,21 +93,28 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         if (_viewModel.isEventExpired) _buildExpiredWarning(),
                         Text(
                           _viewModel.model.name,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        const SizedBox(height: 8),
-                        _buildInfoRow(Icons.location_on, _viewModel.model.location),
-                        _buildInfoRow(Icons.calendar_today, _viewModel.formatDate()),
-                        _buildInfoRow(Icons.access_time, _viewModel.model.formattedTime),
-                        const SizedBox(height: 16),
-                        _buildTicketSelector(),
-                        const SizedBox(height: 16),
-                        _buildSection('Description', _viewModel.model.description),
-                        _buildSection('Details', _viewModel.model.details),
+                        const SizedBox(height: 12),
+                        _buildDetailRow(Icons.location_on, _viewModel.model.location),
+                        _buildDetailRow(Icons.calendar_today, _viewModel.formatDate()),
+                        _buildDetailRow(Icons.access_time, _viewModel.model.formattedTime),
+                        const SizedBox(height: 20),
+                        _buildPriceSection(),
+                        const SizedBox(height: 20),
+                        _buildSectionTitle('Description'),
+                        _buildSectionContent(_viewModel.model.description),
+                        const SizedBox(height: 20),
+                        if (_viewModel.model.details?.isNotEmpty ?? false) ...[
+                          _buildSectionTitle('Details'),
+                          _buildSectionContent(_viewModel.model.details!),
+                          const SizedBox(height: 20),
+                        ],
                         if (_viewModel.model.highlights.isNotEmpty) _buildHighlights(),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 30),
                         _buildBookButton(context),
                       ],
                     ),
@@ -122,7 +132,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       child: images.isEmpty
           ? Container(
               color: Colors.grey[200],
-              child: const Center(child: Icon(Icons.image, size: 50, color: Colors.grey)),
+              child: const Center(
+                child: Icon(Icons.event, size: 60, color: Colors.grey),
+              ),
             )
           : PageView.builder(
               itemCount: images.length,
@@ -146,104 +158,140 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
   Widget _buildExpiredWarning() {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.red[100],
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.red),
       ),
       child: Row(
         children: const [
-          Icon(Icons.warning, color: Colors.red),
-          SizedBox(width: 8),
-          Text('This event has expired'),
+          Icon(Icons.warning_amber, color: Colors.red),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'This event has already ended',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String text) {
+  Widget _buildDetailRow(IconData icon, String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: Colors.deepOrange),
-          const SizedBox(width: 8),
-          Expanded(child: Text(text)),
+          Icon(icon, size: 24, color: Colors.deepOrange),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTicketSelector() {
+  Widget _buildPriceSection() {
     return Card(
-      elevation: 2,
+      elevation: 3,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade200),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             const Text(
-              'Number of Tickets',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.remove_circle_outline),
-                  onPressed: _viewModel.decreaseTicketCount,
-                  iconSize: 30,
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  '${_viewModel.ticketCount}',
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(width: 16),
-                IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: _viewModel.increaseTicketCount,
-                  iconSize: 30,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Total: ${_viewModel.formattedTotalPrice}',
-              style: const TextStyle(
+              'Price per ticket',
+              style: TextStyle(
                 fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _viewModel.model.formattedPrice,
+              style: const TextStyle(
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.deepOrange,
               ),
             ),
+            const SizedBox(height: 16),
+            _buildTicketCounter(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSection(String title, String content) {
+  Widget _buildTicketCounter() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const Text(
+          'Number of Tickets',
+          style: TextStyle(fontSize: 16),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.remove_circle_outline, size: 32),
+              onPressed: _viewModel.decreaseTicketCount,
+              color: Colors.deepOrange,
+            ),
+            const SizedBox(width: 20),
+            Text(
+              '${_viewModel.ticketCount}',
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 20),
+            IconButton(
+              icon: const Icon(Icons.add_circle_outline, size: 32),
+              onPressed: _viewModel.increaseTicketCount,
+              color: Colors.deepOrange,
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
         Text(
-          title,
+          'Total: ${_viewModel.formattedTotalPrice}',
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          content,
-          style: const TextStyle(fontSize: 16, height: 1.5),
-        ),
-        const SizedBox(height: 16),
       ],
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionContent(String content) {
+    return Text(
+      content,
+      style: const TextStyle(fontSize: 16, height: 1.6),
     );
   }
 
@@ -251,18 +299,21 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Highlights',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+        _buildSectionTitle('Highlights'),
         const SizedBox(height: 8),
         ..._viewModel.model.highlights.map((highlight) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 6),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.check_circle, color: Colors.green),
+                  const Icon(Icons.check_circle, color: Colors.green, size: 20),
                   const SizedBox(width: 8),
-                  Expanded(child: Text(highlight, style: const TextStyle(fontSize: 16))),
+                  Expanded(
+                    child: Text(
+                      highlight,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
                 ],
               ),
             )),
@@ -275,13 +326,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
         width: double.infinity,
+        height: 56,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            backgroundColor: Colors.deepOrange,
+            backgroundColor: _viewModel.isEventExpired ? Colors.grey : Colors.deepOrange,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            elevation: 3,
           ),
           onPressed: _viewModel.isEventExpired
               ? null
@@ -292,22 +344,26 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Booking successful!'),
-                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Colors.green,
                       ),
                     );
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Error: ${e.toString()}'),
-                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Colors.red,
                       ),
                     );
                   }
                   setState(() => _isLoading = false);
                 },
-          child: const Text(
-            'Book Now',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          child: Text(
+            _viewModel.isEventExpired ? 'Event Expired' : 'Book Now',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
         ),
       ),

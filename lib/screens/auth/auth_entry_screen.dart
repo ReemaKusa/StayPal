@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
-import 'signup_screen.dart';
+import 'package:staypal/screens/auth/login_screen.dart';
+import 'package:staypal/screens/auth/signup_screen.dart';
 
 class AuthEntryScreen extends StatelessWidget {
   const AuthEntryScreen({super.key});
@@ -15,16 +15,12 @@ class AuthEntryScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo
               Image.asset(
                 'assets/images/staypal_logo.png',
                 height: 400,
                 color: Colors.black,
               ),
-
               const SizedBox(height: 0),
-
-              // Tagline
               const Text(
                 'Millions of places.\nBook your next stay!',
                 textAlign: TextAlign.center,
@@ -34,10 +30,7 @@ class AuthEntryScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               const SizedBox(height: 30),
-
-              // Sign Up Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -50,10 +43,10 @@ class AuthEntryScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orangeAccent,
+                    backgroundColor: Colors.deepOrange,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8), // Rectangle style
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: const Text(
@@ -66,10 +59,7 @@ class AuthEntryScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(height: 8),
-
-              // Log In Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -82,7 +72,7 @@ class AuthEntryScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orangeAccent,
+                    backgroundColor: Colors.deepOrange,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),

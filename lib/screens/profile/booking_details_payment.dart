@@ -8,13 +8,14 @@ class DetailBooking extends StatelessWidget {
     'd MMMM yyyy',
   ).format(DateTime.now());
 
+  DetailBooking({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black, size: 35),
           onPressed: () {

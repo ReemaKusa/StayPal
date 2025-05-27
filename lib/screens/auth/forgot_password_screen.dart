@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -8,12 +9,44 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController emailCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    emailCtrl.dispose();
+    super.dispose();
+  }
+
+  //  reset email using Firebase
+  Future<void> sendResetLink() async {
+    final email = emailCtrl.text.trim();
+
+    if (email.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter your email')),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Reset link sent! Check your inbox.')),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Something went wrong')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // light background
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -57,7 +90,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
               // Email input
               TextField(
-                controller: _emailController,
+                controller: emailCtrl,
                 style: const TextStyle(color: Colors.black),
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
@@ -72,7 +105,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                      color: Colors.orangeAccent,
+                      color: Color.fromRGBO(255, 87, 34, 1),
                       width: 2,
                     ),
                   ),
@@ -85,11 +118,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Handle Login
-                  },
+                  onPressed: sendResetLink,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orangeAccent,
+                    backgroundColor: Color.fromRGBO(255, 87, 34, 1),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -116,7 +147,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 child: const Text(
                   'Back to Log In',
                   style: TextStyle(
-                    color: Colors.orangeAccent,
+                    color: Color.fromRGBO(255, 87, 34, 1),
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -129,9 +160,3 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 }
-
-
-                    // TODO: Add a code field when a code sended to the email 
-                    // TODO: Add a send code again textbutton 
-                    // TODO: Add a field for typing the new password 
-                    // TODO: Add a page-landing showing pass succesfully changed

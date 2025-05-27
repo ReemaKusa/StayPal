@@ -10,7 +10,7 @@ class TestFirestoreScreen extends StatelessWidget {
           .collection('test')
           .doc('demo')
           .get()
-          .timeout(const Duration(seconds: 5)); // ⏳ Add timeout here
+          .timeout(const Duration(seconds: 5));
 
       print('📄 Document fetched: ${doc.data()}');
 

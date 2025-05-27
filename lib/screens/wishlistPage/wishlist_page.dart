@@ -1,19 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:intl/intl.dart';
-import '../search_result/hotel/hotel_details_view.dart';
-import '../search_result/event/event_details_view.dart';
-import '../search_result/hotel/hotel_details_model.dart';
-import '../search_result/hotel/hotel_details_viewmodel.dart';
+// // The Dynmaic V of the Wishlist P after the Static one was pushed
 
 
-class WishListPage extends StatefulWidget {
-  const WishListPage({super.key});
-
-  @override
-  State<WishListPage> createState() => _WishListPageState();
-}
+//   @override
+//   State<WishListPage> createState() => _WishListPageState();
+// }
 
 class _WishListPageState extends State<WishListPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -131,37 +121,37 @@ class _WishListPageState extends State<WishListPage> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final docs = snapshot.data ?? [];
-          if (docs.isEmpty) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.favorite_border, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    'Your wishlist is empty',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Tap the heart icon to add items',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
-              ),
-            );
-          }
+//           final docs = snapshot.data ?? [];
+//           if (docs.isEmpty) {
+//             return const Center(
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Icon(Icons.favorite_border, size: 64, color: Colors.grey),
+//                   SizedBox(height: 16),
+//                   Text(
+//                     'Your wishlist is empty',
+//                     style: TextStyle(fontSize: 18, color: Colors.grey),
+//                   ),
+//                   SizedBox(height: 8),
+//                   Text(
+//                     'Tap the heart icon to add items',
+//                     style: TextStyle(fontSize: 14, color: Colors.grey),
+//                   ),
+//                 ],
+//               ),
+//             );
+//           }
 
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              const SizedBox(height: 8),
-              ...docs.map((doc) {
-                final item = doc.data() as Map<String, dynamic>;
-                final imageUrl = _getImageUrl(item['images']);
-                final isHotel = doc.reference.parent.id == 'hotel';
-                final subtitle = _getSubtitle(item, isHotel);
+//           return ListView(
+//             padding: const EdgeInsets.all(16),
+//             children: [
+//               const SizedBox(height: 8),
+//               ...docs.map((doc) {
+//                 final item = doc.data() as Map<String, dynamic>;
+//                 final imageUrl = _getImageUrl(item['images']);
+//                 final isHotel = doc.reference.parent.id == 'hotel';
+//                 final subtitle = _getSubtitle(item, isHotel);
 
                 return GestureDetector(
                   onTap: () => _showDetailsBottomSheet(

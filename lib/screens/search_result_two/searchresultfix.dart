@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../search_result/hotel/hotel_details_view.dart';
-import '../search_result/event/event_details_view.dart';
-import 'package:staypal/screens/search_result/hotel/hotel_details_model.dart';
-import 'package:staypal/screens/search_result/hotel/hotel_details_viewmodel.dart';
+import '../search_result/hotelDetails.dart';
+import '../search_result/eventDetails.dart';
 
 class CombinedPage extends StatefulWidget {
   const CombinedPage({super.key});
 
-  @override
-  State<CombinedPage> createState() => _CombinedPageState();
-}
+//   @override
+//   State<CombinedPage> createState() => _CombinedPageState();
+// }
 
 class _CombinedPageState extends State<CombinedPage> {
   bool showHotels = true;
@@ -20,26 +18,27 @@ class _CombinedPageState extends State<CombinedPage> {
   int _selectedIndex = 1;
   final Map<String, bool> _hotelLikes = {};
   final Map<String, bool> _eventLikes = {};
-  final CollectionReference hotelsCollection =
-      FirebaseFirestore.instance.collection('hotel');
-  final CollectionReference eventsCollection =
-      FirebaseFirestore.instance.collection('event');
-  final CollectionReference wishlistCollection =
-      FirebaseFirestore.instance.collection('wishlist_testing');
+
+  final CollectionReference hotelsCollection = FirebaseFirestore.instance
+      .collection('hotel');
+  final CollectionReference eventsCollection = FirebaseFirestore.instance
+      .collection('event');
+  final CollectionReference wishlistCollection = FirebaseFirestore.instance
+      .collection('wishlist_testing');
 
   String? _searchQuery;
   String? _filterBy;
-  final String name = "Search Results";
 
-  @override
-  void initState() {
-    super.initState();
-    _initializeLikes();
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     _initializeLikes();
+//   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // ——— Safe route arguments cast ———
     final routeArgs = ModalRoute.of(context)?.settings.arguments;
     if (_searchQuery == null && routeArgs is Map<String, dynamic>) {
       _searchQuery = routeArgs['searchQuery'] as String?;
@@ -65,85 +64,61 @@ class _CombinedPageState extends State<CombinedPage> {
         });
       }
     } catch (_) {
-      if (mounted) {
+      if (mounted)
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error loading favorites')),
         );
-      }
     }
   }
 
-  void _onItemTapped(int index) {
-    setState(() => _selectedIndex = index);
-    if (index == 1) {
-      Scrollable.ensureVisible(
-        _searchKey.currentContext!,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-    } else if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else if (index == 2) {
-      Navigator.pushReplacementNamed(context, '/wishlist');
-    } else if (index == 3) {
-      Navigator.pushReplacementNamed(context, '/profile');
-    }
-  }
+//   void _onItemTapped(int index) {
+//     setState(() => _selectedIndex = index);
+//     if (index == 1) {
+//       Scrollable.ensureVisible(
+//         _searchKey.currentContext!,
+//         duration: const Duration(milliseconds: 500),
+//         curve: Curves.easeInOut,
+//       );
+//     } else if (index == 0) {
+//       Navigator.pushReplacementNamed(context, '/home');
+//     } else if (index == 2) {
+//       Navigator.pushReplacementNamed(context, '/wishlist');
+//     } else if (index == 3) {
+//       Navigator.pushReplacementNamed(context, '/profile');
+//     }
+//   }
 
   String _formatEventDate(dynamic date) {
     if (date == null) return 'No Date';
-    if (date is Timestamp) return DateFormat('MMM d, y').format(date.toDate());
+    if (date is Timestamp)
+      return DateFormat('yyyy-MM-dd').format(date.toDate());
     if (date is String) return date;
     return 'Invalid Date';
-  }
-
-  String _formatEventTime(dynamic time) {
-    if (time == null) return 'No Time';
-    if (time is num) {
-      final hours = time.toInt();
-      final minutes = ((time - hours) * 60).toInt();
-      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
-    }
-    return 'Invalid Time';
   }
 
   Future<void> _toggleHotelLike(String id, Map<String, dynamic> hotel) async {
     final currentStatus = hotel['isFavorite'] ?? false;
     try {
-      await hotelsCollection.doc(id).update({
+      await FirebaseFirestore.instance.collection('hotel').doc(id).update({
         'isFavorite': !currentStatus,
       });
-      if (mounted) {
-        setState(() {
-          hotel['isFavorite'] = !currentStatus;
-        });
-      }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to update favorite status')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to update favorite status')),
+      );
     }
   }
 
   Future<void> _toggleEventLike(String id, Map<String, dynamic> event) async {
     final currentStatus = event['isFavorite'] ?? false;
     try {
-      await eventsCollection.doc(id).update({
+      await FirebaseFirestore.instance.collection('event').doc(id).update({
         'isFavorite': !currentStatus,
       });
-      if (mounted) {
-        setState(() {
-          event['isFavorite'] = !currentStatus;
-        });
-      }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to update favorite status')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to update favorite status')),
+      );
     }
   }
 
@@ -160,33 +135,29 @@ class _CombinedPageState extends State<CombinedPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Wishlist'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Wishlist',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
       appBar: AppBar(
-        title: Text(name),
-        backgroundColor: Colors.orange,
+        title:
+            _searchQuery != null
+                ? Text('Results for "$_searchQuery"')
+                : const Text('Hotels & Events'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
         actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.notifications, color: Colors.black),
-                onPressed: () {},
-              ),
-              Positioned(
-                right: 10,
-                top: 10,
-                child: Container(
-                  width: 10,
-                  height: 10,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-            ],
+          IconButton(
+            icon: const Icon(Icons.notifications_none, color: Colors.black),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.ios_share, color: Colors.black),
+            onPressed: () {},
           ),
         ],
       ),
@@ -213,9 +184,10 @@ class _CombinedPageState extends State<CombinedPage> {
             ),
           ),
           Expanded(
-            child: showHotels
-                ? _buildHotelList(_searchQuery, _filterBy)
-                : _buildEventList(_searchQuery, _filterBy),
+            child:
+                showHotels
+                    ? _buildHotelList(_searchQuery, _filterBy)
+                    : _buildEventList(_searchQuery, _filterBy),
           ),
         ],
       ),
@@ -224,17 +196,17 @@ class _CombinedPageState extends State<CombinedPage> {
 
   Widget _tabButton(String label, bool active, VoidCallback onTap) {
     return ElevatedButton(
-      onPressed: onTap,
       style: ElevatedButton.styleFrom(
         backgroundColor: active ? Colors.orange : Colors.orange.shade200,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
+      onPressed: onTap,
       child: Text(label),
     );
   }
 
-  Widget _buildHotelList(String? query, String? filterBy) {
+ Widget _buildHotelList(String? query, String? filterBy) {
     Query q = hotelsCollection;
     if (query != null && filterBy == 'location') {
       q = q.where('location', isEqualTo: query);
@@ -256,41 +228,33 @@ class _CombinedPageState extends State<CombinedPage> {
           );
         }
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
           itemCount: docs.length,
           itemBuilder: (c, i) {
             final doc = docs[i];
             final data = doc.data() as Map<String, dynamic>;
             final id = doc.id;
-            final images = data['images'] as List? ?? [];
+            final images = data['images'] is List ? data['images'] as List : [];
             final imageUrl = (images.isNotEmpty && images[0] != null)
                 ? images[0].toString()
                 : '';
             final isLiked = data['isFavorite'] ?? false;
 
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _buildRecommendedCard(
-                data['name'] ?? 'No Name',
-                data['location'] ?? 'Unknown',
-                imageUrl,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => HotelDetailsView(
-                      viewModel: HotelDetailsViewModel(
-                        HotelDetailsModel(
-                          hotelId: id,
-                          hotel: data,
-                          isInitiallyLiked: isLiked,
-                        ),
-                      ),
-                    ),
+            return _listingCard(
+              title: data['name'] ?? 'No Name',
+              subtitle: data['location'] ?? 'Unknown',
+              price: data['price']?.toString() ?? 'N/A',
+              imageUrl: imageUrl,
+              isLiked: isLiked,
+              onLike: () => _toggleHotelLike(id, data),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => HotelDetailsPage(
+                    hotel: data,
+                    hotelId: id,
+                    isInitiallyLiked: isLiked,
                   ),
                 ),
-                onLike: () => _toggleHotelLike(id, data),
-                isLiked: isLiked,
-                price: data['price']?.toString() ?? 'N/A',
               ),
             );
           },
@@ -299,11 +263,11 @@ class _CombinedPageState extends State<CombinedPage> {
     );
   }
 
-  Widget _buildEventList(String? query, String? filterBy) {
-    Query q = eventsCollection;
-    if (query != null && filterBy == 'location') {
-      q = q.where('location', isEqualTo: query);
-    }
+//   Widget _buildEventList(String? query, String? filterBy) {
+//     Query q = eventsCollection;
+//     if (query != null && filterBy == 'location') {
+//       q = q.where('location', isEqualTo: query);
+//     }
 
     return StreamBuilder<QuerySnapshot>(
       stream: q.snapshots(),
@@ -321,37 +285,34 @@ class _CombinedPageState extends State<CombinedPage> {
           );
         }
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
           itemCount: docs.length,
           itemBuilder: (c, i) {
             final doc = docs[i];
             final data = doc.data() as Map<String, dynamic>;
             final id = doc.id;
-            final images = data['images'] is List ? data['images'] : [];
-            final imageUrl = images.isNotEmpty ? images[0].toString() : '';
+            final images = data['images'] is List ? data['images'] as List : [];
+            final imageUrl = (images.isNotEmpty && images[0] != null)
+                ? images[0].toString()
+                : '';
             final date = _formatEventDate(data['date']);
             final isLiked = data['isFavorite'] ?? false;
-            final price = data['price']?.toString() ?? 'N/A';
 
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _buildRecommendedCard(
-                data['name'] ?? 'No Name',
-                '$date at ${_formatEventTime(data['time'])}',
-                imageUrl,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => EventDetailsPage(
-                      event: data,
-                      eventId: id,
-                      isInitiallyLiked: isLiked,
-                    ),
+            return _listingCard(
+              title: data['name'] ?? 'No Name',
+              subtitle: date,
+              price: data['price']?.toString() ?? 'N/A',
+              imageUrl: imageUrl,
+              isLiked: isLiked,
+              onLike: () => _toggleEventLike(id, data),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => EventDetailsPage(
+                    event: data,
+                    eventId: id,
+                    isInitiallyLiked: isLiked,
                   ),
                 ),
-                onLike: () => _toggleEventLike(id, data),
-                isLiked: isLiked,
-                price: price,
               ),
             );
           },
@@ -360,77 +321,91 @@ class _CombinedPageState extends State<CombinedPage> {
     );
   }
 
-  Widget _buildRecommendedCard(
-    String title,
-    String subtitle,
-    String imageUrl, {
-    required VoidCallback onTap,
-    required VoidCallback onLike,
-    required bool isLiked,
+  Widget _listingCard({
+    required String title,
+    required String subtitle,
     required String price,
+    required String imageUrl,
+    required bool isLiked,
+    required VoidCallback onLike,
+    required VoidCallback onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Colors.white,
-          boxShadow: const [
-            BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
-          ],
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: Colors.grey.shade300),
         ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                bottomLeft: Radius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child:
+                    imageUrl.isEmpty
+                        ? Container(
+                          width: 60,
+                          height: 60,
+                          color: Colors.grey[200],
+                          child: const Icon(
+                            Icons.image,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        )
+                        : CachedNetworkImage(
+                          imageUrl: imageUrl,
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.cover,
+                          placeholder:
+                              (_, __) => Container(
+                                width: 60,
+                                height: 60,
+                                color: Colors.grey[200],
+                                child: const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                          errorWidget:
+                              (_, __, ___) => Container(
+                                width: 60,
+                                height: 60,
+                                color: Colors.grey[200],
+                                child: const Icon(
+                                  Icons.image,
+                                  size: 40,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                        ),
               ),
-              child: imageUrl.isEmpty
-                  ? Container(
-                      height: 100,
-                      width: 100,
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.image, color: Colors.grey),
-                    )
-                  : CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      height: 100,
-                      width: 100,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        height: 100,
-                        width: 100,
-                        color: Colors.grey[300],
-                        child: const Center(child: CircularProgressIndicator()),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        height: 100,
-                        width: 100,
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.image, color: Colors.grey),
-                      ),
-                    ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
+              const SizedBox(width: 12),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            isLiked ? Icons.favorite : Icons.favorite_border,
+                            color: isLiked ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: onLike,
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    Text(subtitle),
                     const SizedBox(height: 4),
                     Text(
                       '$price ₪',
@@ -442,20 +417,42 @@ class _CombinedPageState extends State<CombinedPage> {
                   ],
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: GestureDetector(
-                onTap: onLike,
-                child: Icon(
-                  isLiked ? Icons.favorite : Icons.favorite_border,
-                  color: isLiked ? Colors.red : Colors.grey,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+Widget _buildEventImage(String imageUrl) {
+  if (imageUrl.isEmpty) {
+    return Container(
+      width: 60,
+      height: 60,
+      color: Colors.grey[200],
+      child: const Icon(Icons.event, size: 40, color: Colors.grey),
+    );
+  }
+
+  return CachedNetworkImage(
+    imageUrl: imageUrl,
+    width: 60,
+    height: 60,
+    fit: BoxFit.cover,
+    placeholder:
+        (context, url) => Container(
+          width: 60,
+          height: 60,
+          color: Colors.grey[200],
+          child: const Center(child: CircularProgressIndicator()),
+        ),
+    errorWidget:
+        (context, url, error) => Container(
+          width: 60,
+          height: 60,
+          color: Colors.grey[200],
+          child: const Icon(Icons.event, size: 40, color: Colors.grey),
+        ),
+  );
 }
