@@ -13,6 +13,7 @@ import 'package:staypal/screens/profile/profile.dart';
 import 'package:staypal/screens/first_screen/firstscreen.dart';
 import 'package:staypal/screens/admin/dynamic_admin_panel.dart';
 import 'package:staypal/screens/wishlistPageTwo/views/wishlist_view.dart';
+
 // import 'package:staypal/screens/auth/test_firestore_screen.dart'; // Uncomment if needed
 
 
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+
       //home:  MyProfile(),
        home:HomePage(),
       //home:MainScreen(),
@@ -47,6 +49,9 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/profile': (context) => MyProfile(),
       },
+
+      // home: const TestFirestoreScreen(), // You can use this for testing
+
     );
   }
 }
