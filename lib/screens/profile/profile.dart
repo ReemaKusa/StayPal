@@ -1,14 +1,14 @@
-import 'dart:typed_data';
+/*import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:staypal/screens/profile/log_out.dart';
-import 'package:staypal/screens/profile/my_fav.dart';
 import 'package:staypal/screens/profile/my_bookings_screen.dart';
 import 'package:staypal/screens/profile/payment_methods.dart';
 import 'package:staypal/screens/profile/personal_details.dart';
 import 'package:staypal/screens/profile/security_settings.dart';
+import 'package:staypal/screens/wishlistPage/wishlist_page.dart';
 import 'uploud_image.dart';
 
 class MyProfile extends StatefulWidget {
@@ -22,6 +22,7 @@ class _MyProfileState extends State<MyProfile> {
   Uint8List? _image;
   Map<String, dynamic>? userData;
   bool isLoading = true;
+  int _selectedIndex = 3;
 
   @override
   void initState() {
@@ -60,33 +61,67 @@ class _MyProfileState extends State<MyProfile> {
     }
   }
 
+  void _onItemTapped(int index) {
+    if (_selectedIndex == index) return;
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/viewlisting');
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/wishlist');
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, size: 30.0, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
+        title: const Text(
           'My Profile',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications, size: 30.0, color: Colors.black),
+            icon: const Icon(
+              Icons.notifications,
+              size: 30.0,
+              color: Colors.black,
+            ),
             onPressed: () {},
           ),
         ],
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.deepOrange,
+        unselectedItemColor: Colors.grey,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Wishlist',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+      ),
       body:
           isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : Padding(
-                padding: EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -103,7 +138,7 @@ class _MyProfileState extends State<MyProfile> {
                                                   .toString()
                                                   .isNotEmpty
                                           ? NetworkImage(userData!['imageUrl'])
-                                          : NetworkImage(
+                                          : const NetworkImage(
                                             'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg',
                                           ))
                                       as ImageProvider,
@@ -113,15 +148,15 @@ class _MyProfileState extends State<MyProfile> {
                           left: 80,
                           child: IconButton(
                             onPressed: selectImage,
-                            icon: Icon(Icons.photo_camera),
+                            icon: const Icon(Icons.photo_camera),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Text(
                       userData?['fullName'] ?? 'No Name',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(221, 16, 15, 15),
@@ -131,34 +166,29 @@ class _MyProfileState extends State<MyProfile> {
                       userData?['email'] ?? '',
                       style: const TextStyle(fontSize: 14, color: Colors.grey),
                     ),
-                    SizedBox(height: 30),
-
+                    const SizedBox(height: 30),
                     _buildCard(
                       'Payment Methods',
-
                       Icons.payment,
-                      const PaymentMethods(),
+                      PaymentMethods(),
                     ),
-
                     _buildCard(
                       'Personal Details',
                       Icons.person,
-                      const PersonalDetails(),
+                      PersonalDetails(),
                     ),
-
-                    _buildCard('My Favorite', Icons.favorite, MyFav()),
-                    //تحويل لبوكننج انتباههه
-
-
-                    _buildCard('My Bookings', Icons.event_available, const MyBookingsScreen()),
+                    _buildCard('My Favorite', Icons.favorite, WishListPage()),
+                    _buildCard(
+                      'My Bookings',
+                      Icons.event_available,
+                      MyBookingsScreen(),
+                    ),
                     _buildCard(
                       'Security Settings',
                       Icons.lock,
                       SecuritySetting(),
                     ),
-
-                    //تحويل لوج اوت انتباههه
-                    _buildCard('Log Out', Icons.exit_to_app, LogOut()),
+                    _buildLogoutCard('Log Out', Icons.exit_to_app),
                   ],
                 ),
               ),
@@ -167,26 +197,14 @@ class _MyProfileState extends State<MyProfile> {
 
   Widget _buildCard(String title, IconData icon, Widget destination) {
     return SizedBox(
-      height: 80,
+      height: 70,
       child: Card(
-        margin: EdgeInsets.all(10),
         color: Colors.white,
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(icon, color: Colors.black, size: 28),
-            title: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            leading: Icon(icon, color: Colors.black, size: 20),
+            title: Text(title, style: const TextStyle(fontSize: 18.0)),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               Navigator.push(
@@ -199,4 +217,25 @@ class _MyProfileState extends State<MyProfile> {
       ),
     );
   }
+
+  Widget _buildLogoutCard(String title, IconData icon) {
+    return SizedBox(
+      height: 70,
+      child: Card(
+        color: Colors.white,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.0),
+          child: ListTile(
+            leading: Icon(icon, color: Colors.black, size: 20),
+            title: Text(title, style: const TextStyle(fontSize: 18.0)),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              LogOut.show(context);
+            },
+          ),
+        ),
+      ),
+    );
+  }
 }
+*/
