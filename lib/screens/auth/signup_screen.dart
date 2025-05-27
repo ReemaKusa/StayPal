@@ -36,7 +36,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final confirmPassword = confirmPasswordCtrl.text.trim();
 
     // validating
-    if (fullName.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (fullName.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all the fields')),
       );
@@ -44,9 +47,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
       return;
     }
 
@@ -78,9 +81,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -164,7 +167,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ElevatedButton(
                   onPressed: signUpUser,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromRGBO(255, 87, 34, 1),
+                    backgroundColor: Color.fromARGB(255, 245, 124, 0),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -203,7 +206,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         'Log In',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Color.fromRGBO(255, 87, 34, 1),
+                          color: Color.fromARGB(255, 245, 124, 0),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -218,12 +221,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  // styling for all the fields
   InputDecoration _inputDecoration(
-      String hint, {
-        bool isPassword = false,
-        VoidCallback? onToggle,
-      }) {
+    String hint, {
+    bool isPassword = false,
+    VoidCallback? onToggle,
+  }) {
     return InputDecoration(
       filled: true,
       fillColor: Colors.white,
@@ -235,17 +237,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color.fromRGBO(255, 87, 34, 1), width: 2),
-      ),
-      suffixIcon: isPassword
-          ? IconButton(
-        icon: Icon(
-          hidePassword ? Icons.visibility_off : Icons.visibility,
-          color: Colors.black12,
+        borderSide: const BorderSide(
+          color: Color.fromARGB(255, 245, 124, 0),
+          width: 2,
         ),
-        onPressed: onToggle,
-      )
-          : null,
+      ),
+      suffixIcon:
+          isPassword
+              ? IconButton(
+                icon: Icon(
+                  hidePassword ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.black12,
+                ),
+                onPressed: onToggle,
+              )
+              : null,
     );
   }
 }

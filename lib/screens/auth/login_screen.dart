@@ -47,15 +47,16 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (context) => HomePage()),
       );
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'Login failed')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message ?? 'Login failed')));
     }
   }
 
   Future<void> saveUserToFirestore(User user) async {
-    final userRef =
-    FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid);
     final doc = await userRef.get();
     if (!doc.exists) {
       await userRef.set({
@@ -79,8 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
         idToken: googleAuth.idToken,
       );
 
-      final userCredential =
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
 
       final user = userCredential.user;
       if (user != null) {
@@ -175,9 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        hidePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                        hidePassword ? Icons.visibility_off : Icons.visibility,
                         color: Colors.black12,
                       ),
                       onPressed: () {
@@ -195,8 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                          const ForgotPasswordScreen(),
+                          builder: (context) => const ForgotPasswordScreen(),
                         ),
                       );
                     },
@@ -216,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ElevatedButton(
                     onPressed: loginWithEmail,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(255, 87, 34, 1),
+                      backgroundColor: const Color.fromARGB(255, 245, 124, 0),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -349,7 +348,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: const Text(
                         'Sign Up',
                         style: TextStyle(
-                          color: Color.fromRGBO(255, 87, 34, 1),
+                          color: Color.fromARGB(255, 245, 124, 0),
                           fontWeight: FontWeight.bold,
                         ),
                       ),

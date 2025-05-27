@@ -1,16 +1,5 @@
 // // The Dynmaic V of the Wishlist P after the Static one was pushed
 
-// import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:rxdart/rxdart.dart';
-// import 'package:intl/intl.dart'; 
-// import '../search_result/hotelDetails.dart';
-// import '../search_result/eventDetails.dart';
-// import '../../widgets/custom_nav_bar.dart';
-
-
-// class WishListPage extends StatefulWidget {
-//   const WishListPage({super.key});
 
 //   @override
 //   State<WishListPage> createState() => _WishListPageState();
@@ -33,13 +22,6 @@
 //     if (isHotel) {
 //       return item['location'] ?? '';
 //     } else {
-
-//       if (item['date'] is Timestamp) {
-//         return _dateFormat.format((item['date'] as Timestamp).toDate());
-//       }
-//       return item['date']?.toString() ?? '';
-//     }
-//   }
 
 //   @override
 //   Widget build(BuildContext context) {
