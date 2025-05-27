@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'login_screen.dart';
+import 'package:staypal/screens/auth/viewmodels/email_verification_viewmodel.dart';
 
-class EmailVerificationScreen extends StatefulWidget {
-  const EmailVerificationScreen({super.key});
+class EmailVerificationView extends StatefulWidget {
+  const EmailVerificationView({super.key});
 
   @override
-  State<EmailVerificationScreen> createState() => _EmailVerificationScreenState();
+  State<EmailVerificationView> createState() => _EmailVerificationViewState();
 }
 
-class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
+class _EmailVerificationViewState extends State<EmailVerificationView> {
+  final viewModel = EmailVerificationViewModel();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,22 +38,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 style: TextStyle(color: Colors.black87),
               ),
               const SizedBox(height: 40),
-
               OutlinedButton(
-                onPressed: () async {
-                  try {
-                    await FirebaseAuth.instance.currentUser?.sendEmailVerification();
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('📨 Verification email sent again.')),
-                    );
-                  } catch (e) {
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: ${e.toString()}')),
-                    );
-                  }
-                },
+                onPressed: () => viewModel.resendVerificationEmail(context),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.black12),
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -65,53 +52,32 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   style: TextStyle(color: Colors.black87, fontSize: 16),
                 ),
               ),
-
               const SizedBox(height: 16),
-
               ElevatedButton(
-                onPressed: () async {
-                  await FirebaseAuth.instance.currentUser?.reload();
-                  final user = FirebaseAuth.instance.currentUser;
-                  if (!mounted) return;
-                  if (user != null && user.emailVerified) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Your email is not verified yet.')),
-                    );
-                  }
-                },
+                onPressed: () => viewModel.checkVerification(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(255, 87, 34, 1),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 child: const Text(
                   'I Verified My Email',
-                  style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-
               const SizedBox(height: 24),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('Need to switch accounts?', style: TextStyle(color: Colors.black87)),
                   TextButton(
-                    onPressed: () async {
-                      await FirebaseAuth.instance.signOut();
-                      if (!mounted) return;
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                      );
-                    },
+                    onPressed: () => viewModel.signOutToLogin(context),
                     child: const Text(
                       'Log Out',
                       style: TextStyle(
