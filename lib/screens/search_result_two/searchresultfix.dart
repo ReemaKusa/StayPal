@@ -7,8 +7,6 @@ import '../search_result/event/event_details_view.dart';
 import 'package:staypal/screens/search_result/hotel/hotel_details_model.dart';
 import 'package:staypal/screens/search_result/hotel/hotel_details_viewmodel.dart';
 
-
-
 class CombinedPage extends StatefulWidget {
   const CombinedPage({super.key});
 
@@ -94,9 +92,19 @@ class _CombinedPageState extends State<CombinedPage> {
 
   String _formatEventDate(dynamic date) {
     if (date == null) return 'No Date';
-    if (date is Timestamp) return DateFormat('yyyy-MM-dd').format(date.toDate());
+    if (date is Timestamp) return DateFormat('MMM d, y').format(date.toDate());
     if (date is String) return date;
     return 'Invalid Date';
+  }
+
+  String _formatEventTime(dynamic time) {
+    if (time == null) return 'No Time';
+    if (time is num) {
+      final hours = time.toInt();
+      final minutes = ((time - hours) * 60).toInt();
+      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
+    }
+    return 'Invalid Time';
   }
 
   Future<void> _toggleHotelLike(String id, Map<String, dynamic> hotel) async {
@@ -269,16 +277,16 @@ class _CombinedPageState extends State<CombinedPage> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                          builder: (_) => HotelDetailsView(
-                            viewModel: HotelDetailsViewModel(
-                              HotelDetailsModel(
-                                hotelId: id,
-                                hotel: data,
-                                isInitiallyLiked: true,
-                              ),
-                            ),
-                          ),
+                    builder: (_) => HotelDetailsView(
+                      viewModel: HotelDetailsViewModel(
+                        HotelDetailsModel(
+                          hotelId: id,
+                          hotel: data,
+                          isInitiallyLiked: isLiked,
                         ),
+                      ),
+                    ),
+                  ),
                 ),
                 onLike: () => _toggleHotelLike(id, data),
                 isLiked: isLiked,
@@ -319,18 +327,17 @@ class _CombinedPageState extends State<CombinedPage> {
             final doc = docs[i];
             final data = doc.data() as Map<String, dynamic>;
             final id = doc.id;
-            final images = data['images'] as List? ?? [];
-            final imageUrl = (images.isNotEmpty && images[0] != null)
-                ? images[0].toString()
-                : '';
+            final images = data['images'] is List ? data['images'] : [];
+            final imageUrl = images.isNotEmpty ? images[0].toString() : '';
             final date = _formatEventDate(data['date']);
             final isLiked = data['isFavorite'] ?? false;
+            final price = data['price']?.toString() ?? 'N/A';
 
             return Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: _buildRecommendedCard(
                 data['name'] ?? 'No Name',
-                date,
+                '$date at ${_formatEventTime(data['time'])}',
                 imageUrl,
                 onTap: () => Navigator.push(
                   context,
@@ -344,7 +351,7 @@ class _CombinedPageState extends State<CombinedPage> {
                 ),
                 onLike: () => _toggleEventLike(id, data),
                 isLiked: isLiked,
-                price: data['price']?.toString() ?? 'N/A',
+                price: price,
               ),
             );
           },
@@ -418,7 +425,12 @@ class _CombinedPageState extends State<CombinedPage> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    Text(subtitle, style: const TextStyle(color: Colors.grey)),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       '$price ₪',

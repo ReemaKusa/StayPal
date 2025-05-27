@@ -5,41 +5,56 @@ import 'event_details_model.dart';
 
 class EventDetailsViewModel with ChangeNotifier {
   final EventDetailsModel model;
-  int _ticketCount = 1;
   bool _isLiked;
+  int _ticketCount = 1;
+  bool _isBooking = false;
 
   EventDetailsViewModel({
     required this.model,
     bool isInitiallyLiked = false,
   }) : _isLiked = isInitiallyLiked;
 
-  int get ticketCount => _ticketCount;
   bool get isLiked => _isLiked;
-  double get totalPrice => model.price * _ticketCount;
+  int get ticketCount => _ticketCount;
+  bool get isBooking => _isBooking;
+  double get totalPrice => (_ticketCount * model.price).clamp(0, double.maxFinite);
+  String get formattedTotalPrice => '${totalPrice.toStringAsFixed(2)} ₪';
 
   bool get isEventExpired {
-    final eventDate = model.event['date'];
-    DateTime? date;
-    
-    if (eventDate is Timestamp) {
-      date = eventDate.toDate();
-    } else if (eventDate is String) {
-      date = DateTime.tryParse(eventDate);
-    } else if (eventDate is DateTime) {
-      date = eventDate;
-    }
-    
-    return date != null && date.isBefore(DateTime.now());
+    final eventDate = model.date?.toDate();
+    return eventDate != null && eventDate.isBefore(DateTime.now());
   }
 
-  void toggleLike() {
-    _isLiked = !_isLiked;
-    notifyListeners();
+  String formatDate() {
+    if (model.date != null) {
+      return DateFormat('EEE, MMM d, y').format(model.date!.toDate());
+    }
+    return 'Date not specified';
+  }
+
+  Future<void> toggleLike() async {
+    try {
+      final newValue = !_isLiked;
+      _isLiked = newValue;
+      notifyListeners();
+
+      await FirebaseFirestore.instance
+          .collection('event')
+          .doc(model.eventId)
+          .update({'isFavorite': newValue});
+    } on FirebaseException catch (e) {
+      _isLiked = !_isLiked;
+      notifyListeners();
+      debugPrint('Error updating favorite status: ${e.message}');
+      throw 'Failed to update favorite status';
+    }
   }
 
   void increaseTicketCount() {
-    _ticketCount++;
-    notifyListeners();
+    if (_ticketCount < 20) {
+      _ticketCount++;
+      notifyListeners();
+    }
   }
 
   void decreaseTicketCount() {
@@ -49,50 +64,41 @@ class EventDetailsViewModel with ChangeNotifier {
     }
   }
 
-  String formatDate() {
-    final eventDate = model.event['date'];
-    if (eventDate is Timestamp) {
-      return DateFormat('yyyy-MM-dd – HH:mm').format(eventDate.toDate());
-    } else if (eventDate is String) {
-      final parsedDate = DateTime.tryParse(eventDate);
-      if (parsedDate != null) {
-        return DateFormat('yyyy-MM-dd – HH:mm').format(parsedDate);
-      }
-      return eventDate;
-    } else if (eventDate is DateTime) {
-      return DateFormat('yyyy-MM-dd – HH:mm').format(eventDate);
-    }
-    return 'No date specified';
-  }
-
   Future<void> bookEvent() async {
+    if (_isBooking) return;
+    _isBooking = true;
+    notifyListeners();
+
     try {
       final bookingData = {
         'eventId': model.eventId,
         'eventName': model.name,
+        'userId': 'current_user_id',
+        'bookingDate': FieldValue.serverTimestamp(),
+        'status': 'pending',
         'tickets': _ticketCount,
         'totalPrice': totalPrice,
-        'bookingDate': FieldValue.serverTimestamp(),
-        'userId': 'current_user_id', // يجب استبدالها بمعرف المستخدم الفعلي
-        'status': 'pending',
       };
 
       await FirebaseFirestore.instance.collection('bookings').add(bookingData);
-      
-    } on FirebaseException catch (e) {
-      throw 'Booking failed: ${e.message}';
     } catch (e) {
-      throw 'An unexpected error occurred';
+      debugPrint('Booking error: $e');
+      rethrow;
+    } finally {
+      _isBooking = false;
+      notifyListeners();
     }
   }
 
   String getShareContent() {
     return '''
-🎟️ Event: ${model.name}
-📍 Location: ${model.location}
-📅 Date: ${formatDate()}
-💰 Price: ${model.price} ₪
-⭐ Rating: ${model.rating}/5
+🎟️ ${model.name}
+📍 ${model.location}
+📅 ${formatDate()} at ${model.formattedTime}
+💰 ${model.formattedPrice}
+${model.description}
+
+${model.details}
 ''';
   }
 }

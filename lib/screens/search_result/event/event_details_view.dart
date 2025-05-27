@@ -1,140 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
+import 'event_details_viewmodel.dart';
+import 'event_details_model.dart';
 
-class EventDetailsModel {
-  final String eventId;
-  final Map<String, dynamic> event;
-
-  EventDetailsModel({
-    required this.eventId,
-    required this.event,
-  });
-
-  static List<String> _convertToList(dynamic value) {
-    if (value == null) return [];
-    if (value is List) return List<String>.from(value.whereType<String>());
-    if (value is String) return value.trim().isEmpty ? [] : [value];
-    return [];
-  }
-
-  String get name => event['title']?.toString() ?? 'No Title';
-  String get location => event['subtitle']?.toString() ?? 'No Location';
-  String get description => event['description']?.toString() ?? 'No Description';
-  List<String> get images => _convertToList(event['imageUrl']);
-  double get price => (event['price'] as num?)?.toDouble() ?? 0.0;
-  double get rating => (event['rating'] as num?)?.toDouble() ?? 0.0;
-  List<String> get highlights => _convertToList(event['highlights']);
-
-  Timestamp? get date {
-    final dateValue = event['date'];
-    if (dateValue == null) return null;
-    if (dateValue is Timestamp) return dateValue;
-    if (dateValue is String) {
-      final parsedDate = DateTime.tryParse(dateValue);
-      return parsedDate != null ? Timestamp.fromDate(parsedDate) : null;
-    }
-    if (dateValue is DateTime) {
-      return Timestamp.fromDate(dateValue);
-    }
-    return null;
-  }
-
-  String get time => event['time']?.toString() ?? 'No Time';
-  bool get isFavorite => event['isFavorite'] == true;
-}
-
-class EventDetailsViewModel with ChangeNotifier {
-  final EventDetailsModel model;
-  bool _isLiked;
-  int _ticketCount = 1;
-  bool _isBooking = false;
-
-  EventDetailsViewModel({
-    required this.model,
-    bool isInitiallyLiked = false,
-  }) : _isLiked = isInitiallyLiked;
-
-  bool get isLiked => _isLiked;
-  int get ticketCount => _ticketCount;
-  bool get isBooking => _isBooking;
-  double get totalPrice => (_ticketCount * model.price).clamp(0, double.maxFinite);
-
-  bool get isEventExpired {
-    final eventDate = model.date?.toDate();
-    return eventDate != null && eventDate.isBefore(DateTime.now());
-  }
-
-  String formatDate() {
-    final eventDate = model.date?.toDate();
-    if (eventDate != null) {
-      return DateFormat('EEE, MMM d, y • hh:mm a').format(eventDate);
-    }
-    return 'Date not specified';
-  }
-
-  Future<void> toggleLike() async {
-    try {
-      final newValue = !_isLiked;
-      _isLiked = newValue;
-      notifyListeners();
-
-      await FirebaseFirestore.instance
-          .collection('upcomingEvents')
-          .doc(model.eventId)
-          .update({'isFavorite': newValue});
-    } on FirebaseException catch (e) {
-      _isLiked = !_isLiked;
-      notifyListeners();
-      debugPrint('Error updating favorite status: ${e.message}');
-      throw 'Failed to update favorite status';
-    }
-  }
-
-  void increaseTicketCount() {
-    if (_ticketCount < 20) {
-      _ticketCount++;
-      notifyListeners();
-    }
-  }
-
-  void decreaseTicketCount() {
-    if (_ticketCount > 1) {
-      _ticketCount--;
-      notifyListeners();
-    }
-  }
-
-  Future<void> bookEvent() async {
-    if (_isBooking) return;
-    _isBooking = true;
-    notifyListeners();
-
-    try {
-      await Future.delayed(const Duration(seconds: 1));
-    } catch (e) {
-      debugPrint('Booking error: $e');
-      rethrow;
-    } finally {
-      _isBooking = false;
-      notifyListeners();
-    }
-  }
-
-  String getShareContent() {
-    return '''
-🎟️ ${model.name}
-📍 ${model.location}
-📅 ${formatDate()}
-💰 ${NumberFormat.currency(symbol: '₪').format(model.price)} per ticket
-⭐ ${model.rating.toStringAsFixed(1)}/5
-
-Book now!''';
-  }
-}
 
 class EventDetailsPage extends StatefulWidget {
   final Map<String, dynamic> event;
@@ -228,15 +97,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         const SizedBox(height: 8),
                         _buildInfoRow(Icons.location_on, _viewModel.model.location),
                         _buildInfoRow(Icons.calendar_today, _viewModel.formatDate()),
-                        _buildInfoRow(Icons.access_time, _viewModel.model.time),
+                        _buildInfoRow(Icons.access_time, _viewModel.model.formattedTime),
                         const SizedBox(height: 16),
                         _buildTicketSelector(),
                         const SizedBox(height: 16),
                         _buildSection('Description', _viewModel.model.description),
+                        _buildSection('Details', _viewModel.model.details),
                         if (_viewModel.model.highlights.isNotEmpty) _buildHighlights(),
                         const SizedBox(height: 16),
-                        _buildRating(),
-                        const SizedBox(height: 24),
                         _buildBookButton(context),
                       ],
                     ),
@@ -345,7 +213,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Total: ₪${_viewModel.totalPrice.toStringAsFixed(2)}',
+              'Total: ${_viewModel.formattedTotalPrice}',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -398,20 +266,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 ],
               ),
             )),
-      ],
-    );
-  }
-
-  Widget _buildRating() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(Icons.star, color: Colors.amber, size: 28),
-        const SizedBox(width: 8),
-        Text(
-          _viewModel.model.rating.toStringAsFixed(1),
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
       ],
     );
   }
