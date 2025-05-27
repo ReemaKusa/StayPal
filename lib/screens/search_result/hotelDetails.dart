@@ -8,7 +8,7 @@ import 'package:staypal/screens/auth/views/auth_entry_view.dart';
 
 
 class HotelDetailsPage extends StatefulWidget {
-  final Map<String, dynamic> hotel;
+  final dynamic hotel;
   final String hotelId;
   final bool isInitiallyLiked;
 

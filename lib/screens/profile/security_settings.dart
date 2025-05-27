@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:staypal/screens/profile/profile.dart';
 
 class SecuritySetting extends StatelessWidget {
   const SecuritySetting({super.key});
@@ -27,7 +26,7 @@ class SecuritySetting extends StatelessWidget {
                 labelText: 'New Password',
                 labelStyle: TextStyle(color: Colors.black87),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.orange),
+                  borderSide: BorderSide(color: Colors.deepOrange),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 border: OutlineInputBorder(
@@ -42,7 +41,7 @@ class SecuritySetting extends StatelessWidget {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange[700],
+                  backgroundColor: Colors.deepOrange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -101,16 +100,13 @@ class SecuritySetting extends StatelessWidget {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Security Settings',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
         ),
         leading: IconButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyProfile()),
-            );
+            Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back),
         ),
@@ -171,3 +167,4 @@ class SecuritySetting extends StatelessWidget {
     );
   }
 }
+*/
