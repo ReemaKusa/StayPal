@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staypal/screens/auth/auth_entry_screen.dart';
 
 class HotelDetailsPage extends StatefulWidget {
-  final Map<String, dynamic> hotel;
+  final dynamic hotel;
   final String hotelId;
   final bool isInitiallyLiked;
 

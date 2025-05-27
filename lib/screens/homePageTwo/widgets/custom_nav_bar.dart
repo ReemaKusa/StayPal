@@ -1,64 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:staypal/screens/auth/auth_entry_screen.dart';
-
-// class CustomNavBar extends StatelessWidget {
-//   final int currentIndex;
-//   final GlobalKey searchKey;
-//   final Function(int)? onTap;
-
-//   const CustomNavBar({
-//     super.key,
-//     required this.currentIndex,
-//     required this.searchKey,
-//     this.onTap,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return BottomNavigationBar(
-//       type: BottomNavigationBarType.fixed,
-//       selectedItemColor: Colors.deepOrange,
-//       unselectedItemColor: Colors.grey,
-//       currentIndex: currentIndex,
-//       onTap: onTap ?? (index) => _handleTap(context, index),
-//       items: const [
-//         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-//         BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-//         BottomNavigationBarItem(
-//           icon: Icon(Icons.favorite),
-//           label: 'Wishlist',
-//         ),
-//         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-//       ],
-//     );
-//   }
-
-//   void _handleTap(BuildContext context, int index) async {
-//     if (index == 1) {
-//       Scrollable.ensureVisible(
-//         searchKey.currentContext!,
-//         duration: const Duration(milliseconds: 500),
-//         curve: Curves.easeInOut,
-//       );
-//     } else if (index == 0) {
-//       Navigator.pushNamed(context, '/home');
-//     } else if (index == 2) {
-//       Navigator.pushNamed(context, '/wishlist');
-//     } else if (index == 3) {
-//       final user = FirebaseAuth.instance.currentUser;
-//       if (user != null) {
-//         Navigator.pushNamed(context, '/profile');
-//       } else {
-//         Navigator.push(
-//           context,
-//           MaterialPageRoute(builder: (_) => const AuthEntryScreen()),
-//         );
-//       }
-//     }
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staypal/screens/auth/auth_entry_screen.dart';
@@ -96,7 +35,7 @@ class CustomNavBar extends StatelessWidget {
   }
 
   void _handleTap(BuildContext context, int index) {
-    if (index == currentIndex) return; // Already on this page
+    if (index == currentIndex) return; 
     
    switch (index) {
       case 0: // Home
@@ -109,7 +48,7 @@ class CustomNavBar extends StatelessWidget {
         
       case 1: // Search
         if (currentIndex == 0) {
-          // If already on Home, just scroll to search
+          
           if (onSearchPressed != null) {
             onSearchPressed!();
           } else if (searchKey?.currentContext != null) {
@@ -120,13 +59,12 @@ class CustomNavBar extends StatelessWidget {
             );
           }
         } else {
-          // If on another page, navigate to Home first
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/home',
             (route) => false,
           ).then((_) {
-            // After navigation completes, scroll to search
+           
             if (searchKey?.currentContext != null) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 Scrollable.ensureVisible(
