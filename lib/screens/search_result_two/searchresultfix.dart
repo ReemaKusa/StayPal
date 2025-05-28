@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../search_result/hotelDetails.dart';
-import '../search_result/eventDetails.dart';
+import '../search_result/hotel/views/hotel_details_view.dart';
+import '../search_result/hotel/viewmodels/hotel_details_viewmodel.dart';
+import '../search_result/event/views/event_details_view.dart';
+import '../search_result/event/viewmodels/event_details_viewmodel.dart';
 
 class CombinedPage extends StatefulWidget {
   const CombinedPage({super.key});
 
-//   @override
-//   State<CombinedPage> createState() => _CombinedPageState();
-// }
+  @override
+  State<CombinedPage> createState() => _CombinedPageState();
+}
 
 class _CombinedPageState extends State<CombinedPage> {
   bool showHotels = true;
@@ -19,21 +21,21 @@ class _CombinedPageState extends State<CombinedPage> {
   final Map<String, bool> _hotelLikes = {};
   final Map<String, bool> _eventLikes = {};
 
-  final CollectionReference hotelsCollection = FirebaseFirestore.instance
-      .collection('hotel');
-  final CollectionReference eventsCollection = FirebaseFirestore.instance
-      .collection('event');
-  final CollectionReference wishlistCollection = FirebaseFirestore.instance
-      .collection('wishlist_testing');
+  final CollectionReference hotelsCollection =
+      FirebaseFirestore.instance.collection('hotel');
+  final CollectionReference eventsCollection =
+      FirebaseFirestore.instance.collection('event');
+  final CollectionReference wishlistCollection =
+      FirebaseFirestore.instance.collection('wishlist_testing');
 
   String? _searchQuery;
   String? _filterBy;
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _initializeLikes();
-//   }
+  @override
+  void initState() {
+    super.initState();
+    _initializeLikes();
+  }
 
   @override
   void didChangeDependencies() {
@@ -64,34 +66,34 @@ class _CombinedPageState extends State<CombinedPage> {
         });
       }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error loading favorites')),
         );
+      }
     }
   }
 
-//   void _onItemTapped(int index) {
-//     setState(() => _selectedIndex = index);
-//     if (index == 1) {
-//       Scrollable.ensureVisible(
-//         _searchKey.currentContext!,
-//         duration: const Duration(milliseconds: 500),
-//         curve: Curves.easeInOut,
-//       );
-//     } else if (index == 0) {
-//       Navigator.pushReplacementNamed(context, '/home');
-//     } else if (index == 2) {
-//       Navigator.pushReplacementNamed(context, '/wishlist');
-//     } else if (index == 3) {
-//       Navigator.pushReplacementNamed(context, '/profile');
-//     }
-//   }
+  void _onItemTapped(int index) {
+    setState(() => _selectedIndex = index);
+    if (index == 1) {
+      Scrollable.ensureVisible(
+        _searchKey.currentContext!,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    } else if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else if (index == 2) {
+      Navigator.pushReplacementNamed(context, '/wishlist');
+    } else if (index == 3) {
+      Navigator.pushReplacementNamed(context, '/profile');
+    }
+  }
 
   String _formatEventDate(dynamic date) {
     if (date == null) return 'No Date';
-    if (date is Timestamp)
-      return DateFormat('yyyy-MM-dd').format(date.toDate());
+    if (date is Timestamp) return DateFormat('yyyy-MM-dd').format(date.toDate());
     if (date is String) return date;
     return 'Invalid Date';
   }
@@ -143,10 +145,9 @@ class _CombinedPageState extends State<CombinedPage> {
         ],
       ),
       appBar: AppBar(
-        title:
-            _searchQuery != null
-                ? Text('Results for "$_searchQuery"')
-                : const Text('Hotels & Events'),
+        title: _searchQuery != null
+            ? Text('Results for "$_searchQuery"')
+            : const Text('Hotels & Events'),
         backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -184,10 +185,9 @@ class _CombinedPageState extends State<CombinedPage> {
             ),
           ),
           Expanded(
-            child:
-                showHotels
-                    ? _buildHotelList(_searchQuery, _filterBy)
-                    : _buildEventList(_searchQuery, _filterBy),
+            child: showHotels
+                ? _buildHotelList(_searchQuery, _filterBy)
+                : _buildEventList(_searchQuery, _filterBy),
           ),
         ],
       ),
@@ -206,7 +206,7 @@ class _CombinedPageState extends State<CombinedPage> {
     );
   }
 
- Widget _buildHotelList(String? query, String? filterBy) {
+  Widget _buildHotelList(String? query, String? filterBy) {
     Query q = hotelsCollection;
     if (query != null && filterBy == 'location') {
       q = q.where('location', isEqualTo: query);
@@ -263,11 +263,11 @@ class _CombinedPageState extends State<CombinedPage> {
     );
   }
 
-//   Widget _buildEventList(String? query, String? filterBy) {
-//     Query q = eventsCollection;
-//     if (query != null && filterBy == 'location') {
-//       q = q.where('location', isEqualTo: query);
-//     }
+  Widget _buildEventList(String? query, String? filterBy) {
+    Query q = eventsCollection;
+    if (query != null && filterBy == 'location') {
+      q = q.where('location', isEqualTo: query);
+    }
 
     return StreamBuilder<QuerySnapshot>(
       stream: q.snapshots(),
@@ -344,9 +344,31 @@ class _CombinedPageState extends State<CombinedPage> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child:
-                    imageUrl.isEmpty
-                        ? Container(
+                child: imageUrl.isEmpty
+                    ? Container(
+                        width: 60,
+                        height: 60,
+                        color: Colors.grey[200],
+                        child: const Icon(
+                          Icons.image,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                      )
+                    : CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => Container(
+                          width: 60,
+                          height: 60,
+                          color: Colors.grey[200],
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) => Container(
                           width: 60,
                           height: 60,
                           color: Colors.grey[200],
@@ -355,33 +377,8 @@ class _CombinedPageState extends State<CombinedPage> {
                             size: 40,
                             color: Colors.grey,
                           ),
-                        )
-                        : CachedNetworkImage(
-                          imageUrl: imageUrl,
-                          width: 60,
-                          height: 60,
-                          fit: BoxFit.cover,
-                          placeholder:
-                              (_, __) => Container(
-                                width: 60,
-                                height: 60,
-                                color: Colors.grey[200],
-                                child: const Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
-                          errorWidget:
-                              (_, __, ___) => Container(
-                                width: 60,
-                                height: 60,
-                                color: Colors.grey[200],
-                                child: const Icon(
-                                  Icons.image,
-                                  size: 40,
-                                  color: Colors.grey,
-                                ),
-                              ),
                         ),
+                      ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -423,36 +420,4 @@ class _CombinedPageState extends State<CombinedPage> {
       ),
     );
   }
-}
-
-Widget _buildEventImage(String imageUrl) {
-  if (imageUrl.isEmpty) {
-    return Container(
-      width: 60,
-      height: 60,
-      color: Colors.grey[200],
-      child: const Icon(Icons.event, size: 40, color: Colors.grey),
-    );
-  }
-
-  return CachedNetworkImage(
-    imageUrl: imageUrl,
-    width: 60,
-    height: 60,
-    fit: BoxFit.cover,
-    placeholder:
-        (context, url) => Container(
-          width: 60,
-          height: 60,
-          color: Colors.grey[200],
-          child: const Center(child: CircularProgressIndicator()),
-        ),
-    errorWidget:
-        (context, url, error) => Container(
-          width: 60,
-          height: 60,
-          color: Colors.grey[200],
-          child: const Icon(Icons.event, size: 40, color: Colors.grey),
-        ),
-  );
 }

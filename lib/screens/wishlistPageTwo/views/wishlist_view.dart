@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:intl/intl.dart';
 import '../../search_result/hotelDetails.dart';
-import '../../search_result/eventDetails.dart';
+import '../../search_result/event/views/event_details_view.dart';
 import '../../homePageTwo/widgets/custom_nav_bar.dart';
 import '../viewmodels/wishlist_view_model.dart';
 

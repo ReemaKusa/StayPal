@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import 'event_details_model.dart';
+import '../models/event_details_model.dart';
 
 class EventDetailsViewModel with ChangeNotifier {
   final EventDetailsModel model;
