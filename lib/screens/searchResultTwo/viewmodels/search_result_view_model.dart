@@ -152,7 +152,7 @@ Future<void> _toggleEventLike(
                     context,
                     MaterialPageRoute(
                       builder:
-                          (_) => HotelDetailsView(
+                          (_) => HotelDetailsPage(
                             hotel: data,
                             hotelId: id,
                             isInitiallyLiked: isLiked,

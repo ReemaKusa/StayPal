@@ -250,7 +250,7 @@ class HomePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => HotelDetailsView(
+                      builder: (_) => HotelDetailsPage(
                         hotel: hotel,
                         hotelId: hotel.id,
                         isInitiallyLiked: hotel.isFavorite,
@@ -294,7 +294,7 @@ class HomePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => HotelDetailsView(
+                          builder: (_) => HotelDetailsPage(
                             hotel: item,
                             hotelId: item.id,
                             isInitiallyLiked: item.isFavorite,
