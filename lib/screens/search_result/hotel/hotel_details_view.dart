@@ -1,326 +1,314 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'hotel_details_viewmodel.dart';
 
-class HotelDetailsView extends StatefulWidget {
-  final HotelDetailsViewModel viewModel;
+class HotelDetailsPage extends StatefulWidget {
+  final dynamic hotel;
+  final String hotelId;
+  final bool isInitiallyLiked;
 
-  const HotelDetailsView({super.key, required this.viewModel});
+  const HotelDetailsPage({
+    Key? key,
+    required this.hotel,
+    required this.hotelId,
+    this.isInitiallyLiked = false,
+  }) : super(key: key);
 
   @override
-  State<HotelDetailsView> createState() => _HotelDetailsViewState();
+  _HotelDetailsPageState createState() => _HotelDetailsPageState();
 }
 
-class _HotelDetailsViewState extends State<HotelDetailsView> {
-  late HotelDetailsViewModel _viewModel;
+class _HotelDetailsPageState extends State<HotelDetailsPage> {
+  late Map<String, dynamic> _hotel;
+  late bool _isLiked;
+  bool _isLoading = false;
+  bool _isBooking = false;
+  int _ticketCount = 1;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = widget.viewModel;
+    _hotel = widget.hotel;
+    _isLiked = widget.isInitiallyLiked;
   }
 
-  void _onItemTapped(BuildContext context, int index) {
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else if (index == 2) {
-      Navigator.pushReplacementNamed(context, '/wishlist');
-    } else if (index == 3) {
-      Navigator.pushReplacementNamed(context, '/profile');
-    }
+  String get _name => _hotel['name'] ?? 'No Name';
+  String get _location => _hotel['location'] ?? 'Unknown Location';
+  String get _price => '${_hotel['price'] ?? 'N/A'} ₪ per night';
+  String get _description => _hotel['description'] ?? 'No description available';
+  String get _details => _hotel['details'] ?? 'No details available';
+  double get _rating => (_hotel['rating'] ?? 0).toDouble();
+  List<dynamic> get _images => _hotel['images'] ?? [];
+  List<dynamic> get _facilities => _hotel['facilities'] ?? [];
+
+  String get _shareMessage {
+    return 'Check out this hotel: $_name located at $_location. Price: $_price';
   }
 
-  void _shareOptions() {
-    final message = _viewModel.getShareMessage();
-
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(20),
-        child: Wrap(
-          spacing: 10,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.ios_share, color: Colors.black),
-              title: const Text('Share via system'),
-              onTap: () {
-                Share.share(message);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green),
-              title: const Text('WhatsApp'),
-              onTap: () {
-                final uri = Uri.parse("https://wa.me/?text=${Uri.encodeComponent(message)}");
-                _launchUrl(uri);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const FaIcon(FontAwesomeIcons.facebook, color: Colors.blue),
-              title: const Text('Facebook'),
-              onTap: () {
-                final uri = Uri.parse("https://www.facebook.com/sharer/sharer.php?u=${Uri.encodeComponent(message)}");
-                _launchUrl(uri);
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _launchUrl(Uri uri) async {
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+  Future<void> _toggleLike() async {
+    setState(() => _isLoading = true);
+    try {
+      await FirebaseFirestore.instance
+          .collection('hotel')
+          .doc(widget.hotelId)
+          .update({'isFavorite': !_isLiked});
+      setState(() => _isLiked = !_isLiked);
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Could not launch link")),
+        SnackBar(content: Text('Failed to update favorite: ${e.toString()}')),
       );
     }
+    setState(() => _isLoading = false);
+  }
+
+  Future<void> _shareHotel() async {
+    try {
+      await Share.share(_shareMessage);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to share: ${e.toString()}')),
+      );
+    }
+  }
+
+  Future<void> _bookHotel() async {
+    setState(() => _isBooking = true);
+    try {
+      // Implement your booking logic here
+      await Future.delayed(const Duration(seconds: 2)); // Simulate booking
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Booking successful!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+    setState(() => _isBooking = false);
+  }
+
+  void _increaseTicketCount() {
+    setState(() => _ticketCount++);
+  }
+
+  void _decreaseTicketCount() {
+    if (_ticketCount > 1) {
+      setState(() => _ticketCount--);
+    }
+  }
+
+  String get _formattedTotalPrice {
+    final price = (_hotel['price'] ?? 0).toDouble();
+    return '${(price * _ticketCount).toStringAsFixed(2)} ₪';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_viewModel.model.name),
+        title: Text(_name),
         backgroundColor: Colors.deepOrange,
         actions: [
           IconButton(
-            icon: const Icon(Icons.ios_share, color: Colors.white),
-            onPressed: _shareOptions,
+            icon: const Icon(Icons.share, color: Colors.white),
+            onPressed: _shareHotel,
           ),
           IconButton(
             icon: Icon(
-              _viewModel.isLiked ? Icons.favorite : Icons.favorite_border,
-              color: _viewModel.isLiked ? Colors.red : Colors.white,
+              _isLiked ? Icons.favorite : Icons.favorite_border,
+              color: _isLiked ? Colors.red : Colors.white,
             ),
-            onPressed: () {
-              setState(() {
-                _viewModel.toggleLike();
-              });
+            onPressed: _toggleLike,
+          ),
+        ],
+      ),
+      body: _isLoading || _isBooking
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildImageSlider(),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _name,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDetailRow(Icons.location_on, _location),
+                        const SizedBox(height: 20),
+                        Text(
+                          _price,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            color: Colors.deepOrange,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildSectionTitle('Description'),
+                        _buildSectionContent(_description),
+                        const SizedBox(height: 20),
+                        _buildSectionTitle('Details'),
+                        _buildSectionContent(_details),
+                        const SizedBox(height: 20),
+                        _buildFacilities(),
+                        const SizedBox(height: 30),
+                        _buildBookButton(context),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+    );
+  }
+
+  Widget _buildImageSlider() {
+    return SizedBox(
+      height: 250,
+      child: _images.isEmpty
+          ? Container(
+              color: Colors.grey[200],
+              child: const Center(
+                child: Icon(Icons.hotel, size: 60, color: Colors.grey),
+              ),
+            )
+          : PageView.builder(
+              itemCount: _images.length,
+              itemBuilder: (context, index) {
+                return CachedNetworkImage(
+                  imageUrl: _images[index].toString(),
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[200],
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey[200],
+                    child: const Icon(Icons.error_outline, color: Colors.red),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 24, color: Colors.deepOrange),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionContent(String content) {
+    return Text(
+      content,
+      style: const TextStyle(fontSize: 16, height: 1.6),
+    );
+  }
+
+  Widget _buildFacilities() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Facilities'),
+        const SizedBox(height: 8),
+        ..._facilities.map((facility) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      facility.toString(),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+      ],
+    );
+  }
+
+  Widget _buildBookButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: SizedBox(
+        width: double.infinity,
+        height: 56,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.deepOrange,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 3,
+          ),
+          onPressed: () async {
+            setState(() => _isBooking = true);
+            try {
+              await _bookHotel();
+            } catch (e) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(_viewModel.isLiked ? 'Added to favorites' : 'Removed from favorites'),
+                  content: Text('Error: ${e.toString()}'),
+                  backgroundColor: Colors.red,
                 ),
               );
-            },
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.deepOrange,
-        unselectedItemColor: Colors.grey,
-        currentIndex: 0,
-        onTap: (index) => _onItemTapped(context, index),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Wishlist'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildDetailImage(),
-                const SizedBox(height: 20),
-                Text(
-                  _viewModel.model.name,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.location_on, color: Colors.deepOrange),
-                    const SizedBox(width: 4),
-                    Text(_viewModel.model.location),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  '${_viewModel.model.price} ₪ per night',
-                  style: const TextStyle(
-                    fontSize: 22,
-                    color: Colors.deepOrange,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    _viewModel.model.description,
-                    style: const TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () => _showDetailsSheet(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepOrange,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text('More Details', style: TextStyle(fontSize: 18)),
-                ),
-                const SizedBox(height: 15),
-                ElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Book Hotel'),
-                        content: const Text('Confirm your booking?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Cancel'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              try {
-                                await _viewModel.bookHotel();
-                                Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Booking successful!')),
-                                );
-                              } catch (e) {
-                                Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: $e')),
-                                );
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepOrange,
-                            ),
-                            child: const Text('Confirm'),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepOrange,
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text('Book Now', style: TextStyle(fontSize: 18)),
-                ),
-              ],
+            }
+            setState(() => _isBooking = false);
+          },
+          child: const Text(
+            'Book Now',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailImage() {
-    final imageUrl = _viewModel.model.images.isNotEmpty ? _viewModel.model.images[0].toString() : '';
-    
-    if (imageUrl.isEmpty) {
-      return Container(
-        width: double.infinity,
-        height: 200,
-        color: Colors.grey[200],
-        child: const Icon(Icons.hotel, size: 100, color: Colors.grey),
-      );
-    }
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: CachedNetworkImage(
-        imageUrl: imageUrl,
-        width: double.infinity,
-        height: 200,
-        fit: BoxFit.cover,
-        placeholder: (context, url) => Container(
-          height: 200,
-          color: Colors.grey[200],
-          child: const Center(child: CircularProgressIndicator()),
-        ),
-        errorWidget: (context, url, error) => Container(
-          height: 200,
-          color: Colors.grey[200],
-          child: const Icon(Icons.hotel, size: 100, color: Colors.grey),
-        ),
-      ),
-    );
-  }
-
-  void _showDetailsSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-      ),
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.5,
-        maxChildSize: 0.8,
-        minChildSize: 0.3,
-        builder: (_, controller) => Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView(
-            controller: controller,
-            children: [
-              const Center(
-                child: Icon(Icons.star, size: 40, color: Colors.deepOrange),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                "Rating: ${_viewModel.model.rating}",
-                style: const TextStyle(fontSize: 18),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                _viewModel.model.details,
-                style: const TextStyle(fontSize: 16),
-                textAlign: TextAlign.justify,
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "Facilities:",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.left,
-              ),
-              const SizedBox(height: 10),
-              ..._viewModel.model.facilities.map<Widget>((facility) => 
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.check, color: Colors.deepOrange),
-                      const SizedBox(width: 8),
-                      Text(facility.toString()),
-                    ],
-                  ),
-                ),
-              ).toList(),
-            ],
           ),
         ),
       ),
