@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:staypal/screens/auth/logout.dart';
+import 'package:staypal/screens/auth/viewmodels/logout_viewmodel.dart';
+
 
 class LogOut {
   static void show(BuildContext context) {
@@ -39,7 +40,7 @@ class LogOut {
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(ctx).pop();
-                  signOutUser(context);
+                  LogoutViewModel().logout(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange[700],

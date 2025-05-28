@@ -1,16 +1,9 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/material.dart';
-// import 'package:intl/intl.dart';
-// import 'package:rxdart/rxdart.dart';
-// import 'package:staypal/screens/search_result/hotel/hotel_details_view.dart'; 
-// import 'package:staypal/screens/search_result/hotel/hotel_details_model.dart'; 
+// // // The Dynmaic V of the Wishlist P after the Static one was pushed
 
-// import 'package:staypal/screens/search_result/hotel/hotel_details_viewmodel.dart';
 
-// class WishListPage extends StatefulWidget {
-//   @override
-//   State<WishListPage> createState() => _WishListPageState();
-// }
+// //   @override
+// //   State<WishListPage> createState() => _WishListPageState();
+// // }
 
 // class _WishListPageState extends State<WishListPage> {
 //   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -49,7 +42,11 @@
 //           if (index == 0) {
 //             Navigator.pushNamed(context, '/home');
 //           } else if (index == 1) {
-//             Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+//             Navigator.pushNamedAndRemoveUntil(
+//               context,
+//               '/home',
+//               (route) => false,
+//             );
 //           } else if (index == 2) {
 //             Navigator.pushNamed(context, '/wishlist');
 //           }
@@ -57,7 +54,10 @@
 //         items: const [
 //           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
 //           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-//           BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Wishlist'),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.favorite),
+//             label: 'Wishlist',
+//           ),
 //           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
 //         ],
 //       ),
@@ -68,7 +68,11 @@
 //           alignment: Alignment.centerLeft,
 //           child: Text(
 //             'My Wishlist',
-//             style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.w600),
+//             style: TextStyle(
+//               color: Colors.black,
+//               fontSize: 24,
+//               fontWeight: FontWeight.w600,
+//             ),
 //           ),
 //         ),
 //         centerTitle: false,
@@ -97,9 +101,19 @@
 //         ],
 //       ),
 //       body: StreamBuilder<List<QueryDocumentSnapshot>>(
-//         stream: CombineLatestStream.combine2<QuerySnapshot, QuerySnapshot, List<QueryDocumentSnapshot>>(
-//           _firestore.collection('hotel').where('isFavorite', isEqualTo: true).snapshots(),
-//           _firestore.collection('event').where('isFavorite', isEqualTo: true).snapshots(),
+//         stream: CombineLatestStream.combine2<
+//           QuerySnapshot,
+//           QuerySnapshot,
+//           List<QueryDocumentSnapshot>
+//         >(
+//           _firestore
+//               .collection('hotel')
+//               .where('isFavorite', isEqualTo: true)
+//               .snapshots(),
+//           _firestore
+//               .collection('event')
+//               .where('isFavorite', isEqualTo: true)
+//               .snapshots(),
 //           (hotelsSnap, eventsSnap) => [...hotelsSnap.docs, ...eventsSnap.docs],
 //         ),
 //         builder: (context, snapshot) {
@@ -107,41 +121,56 @@
 //             return const Center(child: CircularProgressIndicator());
 //           }
 
-//           final docs = snapshot.data ?? [];
-//           if (docs.isEmpty) {
-//             return const Center(
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: [
-//                   Icon(Icons.favorite_border, size: 64, color: Colors.grey),
-//                   SizedBox(height: 16),
-//                   Text('Your wishlist is empty', style: TextStyle(fontSize: 18, color: Colors.grey)),
-//                   SizedBox(height: 8),
-//                   Text('Tap the heart icon to add items', style: TextStyle(fontSize: 14, color: Colors.grey)),
-//                 ],
-//               ),
-//             );
-//           }
+// //           final docs = snapshot.data ?? [];
+// //           if (docs.isEmpty) {
+// //             return const Center(
+// //               child: Column(
+// //                 mainAxisAlignment: MainAxisAlignment.center,
+// //                 children: [
+// //                   Icon(Icons.favorite_border, size: 64, color: Colors.grey),
+// //                   SizedBox(height: 16),
+// //                   Text(
+// //                     'Your wishlist is empty',
+// //                     style: TextStyle(fontSize: 18, color: Colors.grey),
+// //                   ),
+// //                   SizedBox(height: 8),
+// //                   Text(
+// //                     'Tap the heart icon to add items',
+// //                     style: TextStyle(fontSize: 14, color: Colors.grey),
+// //                   ),
+// //                 ],
+// //               ),
+// //             );
+// //           }
 
-//           return ListView(
-//             padding: const EdgeInsets.all(16),
-//             children: [
-//               const SizedBox(height: 8),
-//               ...docs.map((doc) {
-//                 final item = doc.data() as Map<String, dynamic>;
-//                 final imageUrl = _getImageUrl(item['images']);
-//                 final isHotel = doc.reference.parent.id == 'hotel';
-//                 final subtitle = _getSubtitle(item, isHotel);
+// //           return ListView(
+// //             padding: const EdgeInsets.all(16),
+// //             children: [
+// //               const SizedBox(height: 8),
+// //               ...docs.map((doc) {
+// //                 final item = doc.data() as Map<String, dynamic>;
+// //                 final imageUrl = _getImageUrl(item['images']);
+// //                 final isHotel = doc.reference.parent.id == 'hotel';
+// //                 final subtitle = _getSubtitle(item, isHotel);
 
 //                 return GestureDetector(
-//                   onTap: () => _showDetailsBottomSheet(context, item, isHotel, doc.id),
+//                   onTap: () => _showDetailsBottomSheet(
+//                     context,
+//                     item,
+//                     isHotel,
+//                     doc.id,
+//                   ),
 //                   child: Container(
 //                     margin: const EdgeInsets.only(bottom: 16),
 //                     decoration: BoxDecoration(
 //                       borderRadius: BorderRadius.circular(16),
 //                       color: Colors.white,
 //                       boxShadow: const [
-//                         BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
+//                         BoxShadow(
+//                           color: Colors.black12,
+//                           blurRadius: 6,
+//                           offset: Offset(0, 2),
+//                         ),
 //                       ],
 //                     ),
 //                     child: Row(
@@ -160,7 +189,10 @@
 //                               height: 100,
 //                               width: 100,
 //                               color: Colors.grey[200],
-//                               child: const Icon(Icons.image, color: Colors.grey),
+//                               child: const Icon(
+//                                 Icons.image,
+//                                 color: Colors.grey,
+//                               ),
 //                             ),
 //                           ),
 //                         ),
@@ -171,17 +203,31 @@
 //                             child: Column(
 //                               crossAxisAlignment: CrossAxisAlignment.start,
 //                               children: [
-//                                 Text(item['name'] ?? 'No Name',
-//                                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+//                                 Text(
+//                                   item['name'] ?? 'No Name',
+//                                   style: const TextStyle(
+//                                     fontWeight: FontWeight.bold,
+//                                     fontSize: 16,
+//                                   ),
+//                                 ),
 //                                 const SizedBox(height: 4),
-//                                 Text(subtitle,
-//                                     style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+//                                 Text(
+//                                   subtitle,
+//                                   style: TextStyle(
+//                                     color: Colors.grey[600],
+//                                     fontSize: 14,
+//                                   ),
+//                                 ),
 //                                 if (item['price'] != null)
 //                                   Padding(
 //                                     padding: const EdgeInsets.only(top: 4),
-//                                     child: Text('${item['price']?.toString() ?? 'N/A'} ₪',
-//                                         style: const TextStyle(
-//                                             fontWeight: FontWeight.bold, color: Colors.deepOrange)),
+//                                     child: Text(
+//                                       '${item['price']?.toString() ?? 'N/A'} ₪',
+//                                       style: const TextStyle(
+//                                         fontWeight: FontWeight.bold,
+//                                         color: Colors.deepOrange,
+//                                       ),
+//                                     ),
 //                                   ),
 //                               ],
 //                             ),
@@ -191,16 +237,30 @@
 //                           onSelected: (value) {
 //                             if (value == 'remove') {
 //                               doc.reference.update({'isFavorite': false});
-//                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//                                   content: Text('${item['name']} removed from wishlist')));
+//                               ScaffoldMessenger.of(context).showSnackBar(
+//                                 SnackBar(
+//                                   content: Text(
+//                                     '${item['name']} removed from wishlist',
+//                                   ),
+//                                 ),
+//                               );
 //                             } else if (value == 'share') {
 //                               ScaffoldMessenger.of(context).showSnackBar(
-//                                   SnackBar(content: Text('Sharing ${item['name']}...')));
+//                                 SnackBar(
+//                                   content: Text('Sharing ${item['name']}...'),
+//                                 ),
+//                               );
 //                             }
 //                           },
-//                           itemBuilder: (BuildContext context) => const [
-//                             PopupMenuItem(value: 'remove', child: Text('Remove')),
-//                             PopupMenuItem(value: 'share', child: Text('Share')),
+//                           itemBuilder: (BuildContext context) => [
+//                             const PopupMenuItem(
+//                               value: 'remove',
+//                               child: Text('Remove'),
+//                             ),
+//                             const PopupMenuItem(
+//                               value: 'share',
+//                               child: Text('Share'),
+//                             ),
 //                           ],
 //                           icon: const Icon(Icons.more_vert, color: Colors.grey),
 //                         ),
@@ -216,7 +276,12 @@
 //     );
 //   }
 
-//   void _showDetailsBottomSheet(BuildContext context, Map<String, dynamic> item, bool isHotel, String id) {
+//   void _showDetailsBottomSheet(
+//     BuildContext context,
+//     Map<String, dynamic> item,
+//     bool isHotel,
+//     String id,
+//   ) {
 //     final imageUrl = _getImageUrl(item['images']);
 //     final subtitle = _getSubtitle(item, isHotel);
 //     final description = item['description'] ?? 'No description available';
@@ -239,14 +304,25 @@
 //                 child: Container(
 //                   width: 40,
 //                   height: 4,
-//                   decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(4)),
+//                   decoration: BoxDecoration(
+//                     color: Colors.grey[300],
+//                     borderRadius: BorderRadius.circular(4),
+//                   ),
 //                 ),
 //               ),
 //               const SizedBox(height: 16),
-//               Text(item['name'] ?? 'No name',
-//                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+//               Text(
+//                 item['name'] ?? 'No name',
+//                 style: const TextStyle(
+//                   fontSize: 22,
+//                   fontWeight: FontWeight.bold,
+//                 ),
+//               ),
 //               const SizedBox(height: 8),
-//               Text(subtitle, style: TextStyle(color: Colors.grey[600])),
+//               Text(
+//                 subtitle,
+//                 style: TextStyle(color: Colors.grey[600]),
+//               ),
 //               const SizedBox(height: 16),
 //               ClipRRect(
 //                 borderRadius: BorderRadius.circular(12),
@@ -258,16 +334,27 @@
 //                   errorBuilder: (context, error, stackTrace) => Container(
 //                     height: 180,
 //                     color: Colors.grey[200],
-//                     child: const Center(child: Icon(Icons.image, color: Colors.grey)),
+//                     child: const Center(
+//                       child: Icon(Icons.image, color: Colors.grey),
+//                     ),
 //                   ),
 //                 ),
 //               ),
 //               const SizedBox(height: 16),
-//               Text(description, style: const TextStyle(fontSize: 16)),
+//               Text(
+//                 description,
+//                 style: const TextStyle(fontSize: 16),
+//               ),
 //               if (price != null) ...[
 //                 const SizedBox(height: 12),
-//                 Text('$price ₪',
-//                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.deepOrange)),
+//                 Text(
+//                   '$price ₪',
+//                   style: const TextStyle(
+//                     fontSize: 18,
+//                     fontWeight: FontWeight.bold,
+//                     color: Colors.deepOrange,
+//                   ),
+//                 ),
 //               ],
 //               const SizedBox(height: 24),
 //               SizedBox(
@@ -279,7 +366,7 @@
 //                       Navigator.push(
 //                         context,
 //                         MaterialPageRoute(
-//                           builder: (_) => HotelDetailsp(
+//                           builder: (_) => HotelDetailsView(
 //                             viewModel: HotelDetailsViewModel(
 //                               HotelDetailsModel(
 //                                 hotelId: id,
@@ -306,10 +393,15 @@
 //                   style: ElevatedButton.styleFrom(
 //                     backgroundColor: Colors.deepOrange,
 //                     foregroundColor: Colors.white,
-//                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(12),
+//                     ),
 //                     padding: const EdgeInsets.symmetric(vertical: 16),
 //                   ),
-//                   child: const Text("More Details", style: TextStyle(fontSize: 16)),
+//                   child: const Text(
+//                     "More Details",
+//                     style: TextStyle(fontSize: 16),
+//                   ),
 //                 ),
 //               ),
 //             ],

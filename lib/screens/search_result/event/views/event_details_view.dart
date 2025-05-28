@@ -8,7 +8,7 @@ import '../models/event_details_model.dart';
 
 
 class EventDetailsPage extends StatefulWidget {
-  final Map<String, dynamic> event;
+  final dynamic event;
   final String eventId;
   final bool isInitiallyLiked;
 

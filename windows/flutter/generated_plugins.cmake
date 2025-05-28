@@ -7,12 +7,9 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
   firebase_auth
   firebase_core
-<<<<<<< HEAD
+  firebase_storage
   share_plus
   url_launcher_windows
-=======
-  firebase_storage
->>>>>>> 3fc82eca9865983f604a62878a53ac841fadaab0
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

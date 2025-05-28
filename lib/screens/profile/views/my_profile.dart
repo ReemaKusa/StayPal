@@ -13,6 +13,7 @@ import 'package:staypal/screens/profile/views/personal_details.dart';
 import 'package:staypal/screens/profile/views/security_settings.dart';
 import 'dart:typed_data';
 
+import '../../wishlistPageTwo/views/wishlist_view.dart';
 import '../viewmodels/profile_viewmodel.dart';
 import '../models/user_model.dart';
 
