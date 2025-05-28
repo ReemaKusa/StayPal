@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
-import 'event_details_viewmodel.dart';
-import 'event_details_model.dart';
+import '../viewmodels/event_details_viewmodel.dart';
+import '../models/event_details_model.dart';
 
 
 class EventDetailsPage extends StatefulWidget {

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:intl/intl.dart';
-import '../../search_result/hotel/hotel_details_view.dart';
-import '../../search_result/event/event_details_view.dart';
+import '../../search_result/hotel/views/hotel_details_view.dart';
+import '../../search_result/event/views/event_details_view.dart';
 import '../../homePageTwo/widgets/custom_nav_bar.dart';
 import '../viewmodels/wishlist_view_model.dart';
 
