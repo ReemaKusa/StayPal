@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../search_result/eventDetails.dart';
-import '../../search_result/hotelDetails.dart';
+//import '../../search_result/eventDetails.dart';
+import '../../search_result/event/event_details_view.dart';
 import '../../homePageTwo/widgets/custom_nav_bar.dart';
 import '../viewmodels/search_result_view_model.dart';
 

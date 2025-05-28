@@ -133,7 +133,7 @@ class WishListViewModel {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => HotelDetailsPage(
+                          builder: (_) => HotelDetailsView(
                             hotel: item,
                             hotelId: id,
                             isInitiallyLiked: true,
