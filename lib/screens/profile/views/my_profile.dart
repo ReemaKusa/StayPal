@@ -7,7 +7,7 @@ import 'package:staypal/screens/profile/my_bookings_screen.dart';
 import 'package:staypal/screens/profile/payment_methods.dart';
 import 'package:staypal/screens/profile/personal_details.dart';
 import 'package:staypal/screens/profile/security_settings.dart';
-import 'package:staypal/screens/wishlistPage/wishlist_page.dart';
+import 'package:staypal/screens/wishlistPageTwo/views/wishlist_view.dart';
 import 'package:staypal/screens/profile/views/payment_methods.dart';
 import 'package:staypal/screens/profile/views/personal_details.dart';
 import 'package:staypal/screens/profile/views/security_settings.dart';
