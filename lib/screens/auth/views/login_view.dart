@@ -70,7 +70,11 @@ class _LoginViewState extends State<LoginView> {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (_) => const ForgotPasswordView()));
                     },
-                    child: const Text('Forgot Password?'),
+                    child: const Text('Forgot Password?',
+                      style: TextStyle(
+                        color: Color.fromRGBO(255, 87, 34, 1),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
