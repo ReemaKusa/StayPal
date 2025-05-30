@@ -11,12 +11,15 @@ class UserModel {
   final String country;
   final String zipCode;
   final String imageUrl;
+  final bool isActive;
+
 
   UserModel({
     required this.uid,
     required this.fullName,
     required this.email,
     required this.dob,
+    required this.isActive,
     required this.gender,
     required this.phone,
     required this.address,
@@ -34,13 +37,14 @@ class UserModel {
       email: map['email'] ?? '',
       dob: map['dob'] ?? '',
       gender: map['gender'] ?? '',
-      phone: map['phone'].toString(),
+      phone: map['phone']?.toString() ?? '',
       address: map['address'] ?? '',
       city: map['city'] ?? '',
       country: map['country'] ?? '',
-      zipCode: map['zipCode'] ?? '',
+      zipCode: map['zipCode']?.toString() ?? '',
       imageUrl: map['imageUrl'] ?? '',
       createdAt: map['createdAt']?.toDate(),
+      isActive: map['isActive'] ?? true,
     );
   }
 
