@@ -7,7 +7,6 @@ class UpcomingEventsModel {
   final String imageUrl;
   final String description;
   final bool isFavorite;
-  final String? price; 
 
   UpcomingEventsModel({
     required this.id,
@@ -16,7 +15,6 @@ class UpcomingEventsModel {
     required this.imageUrl,
     required this.description,
     required this.isFavorite,
-    this.price,
   });
 
   factory UpcomingEventsModel.fromMap(String id, Map<String, dynamic> data) {

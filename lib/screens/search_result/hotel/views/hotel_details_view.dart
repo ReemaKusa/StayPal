@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HotelDetailsPage extends StatefulWidget {
-  final dynamic hotel;
+  final  Map<String, dynamic> hotel;
   final String hotelId;
   final bool isInitiallyLiked;
 

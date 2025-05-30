@@ -9,6 +9,7 @@ import '../models/upcoming_events_model.dart';
 import '../../search_result/hotel/views/hotel_details_view.dart';
 import '../../search_result/event/views/event_details_view.dart';
 import '../widgets/custom_nav_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatelessWidget {
   final GlobalKey searchKey = GlobalKey();
@@ -98,18 +99,12 @@ class HomePage extends StatelessWidget {
           children: const [
             Text(
               "Find Events-Hotels",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 4),
             Text(
               "Palestine",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -175,9 +170,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
         minimumSize: const Size(double.infinity, 48),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: const Text('Search'),
     );
@@ -190,40 +183,44 @@ class HomePage extends StatelessWidget {
       children: [
         const Text(
           "Upcoming Events",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Column(
-          children: viewModel.upcomingEvents.map((event) {
-            return Column(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => EventDetailsPage(
-                          event: event,
-                          eventId: event.id,
-                          isInitiallyLiked: event.isFavorite,
-                        ),
+          children:
+              viewModel.upcomingEvents.map((event) {
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        final doc =
+                            await FirebaseFirestore.instance
+                                .collection('event')
+                                .doc(event.id)
+                                .get();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => EventDetailsPage(
+                                  event: doc.data() ?? {},
+                                  eventId: event.id,
+                                  isInitiallyLiked: event.isFavorite,
+                                ),
+                          ),
+                        );
+                      },
+                      child: _buildEventCard(
+                        event.title,
+                        event.subtitle,
+                        event.imageUrl,
+                        event.description,
                       ),
-                    );
-                  },
-                  child: _buildEventCard(
-                    event.title,
-                    event.subtitle,
-                    event.imageUrl,
-                    event.description,
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-            );
-          }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                );
+              }).toList(),
         ),
       ],
     );
@@ -236,37 +233,41 @@ class HomePage extends StatelessWidget {
       children: [
         const Text(
           "Hotels Popular Now",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         SizedBox(
           height: 200,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            children: viewModel.popularHotels.map((hotel) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => HotelDetailsPage(
-                        hotel: hotel,
-                        hotelId: hotel.id,
-                        isInitiallyLiked: hotel.isFavorite,
-                      ),
+            children:
+                viewModel.popularHotels.map((hotel) {
+                  return GestureDetector(
+                    onTap: () async {
+                      final doc =
+                          await FirebaseFirestore.instance
+                              .collection('hotel')
+                              .doc(hotel.id)
+                              .get();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => HotelDetailsPage(
+                                hotel: doc.data() ?? {},
+                                hotelId: hotel.id,
+                                isInitiallyLiked: hotel.isFavorite,
+                              ),
+                        ),
+                      );
+                    },
+                    child: _buildHotelCard(
+                      hotel.title,
+                      hotel.subtitle,
+                      hotel.imageUrl,
                     ),
                   );
-                },
-                child: _buildHotelCard(
-                  hotel.title,
-                  hotel.subtitle,
-                  hotel.imageUrl,
-                ),
-              );
-            }).toList(),
+                }).toList(),
           ),
         ),
       ],
@@ -274,62 +275,104 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildRecommendedItems(BuildContext context) {
-    final viewModel = Provider.of<HomeViewModel>(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Recommended for You",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Column(
-          children: viewModel.recommendedItems.map((item) {
-            return Column(
-              children: [
-                GestureDetector(
-                  onTap: () {
+  final viewModel = Provider.of<HomeViewModel>(context);
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        "Recommended for You",
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 12),
+      Column(
+        children: viewModel.recommendedItems.map((item) {
+          return Column(
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  try {
+                    // Show loading indicator
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => const Center(child: CircularProgressIndicator()),
+                    );
+
                     if (item.type == 'hotel') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => HotelDetailsPage(
-                            hotel: item,
-                            hotelId: item.id,
-                            isInitiallyLiked: item.isFavorite,
+                      // Fetch hotel details
+                      final doc = await FirebaseFirestore.instance
+                          .collection('hotel')
+                          .doc(item.id)
+                          .get();
+
+                      // Close loading dialog
+                      Navigator.of(context).pop();
+
+                      if (doc.exists) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => HotelDetailsPage(
+                              hotel: doc.data() ?? {},
+                              hotelId: item.id,
+                              isInitiallyLiked: item.isFavorite,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Hotel details not found')),
+                        );
+                      }
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => EventDetailsPage(
-                            event: item,
-                            eventId: item.id,
-                            isInitiallyLiked: item.isFavorite,
+                      // Fetch event details
+                      final doc = await FirebaseFirestore.instance
+                          .collection('event')
+                          .doc(item.id)
+                          .get();
+
+                      // Close loading dialog
+                      Navigator.of(context).pop();
+
+                      if (doc.exists) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EventDetailsPage(
+                              event: doc.data() ?? {},
+                              eventId: item.id,
+                              isInitiallyLiked: item.isFavorite,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Event details not found')),
+                        );
+                      }
                     }
-                  },
-                  child: _buildRecommendedCard(
-                    item.title,
-                    item.subtitle,
-                    item.imageUrl,
-                  ),
+                  } catch (e) {
+                    // Close loading dialog if still open
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: ${e.toString()}')),
+                    );
+                  }
+                },
+                child: _buildRecommendedCard(
+                  item.title,
+                  item.subtitle,
+                  item.imageUrl,
                 ),
-                const SizedBox(height: 16),
-              ],
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
+              ),
+              const SizedBox(height: 16),
+            ],
+          );
+        }).toList(),
+      ),
+    ],
+  );
+}
 
   Widget _buildEventCard(
     String title,
@@ -355,12 +398,13 @@ class HomePage extends StatelessWidget {
               height: 120,
               width: 120,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 120,
-                width: 120,
-                color: Colors.grey[300],
-                child: const Icon(Icons.image, color: Colors.grey),
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Container(
+                    height: 120,
+                    width: 120,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, color: Colors.grey),
+                  ),
             ),
           ),
           const SizedBox(width: 12),
@@ -391,7 +435,7 @@ class HomePage extends StatelessWidget {
               onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(255, 87, 34, 1),
-                 minimumSize: const Size(6, 30),
+                minimumSize: const Size(6, 30),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -426,12 +470,13 @@ class HomePage extends StatelessWidget {
               height: 100,
               width: 160,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 100,
-                width: 160,
-                color: Colors.grey[300],
-                child: const Icon(Icons.image, color: Colors.grey),
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Container(
+                    height: 100,
+                    width: 160,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, color: Colors.grey),
+                  ),
             ),
           ),
           Padding(
@@ -474,12 +519,13 @@ class HomePage extends StatelessWidget {
               height: 100,
               width: 100,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 100,
-                width: 100,
-                color: Colors.grey[300],
-                child: const Icon(Icons.image, color: Colors.grey),
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Container(
+                    height: 100,
+                    width: 100,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, color: Colors.grey),
+                  ),
             ),
           ),
           const SizedBox(width: 12),
