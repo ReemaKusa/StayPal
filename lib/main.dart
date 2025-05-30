@@ -11,8 +11,10 @@ import 'package:staypal/DB/firebase_options.dart'; // Make sure this file exists
 //import 'package:staypal/screens/homePage/home_page.dart';
 import 'package:staypal/screens/profile/profile.dart';
 //import 'package:staypal/screens/first_screen/firstscreen.dart';
-import 'package:staypal/screens/admin/dynamic_admin_panel.dart';
+//import 'package:staypal/screens/admin/dynamic_admin_panel.dart';
 import 'package:staypal/screens/wishlistPageTwo/views/wishlist_view.dart';
+import 'package:staypal/screens/admin/views/admin_dashboard_view.dart';
+
 
 // import 'package:staypal/screens/auth/test_firestore_screen.dart'; // Uncomment if needed
 
@@ -39,10 +41,10 @@ class MyApp extends StatelessWidget {
       ),
 
       //home:  MyProfile(),
-       home:HomePage(),
+      home:HomePage(),
       //home:MainScreen(),
       //home:AuthEntryScreen(),
-      //home:const DynamicAdminPanel(),
+      //home: const AdminDashboard(),
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),
@@ -101,3 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+
+

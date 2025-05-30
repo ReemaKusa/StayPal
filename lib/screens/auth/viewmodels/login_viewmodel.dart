@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:staypal/screens/homePage/home_page.dart';
 import 'package:staypal/screens/homePageTwo/views/home_page.dart';
+import 'package:staypal/screens/auth/views/email_verification_view.dart';
 
 class LoginViewModel {
   final TextEditingController emailCtrl = TextEditingController();
@@ -24,9 +25,22 @@ class LoginViewModel {
     }
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email, password: password);
-      _goToHome(context);
+      final credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      final user = credential.user;
+
+      if (user != null) {
+        await user.reload();
+        if (!user.emailVerified) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const EmailVerificationView()),
+          );
+          return;
+        }
+
+        _goToHome(context);
+      }
     } on FirebaseAuthException catch (e) {
       _showMessage(context, e.message ?? 'Login failed');
     }
