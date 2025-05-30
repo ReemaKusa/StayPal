@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       ),
 
       //home:  MyProfile(),
-       home:HomePage(),
+       home:SearchResultPage(),
       //home:MainScreen(),
       //home:AuthEntryScreen(),
       //home:const DynamicAdminPanel(),

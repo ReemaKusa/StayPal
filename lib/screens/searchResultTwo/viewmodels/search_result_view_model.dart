@@ -6,19 +6,17 @@ import '../../search_result/event/views/event_details_view.dart';
 import '../../search_result/hotel/views/hotel_details_view.dart';
 import '../../search_result/hotel/viewmodels/hotel_details_viewmodel.dart';
 
-
-
 class SearchResultViewModel {
   bool showHotels = true;
   String? searchQuery;
   String? filterBy;
 
-  final CollectionReference hotelsCollection = FirebaseFirestore.instance
-      .collection('hotel');
-  final CollectionReference eventsCollection = FirebaseFirestore.instance
-      .collection('event');
-  final CollectionReference wishlistCollection = FirebaseFirestore.instance
-      .collection('wishlist_testing');
+  final CollectionReference hotelsCollection = 
+      FirebaseFirestore.instance.collection('hotel');
+  final CollectionReference eventsCollection = 
+      FirebaseFirestore.instance.collection('event');
+  final CollectionReference wishlistCollection = 
+      FirebaseFirestore.instance.collection('wishlist_testing');
 
   final Map<String, bool> _hotelLikes = {};
   final Map<String, bool> _eventLikes = {};
@@ -33,16 +31,14 @@ class SearchResultViewModel {
         if (type == 'event') _eventLikes[doc.id] = true;
       }
     } catch (_) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Error loading favorites')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error loading favorites')));
     }
   }
 
   String _formatEventDate(dynamic date) {
     if (date == null) return 'No Date';
-    if (date is Timestamp)
-      return DateFormat('yyyy-MM-dd').format(date.toDate());
+    if (date is Timestamp) return DateFormat('yyyy-MM-dd').format(date.toDate());
     if (date is String) return date;
     return 'Invalid Date';
   }
@@ -57,54 +53,43 @@ class SearchResultViewModel {
 
     try {
       final doc = await docRef.get();
-
       if (doc.exists) {
         await docRef.update({'isFavorite': !currentStatus});
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Favorite status updated!')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Favorite status updated!')));
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Hotel not found.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Hotel not found.')));
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update favorite status: $e')),
-      );
+        SnackBar(content: Text('Failed to update favorite status: $e')));
     }
   }
 
+  Future<void> _toggleEventLike(
+    BuildContext context,
+    String id,
+    Map<String, dynamic> event,
+  ) async {
+    final currentStatus = event['isFavorite'] ?? false;
+    final docRef = FirebaseFirestore.instance.collection('event').doc(id);
 
-Future<void> _toggleEventLike(
-  BuildContext context,
-  String id,
-  Map<String, dynamic> event,
-) async {
-  final currentStatus = event['isFavorite'] ?? false;
-  final docRef = FirebaseFirestore.instance.collection('event').doc(id);
-
-  try {
-    final doc = await docRef.get();
-
-    if (doc.exists) {
-      await docRef.update({'isFavorite': !currentStatus});
+    try {
+      final doc = await docRef.get();
+      if (doc.exists) {
+        await docRef.update({'isFavorite': !currentStatus});
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Favorite status updated!')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Event not found.')));
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Favorite status updated!')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Event not found.')),
-      );
+        SnackBar(content: Text('Failed to update favorite status: $e')));
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to update favorite status: $e')),
-    );
   }
-
-}
-
 
   Widget buildHotelList(BuildContext context) {
     Query q = hotelsCollection;
@@ -123,9 +108,9 @@ Future<void> _toggleEventLike(
         if (docs.isEmpty) {
           return Center(
             child: Text(
-              searchQuery == null
-                  ? 'No hotels available'
-                  : 'No hotels for "$searchQuery"',
+              searchQuery == null 
+                ? 'No hotels available' 
+                : 'No hotels for "$searchQuery"',
             ),
           );
         }
@@ -136,10 +121,9 @@ Future<void> _toggleEventLike(
             final data = doc.data() as Map<String, dynamic>;
             final id = doc.id;
             final images = data['images'] is List ? data['images'] as List : [];
-            final imageUrl =
-                (images.isNotEmpty && images[0] != null)
-                    ? images[0].toString()
-                    : '';
+            final imageUrl = (images.isNotEmpty && images[0] != null)
+                ? images[0].toString()
+                : '';
             final isLiked = data['isFavorite'] ?? false;
 
             return _listingCard(
@@ -150,18 +134,16 @@ Future<void> _toggleEventLike(
               imageUrl: imageUrl,
               isLiked: isLiked,
               onLike: () => _toggleHotelLike(context, id, data),
-              onTap:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => HotelDetailsPage(
-                            hotel: data,
-                            hotelId: id,
-                            isInitiallyLiked: isLiked,
-                          ),
-                    ),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => HotelDetailsPage(
+                    hotel: data,
+                    hotelId: id,
+                    isInitiallyLiked: isLiked,
                   ),
+                ),
+              ),
             );
           },
         );
@@ -187,8 +169,8 @@ Future<void> _toggleEventLike(
           return Center(
             child: Text(
               searchQuery == null
-                  ? 'No events available'
-                  : 'No events for "$searchQuery"',
+                ? 'No events available'
+                : 'No events for "$searchQuery"',
             ),
           );
         }
@@ -199,10 +181,9 @@ Future<void> _toggleEventLike(
             final data = doc.data() as Map<String, dynamic>;
             final id = doc.id;
             final images = data['images'] is List ? data['images'] as List : [];
-            final imageUrl =
-                (images.isNotEmpty && images[0] != null)
-                    ? images[0].toString()
-                    : '';
+            final imageUrl = (images.isNotEmpty && images[0] != null)
+                ? images[0].toString()
+                : '';
             final date = _formatEventDate(data['date']);
             final isLiked = data['isFavorite'] ?? false;
 
@@ -214,18 +195,16 @@ Future<void> _toggleEventLike(
               imageUrl: imageUrl,
               isLiked: isLiked,
               onLike: () => _toggleEventLike(context, id, data),
-              onTap:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => EventDetailsPage(
-                            event: data,
-                            eventId: id,
-                            isInitiallyLiked: isLiked,
-                          ),
-                    ),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => EventDetailsPage(
+                    event: data,
+                    eventId: id,
+                    isInitiallyLiked: isLiked,
                   ),
+                ),
+              ),
             );
           },
         );
@@ -245,93 +224,94 @@ Future<void> _toggleEventLike(
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Card(
+      child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Colors.grey.shade300),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.white,
+          boxShadow: const [
+            BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
+          ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child:
-                    imageUrl.isEmpty
-                        ? Container(
-                          width: 60,
-                          height: 60,
-                          color: Colors.grey[200],
-                          child: const Icon(
-                            Icons.image,
-                            size: 40,
-                            color: Colors.grey,
-                          ),
-                        )
-                        : CachedNetworkImage(
-                          imageUrl: imageUrl,
-                          width: 60,
-                          height: 60,
-                          fit: BoxFit.cover,
-                          placeholder:
-                              (_, __) => Container(
-                                width: 60,
-                                height: 60,
-                                color: Colors.grey[200],
-                                child: const Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
-                          errorWidget:
-                              (_, __, ___) => Container(
-                                width: 60,
-                                height: 60,
-                                color: Colors.grey[200],
-                                child: const Icon(
-                                  Icons.image,
-                                  size: 40,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                bottomLeft: Radius.circular(16),
               ),
-              const SizedBox(width: 12),
-              Expanded(
+              child: imageUrl.isEmpty
+                  ? Container(
+                      height: 100,
+                      width: 100,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.image, color: Colors.grey),
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      height: 100,
+                      width: 100,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => Container(
+                        height: 100,
+                        width: 100,
+                        color: Colors.grey[300],
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      errorWidget: (_, __, ___) => Container(
+                        height: 100,
+                        width: 100,
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.image, color: Colors.grey),
+                      ),
+                    ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            isLiked ? Icons.favorite : Icons.favorite_border,
-                            color: isLiked ? Colors.red : Colors.grey,
-                          ),
-                          onPressed: onLike,
-                        ),
-                      ],
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                     const SizedBox(height: 4),
-                    Text(subtitle),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(color: Colors.grey, fontSize: 14),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       '$price ₪',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.orange,
+                        fontSize: 16,
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: IconButton(
+                icon: Icon(
+                  isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: isLiked ? Colors.red : Colors.grey,
+                  size: 28,
+                ),
+                onPressed: onLike,
+              ),
+            ),
+          ],
         ),
       ),
     );

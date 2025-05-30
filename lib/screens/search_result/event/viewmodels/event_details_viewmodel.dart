@@ -17,6 +17,12 @@ class EventDetailsViewModel with ChangeNotifier {
   bool get isLiked => _isLiked;
   int get ticketCount => _ticketCount;
   bool get isBooking => _isBooking;
+
+  set isBooking(bool value) {
+    _isBooking = value;
+    notifyListeners();
+  }
+
   double get totalPrice => (_ticketCount * model.price).clamp(0, double.maxFinite);
   String get formattedTotalPrice => '${totalPrice.toStringAsFixed(2)} ₪';
 
@@ -66,14 +72,13 @@ class EventDetailsViewModel with ChangeNotifier {
 
   Future<void> bookEvent() async {
     if (_isBooking) return;
-    _isBooking = true;
-    notifyListeners();
+    isBooking = true;
 
     try {
       final bookingData = {
         'eventId': model.eventId,
         'eventName': model.name,
-        'userId': 'current_user_id',
+        'userId': 'current_user_id',  // استبدل بمعرف المستخدم الحقيقي
         'bookingDate': FieldValue.serverTimestamp(),
         'status': 'pending',
         'tickets': _ticketCount,
@@ -85,8 +90,7 @@ class EventDetailsViewModel with ChangeNotifier {
       debugPrint('Booking error: $e');
       rethrow;
     } finally {
-      _isBooking = false;
-      notifyListeners();
+      isBooking = false;
     }
   }
 

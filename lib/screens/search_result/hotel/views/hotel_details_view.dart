@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HotelDetailsPage extends StatefulWidget {
   final dynamic hotel;
@@ -26,7 +24,6 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
   late bool _isLiked;
   bool _isLoading = false;
   bool _isBooking = false;
-  int _ticketCount = 1;
 
   @override
   void initState() {
@@ -40,7 +37,6 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
   String get _price => '${_hotel['price'] ?? 'N/A'} ₪ per night';
   String get _description => _hotel['description'] ?? 'No description available';
   String get _details => _hotel['details'] ?? 'No details available';
-  double get _rating => (_hotel['rating'] ?? 0).toDouble();
   List<dynamic> get _images => _hotel['images'] ?? [];
   List<dynamic> get _facilities => _hotel['facilities'] ?? [];
 
@@ -77,8 +73,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
   Future<void> _bookHotel() async {
     setState(() => _isBooking = true);
     try {
-      // Implement your booking logic here
-      await Future.delayed(const Duration(seconds: 2)); // Simulate booking
+      await Future.delayed(const Duration(seconds: 2));
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Booking successful!'),
@@ -96,38 +91,17 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
     setState(() => _isBooking = false);
   }
 
-  void _increaseTicketCount() {
-    setState(() => _ticketCount++);
-  }
-
-  void _decreaseTicketCount() {
-    if (_ticketCount > 1) {
-      setState(() => _ticketCount--);
-    }
-  }
-
-  String get _formattedTotalPrice {
-    final price = (_hotel['price'] ?? 0).toDouble();
-    return '${(price * _ticketCount).toStringAsFixed(2)} ₪';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(_name),
         backgroundColor: Colors.deepOrange,
         actions: [
           IconButton(
-            icon: const Icon(Icons.share, color: Colors.white),
+            icon: const Icon(Icons.ios_share, color: Colors.white),
             onPressed: _shareHotel,
-          ),
-          IconButton(
-            icon: Icon(
-              _isLiked ? Icons.favorite : Icons.favorite_border,
-              color: _isLiked ? Colors.red : Colors.white,
-            ),
-            onPressed: _toggleLike,
           ),
         ],
       ),
@@ -136,38 +110,21 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildImageSlider(),
+                  _buildHotelCard(),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          _name,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        _buildDetailRow(Icons.location_on, _location),
-                        const SizedBox(height: 20),
-                        Text(
-                          _price,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            color: Colors.deepOrange,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
                         _buildSectionTitle('Description'),
                         _buildSectionContent(_description),
                         const SizedBox(height: 20),
                         _buildSectionTitle('Details'),
                         _buildSectionContent(_details),
                         const SizedBox(height: 20),
-                        _buildFacilities(),
+                        _buildSectionTitle('Facilities'),
+                        const SizedBox(height: 8),
+                        _buildFacilitiesGrid(_facilities),
                         const SizedBox(height: 30),
                         _buildBookButton(context),
                       ],
@@ -179,52 +136,123 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
     );
   }
 
-  Widget _buildImageSlider() {
-    return SizedBox(
-      height: 250,
-      child: _images.isEmpty
-          ? Container(
-              color: Colors.grey[200],
-              child: const Center(
-                child: Icon(Icons.hotel, size: 60, color: Colors.grey),
-              ),
-            )
-          : PageView.builder(
-              itemCount: _images.length,
-              itemBuilder: (context, index) {
-                return CachedNetworkImage(
-                  imageUrl: _images[index].toString(),
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey[200],
-                    child: const Center(child: CircularProgressIndicator()),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.error_outline, color: Colors.red),
-                  ),
-                );
-              },
-            ),
-    );
-  }
-
-  Widget _buildDetailRow(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildHotelCard() {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
+        ],
+      ),
+      child: Column(
         children: [
-          Icon(icon, size: 24, color: Colors.deepOrange),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 16),
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: _images.isNotEmpty
+                ? CachedNetworkImage(
+                    imageUrl: _images[0].toString(),
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      height: 200,
+                      color: Colors.grey[200],
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      height: 200,
+                      color: Colors.grey[200],
+                      child: const Icon(Icons.hotel, size: 60, color: Colors.grey),
+                    ),
+                  )
+                : Container(
+                    height: 200,
+                    color: Colors.grey[200],
+                    child: const Icon(Icons.hotel, size: 60, color: Colors.grey),
+                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _name,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.location_on, size: 16, color: Colors.deepOrange),
+                    const SizedBox(width: 4),
+                    Text(
+                      _location,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _price,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepOrange,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        _isLiked ? Icons.favorite : Icons.favorite_border,
+                        color: _isLiked ? Colors.red : Colors.grey,
+                      ),
+                      onPressed: _toggleLike,
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFacilitiesGrid(List<dynamic> facilities) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 6,
+        crossAxisSpacing: 6,
+        childAspectRatio: 4,
+      ),
+      itemCount: facilities.length,
+      itemBuilder: (context, index) {
+        final facility = facilities[index];
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: const [
+              BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
+            ],
+          ),
+          child: Text(
+            facility.toString(),
+            style: const TextStyle(fontSize: 16),
+          ),
+        );
+      },
     );
   }
 
@@ -245,32 +273,6 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
     return Text(
       content,
       style: const TextStyle(fontSize: 16, height: 1.6),
-    );
-  }
-
-  Widget _buildFacilities() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('Facilities'),
-        const SizedBox(height: 8),
-        ..._facilities.map((facility) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(Icons.check_circle, color: Colors.green, size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      facility.toString(),
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ],
-              ),
-            )),
-      ],
     );
   }
 
