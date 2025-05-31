@@ -110,7 +110,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildHotelCard(),
+                  _buildHotelHeader(),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
@@ -136,92 +136,80 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
     );
   }
 
-  Widget _buildHotelCard() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.white,
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
-        ],
-      ),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            child: _images.isNotEmpty
-                ? CachedNetworkImage(
-                    imageUrl: _images[0].toString(),
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      height: 200,
-                      color: Colors.grey[200],
-                      child: const Center(child: CircularProgressIndicator()),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      height: 200,
-                      color: Colors.grey[200],
-                      child: const Icon(Icons.hotel, size: 60, color: Colors.grey),
-                    ),
-                  )
-                : Container(
-                    height: 200,
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.hotel, size: 60, color: Colors.grey),
+  Widget _buildHotelHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _images.isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: _images[0].toString(),
+                height: 250,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  height: 250,
+                  color: Colors.grey[200],
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  height: 250,
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.hotel, size: 60, color: Colors.grey),
+                ),
+              )
+            : Container(
+                height: 250,
+                color: Colors.grey[200],
+                child: const Icon(Icons.hotel, size: 60, color: Colors.grey),
+              ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _name,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.location_on, size: 18, color: Colors.deepOrange),
+                  const SizedBox(width: 4),
+                  Text(
+                    _location,
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _name,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _price,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrange,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, size: 16, color: Colors.deepOrange),
-                    const SizedBox(width: 4),
-                    Text(
-                      _location,
-                      style: const TextStyle(color: Colors.grey),
+                  IconButton(
+                    icon: Icon(
+                      _isLiked ? Icons.favorite : Icons.favorite_border,
+                      color: _isLiked ? Colors.red : Colors.grey,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _price,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepOrange,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        _isLiked ? Icons.favorite : Icons.favorite_border,
-                        color: _isLiked ? Colors.red : Colors.grey,
-                      ),
-                      onPressed: _toggleLike,
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                    onPressed: _toggleLike,
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -233,7 +221,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
         crossAxisCount: 2,
         mainAxisSpacing: 6,
         crossAxisSpacing: 6,
-        childAspectRatio: 4,
+        childAspectRatio: 3,
       ),
       itemCount: facilities.length,
       itemBuilder: (context, index) {

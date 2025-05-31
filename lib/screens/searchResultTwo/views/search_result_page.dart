@@ -66,17 +66,21 @@ class _SearchResultPageState extends State<SearchResultPage> {
           Padding(
             key: widget._searchKey,
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _tabButton('Hotels', _viewModel.showHotels, () {
-                  setState(() => _viewModel.showHotels = true);
-                }),
-                const SizedBox(width: 12),
-                _tabButton('Events', !_viewModel.showHotels, () {
-                  setState(() => _viewModel.showHotels = false);
-                }),
-              ],
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  _tabText("Hotels", _viewModel.showHotels, () {
+                    setState(() => _viewModel.showHotels = true);
+                  }),
+                  _tabText("Events", !_viewModel.showHotels, () {
+                    setState(() => _viewModel.showHotels = false);
+                  }),
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -89,15 +93,27 @@ class _SearchResultPageState extends State<SearchResultPage> {
     );
   }
 
-  Widget _tabButton(String label, bool active, VoidCallback onTap) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: active ? Colors.orange : Colors.orange.shade200,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  Widget _tabText(String label, bool isSelected, VoidCallback onTap) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.grey[200],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.orange : Colors.black54,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
       ),
-      onPressed: onTap,
-      child: Text(label),
     );
   }
 }

@@ -49,7 +49,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9),
+      backgroundColor: const Color(0xFFF4F5F7),
       appBar: AppBar(
         title: Text(_viewModel.model.name),
         backgroundColor: Colors.deepOrange,
@@ -67,7 +67,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildEventCard(),
+                  _buildEventHeader(),
                   const SizedBox(height: 16),
                   _buildTicketCounterCard(),
                   const SizedBox(height: 16),
@@ -77,14 +77,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (_viewModel.isEventExpired) _buildExpiredWarning(),
-                        _buildSectionTitle('Description'),
-                        _buildSectionContent(_viewModel.model.description),
-                        const SizedBox(height: 24),
-                        if (_viewModel.model.details?.isNotEmpty ?? false) ...[
-                          _buildSectionTitle('Details'),
-                          _buildSectionContent(_viewModel.model.details!),
-                          const SizedBox(height: 24),
-                        ],
+                        _buildSectionCard('Description', _viewModel.model.description),
+                        if (_viewModel.model.details?.isNotEmpty ?? false)
+                          _buildSectionCard('Details', _viewModel.model.details!),
                         if (_viewModel.model.highlights.isNotEmpty)
                           _buildHighlightsSection(),
                         const SizedBox(height: 30),
@@ -99,110 +94,184 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     );
   }
 
-  Widget _buildEventCard() {
+  Widget _buildEventHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _viewModel.model.images.isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: _viewModel.model.images[0],
+                height: 220,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  height: 220,
+                  color: Colors.grey[200],
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  height: 220,
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.event, size: 60, color: Colors.grey),
+                ),
+              )
+            : Container(
+                height: 220,
+                color: Colors.grey[200],
+                child: const Icon(Icons.event, size: 60, color: Colors.grey),
+              ),
+        Padding(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _viewModel.model.name,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              _buildInfoRow(Icons.location_on, _viewModel.model.location),
+              _buildInfoRow(Icons.calendar_today, _viewModel.formatDate()),
+              _buildInfoRow(Icons.access_time, _viewModel.model.formattedTime),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _viewModel.model.formattedPrice,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrange,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      _viewModel.isLiked ? Icons.favorite : Icons.favorite_border,
+                      color: _viewModel.isLiked ? Colors.red : Colors.grey,
+                      size: 28,
+                    ),
+                    onPressed: () async {
+                      setState(() => _isLoading = true);
+                      try {
+                        await _viewModel.toggleLike();
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Failed to update favorite: ${e.toString()}')),
+                        );
+                      }
+                      setState(() => _isLoading = false);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: Colors.deepOrange),
+          const SizedBox(width: 8),
+          Flexible(child: Text(text, style: const TextStyle(color: Colors.grey))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard(String title, String content) {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
         color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: _viewModel.model.images.isNotEmpty
-                ? CachedNetworkImage(
-                    imageUrl: _viewModel.model.images[0],
-                    height: 220,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      height: 220,
-                      color: Colors.grey[200],
-                      child: const Center(child: CircularProgressIndicator()),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      height: 220,
-                      color: Colors.grey[200],
-                      child: const Icon(Icons.event, size: 60, color: Colors.grey),
-                    ),
-                  )
-                : Container(
-                    height: 220,
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.event, size: 60, color: Colors.grey),
-                  ),
+          Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Text(
+            content,
+            style: const TextStyle(fontSize: 16, height: 1.6, color: Colors.black87),
           ),
-          Padding(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _viewModel.model.name,
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, size: 18, color: Colors.deepOrange),
-                    const SizedBox(width: 6),
-                    Text(_viewModel.model.location, style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(Icons.calendar_today, size: 18, color: Colors.deepOrange),
-                    const SizedBox(width: 6),
-                    Text(_viewModel.formatDate(), style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(Icons.access_time, size: 18, color: Colors.deepOrange),
-                    const SizedBox(width: 6),
-                    Text(_viewModel.model.formattedTime, style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _viewModel.model.formattedPrice,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepOrange,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        _viewModel.isLiked ? Icons.favorite : Icons.favorite_border,
-                        color: _viewModel.isLiked ? Colors.red : Colors.grey,
-                        size: 28,
-                      ),
-                      onPressed: () async {
-                        setState(() => _isLoading = true);
-                        try {
-                          await _viewModel.toggleLike();
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Failed to update favorite: ${e.toString()}')),
-                          );
-                        }
-                        setState(() => _isLoading = false);
-                      },
-                    ),
-                  ],
-                ),
-              ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHighlightsSection() {
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Highlights', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          _buildHighlightsGrid(_viewModel.model.highlights),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHighlightsGrid(List<String> highlights) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+        childAspectRatio: 2.5,
+      ),
+      itemCount: highlights.length,
+      itemBuilder: (context, index) {
+        final highlight = highlights[index];
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: const [
+              BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 1)),
+            ],
+          ),
+          child: Text(
+            highlight,
+            style: const TextStyle(fontSize: 16),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildExpiredWarning() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.red[100],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.red),
+      ),
+      child: Row(
+        children: const [
+          Icon(Icons.warning_amber_rounded, color: Colors.red),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'This event has already ended',
+              style: TextStyle(color: Colors.red),
             ),
           ),
         ],
@@ -258,89 +327,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildExpiredWarning() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.red[100],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.red),
-      ),
-      child: Row(
-        children: const [
-          Icon(Icons.warning_amber_rounded, color: Colors.red),
-          SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'This event has already ended',
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  Widget _buildSectionContent(String content) {
-    return Text(
-      content,
-      style: const TextStyle(fontSize: 16, height: 1.6, color: Colors.black87),
-    );
-  }
-
-  Widget _buildHighlightsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('Highlights'),
-        const SizedBox(height: 8),
-        _buildHighlightsGrid(_viewModel.model.highlights),
-      ],
-    );
-  }
-
-  Widget _buildHighlightsGrid(List<String> highlights) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 6,
-        crossAxisSpacing: 6,
-        childAspectRatio: 4,
-      ),
-      itemCount: highlights.length,
-      itemBuilder: (context, index) {
-        final highlight = highlights[index];
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: const [
-              BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
-            ],
-          ),
-          child: Text(
-            highlight,
-            style: const TextStyle(fontSize: 16),
-          ),
-        );
-      },
     );
   }
 

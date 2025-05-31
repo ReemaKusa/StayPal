@@ -13,7 +13,7 @@ class EventDetailsModel {
   String get location => event['location']?.toString() ?? 'No Location';
   String get description => event['description']?.toString() ?? 'No Description';
   String get details => event['details']?.toString() ?? 'No Details';
-  
+
   List<String> get images {
     if (event['images'] is List) {
       return List<String>.from(event['images'].whereType<String>());
@@ -23,7 +23,7 @@ class EventDetailsModel {
 
   double get price => (event['price'] as num?)?.toDouble() ?? 0.0;
   String get formattedPrice => '${price.toStringAsFixed(2)} ₪';
-  
+
   List<String> get highlights {
     if (event['highlights'] is List) {
       return List<String>.from(event['highlights'].whereType<String>());
@@ -32,15 +32,15 @@ class EventDetailsModel {
   }
 
   Timestamp? get date => event['date'] is Timestamp ? event['date'] : null;
-  
+
   String get formattedTime {
-    if (event['time'] is num) {
-      final hours = (event['time'] as num).toInt();
-      final minutes = ((event['time'] as num) - hours) * 60;
-      return '${hours.toString().padLeft(2, '0')}:${minutes.toInt().toString().padLeft(2, '0')}';
+    if (event['time'] is String) {
+      return event['time'];
     }
     return 'No Time';
   }
 
   bool get isFavorite => event['isFavorite'] == true;
+
+  num get limit => event['limit'] is num ? event['limit'] as num : 0;
 }
