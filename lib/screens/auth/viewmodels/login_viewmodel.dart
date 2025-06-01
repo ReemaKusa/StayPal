@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:staypal/screens/homePageTwo/views/home_page.dart';
+import 'package:staypal/screens/homePage/views/home_page.dart';
 import 'package:staypal/screens/auth/views/email_verification_view.dart';
 
 class LoginViewModel {
