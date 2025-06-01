@@ -14,10 +14,9 @@ import 'package:staypal/screens/profile/profile.dart';
 //import 'package:staypal/screens/admin/dynamic_admin_panel.dart';
 import 'package:staypal/screens/wishlistPageTwo/views/wishlist_view.dart';
 import 'package:staypal/screens/admin/views/admin_dashboard_view.dart';
-
+//import 'package:staypal/screens/reviewSection/views/review.dart';
 
 // import 'package:staypal/screens/auth/test_firestore_screen.dart'; // Uncomment if needed
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +40,7 @@ class MyApp extends StatelessWidget {
       ),
 
       //home:  MyProfile(),
-      home:HomePage(),
+      home: HomePage(),
       //home:MainScreen(),
       //home:AuthEntryScreen(),
       //home: const AdminDashboard(),
@@ -53,7 +52,6 @@ class MyApp extends StatelessWidget {
       },
 
       // home: const TestFirestoreScreen(), // You can use this for testing
-
     );
   }
 }
@@ -103,7 +101,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-
-
-
