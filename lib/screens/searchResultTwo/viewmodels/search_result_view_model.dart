@@ -6,8 +6,6 @@ import '../../search_result/event/views/event_details_view.dart';
 import '../../search_result/hotel/views/hotel_details_view.dart';
 import '../../search_result/hotel/viewmodels/hotel_details_viewmodel.dart';
 
-
-
 class SearchResultViewModel {
   bool showHotels = true;
   String? searchQuery;
@@ -75,163 +73,327 @@ class SearchResultViewModel {
     }
   }
 
+  Future<void> _toggleEventLike(
+    BuildContext context,
+    String id,
+    Map<String, dynamic> event,
+  ) async {
+    final currentStatus = event['isFavorite'] ?? false;
+    final docRef = FirebaseFirestore.instance.collection('event').doc(id);
 
-Future<void> _toggleEventLike(
-  BuildContext context,
-  String id,
-  Map<String, dynamic> event,
-) async {
-  final currentStatus = event['isFavorite'] ?? false;
-  final docRef = FirebaseFirestore.instance.collection('event').doc(id);
+    try {
+      final doc = await docRef.get();
 
-  try {
-    final doc = await docRef.get();
-
-    if (doc.exists) {
-      await docRef.update({'isFavorite': !currentStatus});
+      if (doc.exists) {
+        await docRef.update({'isFavorite': !currentStatus});
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Favorite status updated!')));
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Event not found.')));
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Favorite status updated!')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Event not found.')),
+        SnackBar(content: Text('Failed to update favorite status: $e')),
       );
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to update favorite status: $e')),
-    );
   }
 
+Widget buildHotelList(BuildContext context) {
+  Query q = hotelsCollection;
+  
+  if (searchQuery != null) {
+    if (filterBy == 'location') {
+      q = q.where('location', isEqualTo: searchQuery.toString());
+    } else if (filterBy == 'price') {
+      final price = searchQuery is num ? searchQuery : double.tryParse(searchQuery.toString());
+      if (price != null) {
+        q = q.where('price', isLessThanOrEqualTo: price)
+             .orderBy('price', descending: true);
+      } else {
+        return Center(child: Text('Please enter a valid price number'));
+      }
+    }
+  }
+
+  return StreamBuilder<QuerySnapshot>(
+    stream: q.snapshots(),
+    builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      }
+
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (snapshot.data!.docs.isEmpty) {
+        return Center(
+          child: Text(
+            filterBy == 'price'
+              ? 'No hotels under ${searchQuery.toString()} ₪'
+              : 'No hotels in ${searchQuery.toString()}',
+          ),
+        );
+      }
+
+      return ListView.builder(
+        itemCount: snapshot.data!.docs.length,
+        itemBuilder: (context, index) {
+          final doc = snapshot.data!.docs[index];
+          final data = doc.data() as Map<String, dynamic>;
+          final id = doc.id;
+          final images = data['images'] is List ? data['images'] as List : [];
+          final imageUrl = images.isNotEmpty ? images[0].toString() : '';
+          final isLiked = data['isFavorite'] ?? false;
+
+          return _listingCard(
+            context: context,
+            title: data['name'] ?? 'No Name',
+            subtitle: data['location'] ?? 'Unknown Location',
+            price: data['price']?.toString() ?? 'N/A',
+            imageUrl: imageUrl,
+            isLiked: isLiked,
+            onLike: () => _toggleHotelLike(context, id, data),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => HotelDetailsPage(
+                  hotel: data,
+                  hotelId: id,
+                  isInitiallyLiked: isLiked,
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
 }
 
-
-  Widget buildHotelList(BuildContext context) {
-    Query q = hotelsCollection;
-    if (searchQuery != null && filterBy == 'location') {
-      q = q.where('location', isEqualTo: searchQuery);
+Widget buildEventList(BuildContext context) {
+  Query q = eventsCollection;
+  
+  if (searchQuery != null) {
+    if (filterBy == 'location') {
+      q = q.where('location', isEqualTo: searchQuery.toString());
+    } else if (filterBy == 'price') {
+      final price = searchQuery is num ? searchQuery : double.tryParse(searchQuery.toString());
+      if (price != null) {
+        q = q.where('price', isLessThanOrEqualTo: price)
+             .orderBy('price', descending: true);
+      } else {
+        return Center(child: Text('Please enter a valid price number'));
+      }
     }
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: q.snapshots(),
-      builder: (ctx, snap) {
-        if (snap.hasError) return Center(child: Text('Error: ${snap.error}'));
-        if (snap.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        final docs = snap.data!.docs;
-        if (docs.isEmpty) {
-          return Center(
-            child: Text(
-              searchQuery == null
-                  ? 'No hotels available'
-                  : 'No hotels for "$searchQuery"',
-            ),
-          );
-        }
-        return ListView.builder(
-          itemCount: docs.length,
-          itemBuilder: (c, i) {
-            final doc = docs[i];
-            final data = doc.data() as Map<String, dynamic>;
-            final id = doc.id;
-            final images = data['images'] is List ? data['images'] as List : [];
-            final imageUrl =
-                (images.isNotEmpty && images[0] != null)
-                    ? images[0].toString()
-                    : '';
-            final isLiked = data['isFavorite'] ?? false;
-
-            return _listingCard(
-              context: context,
-              title: data['name'] ?? 'No Name',
-              subtitle: data['location'] ?? 'Unknown',
-              price: data['price']?.toString() ?? 'N/A',
-              imageUrl: imageUrl,
-              isLiked: isLiked,
-              onLike: () => _toggleHotelLike(context, id, data),
-              onTap:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => HotelDetailsPage(
-                            hotel: data,
-                            hotelId: id,
-                            isInitiallyLiked: isLiked,
-                          ),
-                    ),
-                  ),
-            );
-          },
-        );
-      },
-    );
   }
 
-  Widget buildEventList(BuildContext context) {
-    Query q = eventsCollection;
-    if (searchQuery != null && filterBy == 'location') {
-      q = q.where('location', isEqualTo: searchQuery);
-    }
+  return StreamBuilder<QuerySnapshot>(
+    stream: q.snapshots(),
+    builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      }
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: q.snapshots(),
-      builder: (ctx, snap) {
-        if (snap.hasError) return Center(child: Text('Error: ${snap.error}'));
-        if (snap.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        final docs = snap.data!.docs;
-        if (docs.isEmpty) {
-          return Center(
-            child: Text(
-              searchQuery == null
-                  ? 'No events available'
-                  : 'No events for "$searchQuery"',
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (snapshot.data!.docs.isEmpty) {
+        return Center(
+          child: Text(
+            filterBy == 'price'
+              ? 'No events under ${searchQuery.toString()} ₪'
+              : 'No events in ${searchQuery.toString()}',
+          ),
+        );
+      }
+
+      return ListView.builder(
+        itemCount: snapshot.data!.docs.length,
+        itemBuilder: (context, index) {
+          final doc = snapshot.data!.docs[index];
+          final data = doc.data() as Map<String, dynamic>;
+          final id = doc.id;
+          final images = data['images'] is List ? data['images'] as List : [];
+          final imageUrl = images.isNotEmpty ? images[0].toString() : '';
+          final date = _formatEventDate(data['date']);
+          final isLiked = data['isFavorite'] ?? false;
+
+          return _listingCard(
+            context: context,
+            title: data['name'] ?? 'No Name',
+            subtitle: date,
+            price: data['price']?.toString() ?? 'N/A',
+            imageUrl: imageUrl,
+            isLiked: isLiked,
+            onLike: () => _toggleEventLike(context, id, data),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => EventDetailsPage(
+                  event: data,
+                  eventId: id,
+                  isInitiallyLiked: isLiked,
+                ),
+              ),
             ),
           );
-        }
-        return ListView.builder(
-          itemCount: docs.length,
-          itemBuilder: (c, i) {
-            final doc = docs[i];
-            final data = doc.data() as Map<String, dynamic>;
-            final id = doc.id;
-            final images = data['images'] is List ? data['images'] as List : [];
-            final imageUrl =
-                (images.isNotEmpty && images[0] != null)
-                    ? images[0].toString()
-                    : '';
-            final date = _formatEventDate(data['date']);
-            final isLiked = data['isFavorite'] ?? false;
+        },
+      );
+    },
+  );
+}
 
-            return _listingCard(
-              context: context,
-              title: data['name'] ?? 'No Name',
-              subtitle: date,
-              price: data['price']?.toString() ?? 'N/A',
-              imageUrl: imageUrl,
-              isLiked: isLiked,
-              onLike: () => _toggleEventLike(context, id, data),
-              onTap:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => EventDetailsPage(
-                            event: data,
-                            eventId: id,
-                            isInitiallyLiked: isLiked,
-                          ),
-                    ),
-                  ),
-            );
-          },
-        );
-      },
-    );
-  }
+  // Widget buildHotelList(BuildContext context) {
+  //   Query q = hotelsCollection;
+  //   if (searchQuery != null) {
+  //     if (filterBy == 'location') {
+  //       q = q.where('location', isEqualTo: searchQuery);
+  //     } else if (filterBy == 'price') {
+  //       final price = double.tryParse(searchQuery!);
+  //       if (price != null) {
+  //         // Search for hotels with price <= search value
+  //         q = q
+  //             .where('price', isLessThanOrEqualTo: price)
+  //             .orderBy('price', descending: true);
+  //       }
+  //     }
+  //   }
+
+  //   return StreamBuilder<QuerySnapshot>(
+  //     stream: q.snapshots(),
+  //     builder: (ctx, snap) {
+  //       if (snap.hasError) return Center(child: Text('Error: ${snap.error}'));
+  //       if (snap.connectionState == ConnectionState.waiting) {
+  //         return const Center(child: CircularProgressIndicator());
+  //       }
+  //       final docs = snap.data!.docs;
+  //       if (docs.isEmpty) {
+  //         return Center(
+  //           child: Text(
+  //             searchQuery == null
+  //                 ? 'No hotels available'
+  //                 : 'No hotels for "$searchQuery"',
+  //           ),
+  //         );
+  //       }
+  //       return ListView.builder(
+  //         itemCount: docs.length,
+  //         itemBuilder: (c, i) {
+  //           final doc = docs[i];
+  //           final data = doc.data() as Map<String, dynamic>;
+  //           final id = doc.id;
+  //           final images = data['images'] is List ? data['images'] as List : [];
+  //           final imageUrl =
+  //               (images.isNotEmpty && images[0] != null)
+  //                   ? images[0].toString()
+  //                   : '';
+  //           final isLiked = data['isFavorite'] ?? false;
+
+  //           return _listingCard(
+  //             context: context,
+  //             title: data['name'] ?? 'No Name',
+  //             subtitle: data['location'] ?? 'Unknown',
+  //             price: data['price']?.toString() ?? 'N/A',
+  //             imageUrl: imageUrl,
+  //             isLiked: isLiked,
+  //             onLike: () => _toggleHotelLike(context, id, data),
+  //             onTap:
+  //                 () => Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder:
+  //                         (_) => HotelDetailsPage(
+  //                           hotel: data,
+  //                           hotelId: id,
+  //                           isInitiallyLiked: isLiked,
+  //                         ),
+  //                   ),
+  //                 ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+
+  // Widget buildEventList(BuildContext context) {
+  //   Query q = eventsCollection;
+  //   if (searchQuery != null) {
+  //     if (filterBy == 'location') {
+  //       q = q.where('location', isEqualTo: searchQuery);
+  //     } else if (filterBy == 'price') {
+  //       final price = double.tryParse(searchQuery!);
+  //       if (price != null) {
+  //         // Search for events with price <= search value
+  //         q = q
+  //             .where('price', isLessThanOrEqualTo: price)
+  //             .orderBy('price', descending: true);
+  //       }
+  //     }
+  //   }
+
+  //   return StreamBuilder<QuerySnapshot>(
+  //     stream: q.snapshots(),
+  //     builder: (ctx, snap) {
+  //       if (snap.hasError) return Center(child: Text('Error: ${snap.error}'));
+  //       if (snap.connectionState == ConnectionState.waiting) {
+  //         return const Center(child: CircularProgressIndicator());
+  //       }
+  //       final docs = snap.data!.docs;
+  //       if (docs.isEmpty) {
+  //         return Center(
+  //           child: Text(
+  //             searchQuery == null
+  //                 ? 'No events available'
+  //                 : 'No events for "$searchQuery"',
+  //           ),
+  //         );
+  //       }
+  //       return ListView.builder(
+  //         itemCount: docs.length,
+  //         itemBuilder: (c, i) {
+  //           final doc = docs[i];
+  //           final data = doc.data() as Map<String, dynamic>;
+  //           final id = doc.id;
+  //           final images = data['images'] is List ? data['images'] as List : [];
+  //           final imageUrl =
+  //               (images.isNotEmpty && images[0] != null)
+  //                   ? images[0].toString()
+  //                   : '';
+  //           final date = _formatEventDate(data['date']);
+  //           final isLiked = data['isFavorite'] ?? false;
+
+  //           return _listingCard(
+  //             context: context,
+  //             title: data['name'] ?? 'No Name',
+  //             subtitle: date,
+  //             price: data['price']?.toString() ?? 'N/A',
+  //             imageUrl: imageUrl,
+  //             isLiked: isLiked,
+  //             onLike: () => _toggleEventLike(context, id, data),
+  //             onTap:
+  //                 () => Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder:
+  //                         (_) => EventDetailsPage(
+  //                           event: data,
+  //                           eventId: id,
+  //                           isInitiallyLiked: isLiked,
+  //                         ),
+  //                   ),
+  //                 ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _listingCard({
     required BuildContext context,

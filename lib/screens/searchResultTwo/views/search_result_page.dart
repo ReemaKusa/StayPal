@@ -6,6 +6,8 @@ import '../../search_result/event/views/event_details_view.dart';
 import '../../search_result/hotel/views/hotel_details_view.dart';
 import '../../homePageTwo/widgets/custom_nav_bar.dart';
 import '../viewmodels/search_result_view_model.dart';
+import 'package:provider/provider.dart'; 
+
 
 class SearchResultPage extends StatefulWidget {
   final GlobalKey _searchKey = GlobalKey();
@@ -16,27 +18,19 @@ class SearchResultPage extends StatefulWidget {
 }
 
 class _SearchResultPageState extends State<SearchResultPage> {
-  late SearchResultViewModel _viewModel;
-
-  @override
-  void initState() {
-    super.initState();
-    _viewModel = SearchResultViewModel();
-    _viewModel.initializeLikes(context);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final routeArgs = ModalRoute.of(context)?.settings.arguments;
-    if (_viewModel.searchQuery == null && routeArgs is Map<String, dynamic>) {
-      _viewModel.searchQuery = routeArgs['searchQuery'] as String?;
-      _viewModel.filterBy = routeArgs['filterBy'] as String?;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    // Get arguments from navigation
+    final args = ModalRoute.of(context)?.settings.arguments as dynamic ?; /////////////////////////////// was Map
+    final searchQuery = args?['searchQuery'];
+    final filterBy = args?['filterBy'];
+
+    // Initialize viewModel
+    final viewModel = SearchResultViewModel()
+      ..searchQuery = searchQuery
+      ..filterBy = filterBy;
+    viewModel.initializeLikes(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: CustomNavBar(
@@ -44,8 +38,8 @@ class _SearchResultPageState extends State<SearchResultPage> {
         searchKey: widget._searchKey,
       ),
       appBar: AppBar(
-        title: _viewModel.searchQuery != null
-            ? Text('Results for "${_viewModel.searchQuery}"')
+        title: viewModel.searchQuery != null
+            ? Text('Results for "${viewModel.searchQuery}"')
             : const Text('Hotels & Events'),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -69,20 +63,24 @@ class _SearchResultPageState extends State<SearchResultPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _tabButton('Hotels', _viewModel.showHotels, () {
-                  setState(() => _viewModel.showHotels = true);
-                }),
+                _tabButton(
+                  'Hotels', 
+                  viewModel.showHotels, 
+                  () => setState(() => viewModel.showHotels = true)
+                ),
                 const SizedBox(width: 12),
-                _tabButton('Events', !_viewModel.showHotels, () {
-                  setState(() => _viewModel.showHotels = false);
-                }),
+                _tabButton(
+                  'Events', 
+                  !viewModel.showHotels, 
+                  () => setState(() => viewModel.showHotels = false)
+                ),
               ],
             ),
           ),
           Expanded(
-            child: _viewModel.showHotels
-                ? _viewModel.buildHotelList(context)
-                : _viewModel.buildEventList(context),
+            child: viewModel.showHotels
+                ? viewModel.buildHotelList(context)
+                : viewModel.buildEventList(context),
           ),
         ],
       ),

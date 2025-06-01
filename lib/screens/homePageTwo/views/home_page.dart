@@ -29,10 +29,14 @@ class HomePage extends StatelessWidget {
     final query = viewModel.searchQuery.trim();
     if (query.isEmpty) return;
 
+    final isNumeric = double.tryParse(query) != null;
+    final filterBy = isNumeric ? 'price' : 'location';
+    dynamic searchValue = isNumeric ? double.parse(query) : query;
+
     Navigator.pushNamed(
       context,
       '/searchresult',
-      arguments: {'searchQuery': query, 'filterBy': 'location'},
+      arguments: {'searchQuery': searchValue, 'filterBy': filterBy},
     );
 
     viewModel.clearSearch();
@@ -275,104 +279,116 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildRecommendedItems(BuildContext context) {
-  final viewModel = Provider.of<HomeViewModel>(context);
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        "Recommended for You",
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 12),
-      Column(
-        children: viewModel.recommendedItems.map((item) {
-          return Column(
-            children: [
-              GestureDetector(
-                onTap: () async {
-                  try {
-                    // Show loading indicator
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) => const Center(child: CircularProgressIndicator()),
-                    );
+    final viewModel = Provider.of<HomeViewModel>(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Recommended for You",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        Column(
+          children:
+              viewModel.recommendedItems.map((item) {
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        try {
+                          // Show loading indicator
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder:
+                                (context) => const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                          );
 
-                    if (item.type == 'hotel') {
-                      // Fetch hotel details
-                      final doc = await FirebaseFirestore.instance
-                          .collection('hotel')
-                          .doc(item.id)
-                          .get();
+                          if (item.type == 'hotel') {
+                            // Fetch hotel details
+                            final doc =
+                                await FirebaseFirestore.instance
+                                    .collection('hotel')
+                                    .doc(item.id)
+                                    .get();
 
-                      // Close loading dialog
-                      Navigator.of(context).pop();
+                            // Close loading dialog
+                            Navigator.of(context).pop();
 
-                      if (doc.exists) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => HotelDetailsPage(
-                              hotel: doc.data() ?? {},
-                              hotelId: item.id,
-                              isInitiallyLiked: item.isFavorite,
-                            ),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Hotel details not found')),
-                        );
-                      }
-                    } else {
-                      // Fetch event details
-                      final doc = await FirebaseFirestore.instance
-                          .collection('event')
-                          .doc(item.id)
-                          .get();
+                            if (doc.exists) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (_) => HotelDetailsPage(
+                                        hotel: doc.data() ?? {},
+                                        hotelId: item.id,
+                                        isInitiallyLiked: item.isFavorite,
+                                      ),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Hotel details not found'),
+                                ),
+                              );
+                            }
+                          } else {
+                            // Fetch event details
+                            final doc =
+                                await FirebaseFirestore.instance
+                                    .collection('event')
+                                    .doc(item.id)
+                                    .get();
 
-                      // Close loading dialog
-                      Navigator.of(context).pop();
+                            // Close loading dialog
+                            Navigator.of(context).pop();
 
-                      if (doc.exists) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => EventDetailsPage(
-                              event: doc.data() ?? {},
-                              eventId: item.id,
-                              isInitiallyLiked: item.isFavorite,
-                            ),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Event details not found')),
-                        );
-                      }
-                    }
-                  } catch (e) {
-                    // Close loading dialog if still open
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: ${e.toString()}')),
-                    );
-                  }
-                },
-                child: _buildRecommendedCard(
-                  item.title,
-                  item.subtitle,
-                  item.imageUrl,
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-          );
-        }).toList(),
-      ),
-    ],
-  );
-}
+                            if (doc.exists) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (_) => EventDetailsPage(
+                                        event: doc.data() ?? {},
+                                        eventId: item.id,
+                                        isInitiallyLiked: item.isFavorite,
+                                      ),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Event details not found'),
+                                ),
+                              );
+                            }
+                          }
+                        } catch (e) {
+                          // Close loading dialog if still open
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: ${e.toString()}')),
+                          );
+                        }
+                      },
+                      child: _buildRecommendedCard(
+                        item.title,
+                        item.subtitle,
+                        item.imageUrl,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                );
+              }).toList(),
+        ),
+      ],
+    );
+  }
 
   Widget _buildEventCard(
     String title,
