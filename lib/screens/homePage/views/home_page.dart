@@ -32,13 +32,22 @@ class HomePage extends StatelessWidget {
     final isNumeric = double.tryParse(query) != null;
     final filterBy = isNumeric ? 'price' : 'location';
     dynamic searchValue = isNumeric ? double.parse(query) : query;
+    //dynamic searchValue;
+    // if (isNumeric) {
+    //   searchValue = double.parse(query);
+    // } else {
+    //   searchValue = query;
+    // }
 
     Navigator.pushNamed(
       context,
       '/searchresult',
-      arguments: {'searchQuery': searchValue, 'filterBy': filterBy},
+      arguments: {
+        'searchQuery': searchValue,
+        'filterBy': filterBy,
+        //'isNumeric': isNumeric, // Explicit type flag
+      },
     );
-
     viewModel.clearSearch();
   }
 

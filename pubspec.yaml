@@ -28,6 +28,7 @@ dependencies:
   url_launcher: ^6.2.5
   font_awesome_flutter: ^10.7.0
   flutter_rating_bar: ^4.0.0
+  
 
 
 
@@ -36,6 +37,7 @@ dev_dependencies:
     sdk: flutter
   flutter_native_splash: ^2.4.0
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
@@ -48,3 +50,8 @@ flutter_native_splash:
   android: true
   ios: true
   fullscreen: true
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/flutter_app_logo.png"

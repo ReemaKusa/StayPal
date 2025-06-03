@@ -7,13 +7,13 @@ import 'package:staypal/screens/profile/my_bookings_screen.dart';
 import 'package:staypal/screens/profile/payment_methods.dart';
 import 'package:staypal/screens/profile/personal_details.dart';
 import 'package:staypal/screens/profile/security_settings.dart';
-import 'package:staypal/screens/wishlistPageTwo/views/wishlist_view.dart';
+import 'package:staypal/screens/wishlistPage/views/wishlist_view.dart';
 import 'package:staypal/screens/profile/views/payment_methods.dart';
 import 'package:staypal/screens/profile/views/personal_details.dart';
 import 'package:staypal/screens/profile/views/security_settings.dart';
 import 'dart:typed_data';
 
-import '../../wishlistPageTwo/views/wishlist_view.dart';
+import '../../wishlistPage/views/wishlist_view.dart';
 import '../viewmodels/profile_viewmodel.dart';
 import '../models/user_model.dart';
 
