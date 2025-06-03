@@ -102,7 +102,7 @@ class SearchResultViewModel {
   }
 
 Widget buildHotelList(BuildContext context) {
- Query q = hotelsCollection;
+  Query q = hotelsCollection;
   
   if (searchQuery != null) {
     if (filterBy == 'location') {
@@ -175,7 +175,7 @@ Widget buildHotelList(BuildContext context) {
 }
 
 Widget buildEventList(BuildContext context) {
- Query q = eventsCollection;
+  Query q = eventsCollection;
   
   if (searchQuery != null) {
     if (filterBy == 'location') {
