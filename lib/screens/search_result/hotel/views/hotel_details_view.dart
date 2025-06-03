@@ -4,9 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../homePage/widgets/custom_nav_bar.dart';
 
 class HotelDetailsPage extends StatefulWidget {
-  final  Map<String, dynamic> hotel;
+  final Map<String, dynamic> hotel;
   final String hotelId;
   final bool isInitiallyLiked;
 
@@ -38,7 +39,8 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
   String get _name => _hotel['name'] ?? 'No Name';
   String get _location => _hotel['location'] ?? 'Unknown Location';
   String get _price => '${_hotel['price'] ?? 'N/A'} ₪ per night';
-  String get _description => _hotel['description'] ?? 'No description available';
+  String get _description =>
+      _hotel['description'] ?? 'No description available';
   String get _details => _hotel['details'] ?? 'No details available';
   double get _rating => (_hotel['rating'] ?? 0).toDouble();
   List<dynamic> get _images => _hotel['images'] ?? [];
@@ -131,81 +133,94 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
           ),
         ],
       ),
-      body: _isLoading || _isBooking
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildImageSlider(),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _name,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+      body:
+          _isLoading || _isBooking
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildImageSlider(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _name,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        _buildDetailRow(Icons.location_on, _location),
-                        const SizedBox(height: 20),
-                        Text(
-                          _price,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            color: Colors.deepOrange,
-                            fontWeight: FontWeight.bold,
+                          const SizedBox(height: 12),
+                          _buildDetailRow(Icons.location_on, _location),
+                          const SizedBox(height: 20),
+                          Text(
+                            _price,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              color: Colors.deepOrange,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildSectionTitle('Description'),
-                        _buildSectionContent(_description),
-                        const SizedBox(height: 20),
-                        _buildSectionTitle('Details'),
-                        _buildSectionContent(_details),
-                        const SizedBox(height: 20),
-                        _buildFacilities(),
-                        const SizedBox(height: 30),
-                        _buildBookButton(context),
-                      ],
+                          const SizedBox(height: 20),
+                          _buildSectionTitle('Description'),
+                          _buildSectionContent(_description),
+                          const SizedBox(height: 20),
+                          _buildSectionTitle('Details'),
+                          _buildSectionContent(_details),
+                          const SizedBox(height: 20),
+                          _buildFacilities(),
+                          const SizedBox(height: 30),
+                          _buildBookButton(context),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+      bottomNavigationBar: CustomNavBar(
+        currentIndex: 1, // or whatever index you want
+        searchKey: GlobalKey(),
+      ),
     );
   }
 
   Widget _buildImageSlider() {
     return SizedBox(
       height: 250,
-      child: _images.isEmpty
-          ? Container(
-              color: Colors.grey[200],
-              child: const Center(
-                child: Icon(Icons.hotel, size: 60, color: Colors.grey),
+      child:
+          _images.isEmpty
+              ? Container(
+                color: Colors.grey[200],
+                child: const Center(
+                  child: Icon(Icons.hotel, size: 60, color: Colors.grey),
+                ),
+              )
+              : PageView.builder(
+                itemCount: _images.length,
+                itemBuilder: (context, index) {
+                  return CachedNetworkImage(
+                    imageUrl: _images[index].toString(),
+                    fit: BoxFit.cover,
+                    placeholder:
+                        (context, url) => Container(
+                          color: Colors.grey[200],
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                    errorWidget:
+                        (context, url, error) => Container(
+                          color: Colors.grey[200],
+                          child: const Icon(
+                            Icons.error_outline,
+                            color: Colors.red,
+                          ),
+                        ),
+                  );
+                },
               ),
-            )
-          : PageView.builder(
-              itemCount: _images.length,
-              itemBuilder: (context, index) {
-                return CachedNetworkImage(
-                  imageUrl: _images[index].toString(),
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey[200],
-                    child: const Center(child: CircularProgressIndicator()),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.error_outline, color: Colors.red),
-                  ),
-                );
-              },
-            ),
     );
   }
 
@@ -217,12 +232,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
         children: [
           Icon(icon, size: 24, color: Colors.deepOrange),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 16))),
         ],
       ),
     );
@@ -233,19 +243,13 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
     );
   }
 
   Widget _buildSectionContent(String content) {
-    return Text(
-      content,
-      style: const TextStyle(fontSize: 16, height: 1.6),
-    );
+    return Text(content, style: const TextStyle(fontSize: 16, height: 1.6));
   }
 
   Widget _buildFacilities() {
@@ -254,22 +258,24 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
       children: [
         _buildSectionTitle('Facilities'),
         const SizedBox(height: 8),
-        ..._facilities.map((facility) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(Icons.check_circle, color: Colors.green, size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      facility.toString(),
-                      style: const TextStyle(fontSize: 16),
-                    ),
+        ..._facilities.map(
+          (facility) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    facility.toString(),
+                    style: const TextStyle(fontSize: 16),
                   ),
-                ],
-              ),
-            )),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

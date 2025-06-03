@@ -25,21 +25,33 @@ class HomePage extends StatelessWidget {
   }
 
   void _performSearch(BuildContext context) {
-    final viewModel = Provider.of<HomeViewModel>(context, listen: false);
-    final query = viewModel.searchQuery.trim();
-    if (query.isEmpty) return;
+    void _performSearch(BuildContext context) {
+      final viewModel = Provider.of<HomeViewModel>(context, listen: false);
+      final query = viewModel.searchQuery.trim();
+      if (query.isEmpty) return;
 
-    final isNumeric = double.tryParse(query) != null;
-    final filterBy = isNumeric ? 'price' : 'location';
-    dynamic searchValue = isNumeric ? double.parse(query) : query;
+      final isNumeric = double.tryParse(query) != null;
+      final filterBy = isNumeric ? 'price' : 'location';
 
-    Navigator.pushNamed(
-      context,
-      '/searchresult',
-      arguments: {'searchQuery': searchValue, 'filterBy': filterBy},
-    );
+      // CRITICAL CHANGE: Ensure numeric values stay as doubles
+      dynamic searchValue;
+      if (isNumeric) {
+        searchValue = double.parse(query);
+      } else {
+        searchValue = query;
+      }
 
-    viewModel.clearSearch();
+      Navigator.pushNamed(
+        context,
+        '/searchresult',
+        arguments: {
+          'searchQuery': searchValue,
+          'filterBy': filterBy,
+          'isNumeric': isNumeric, // Explicit type flag
+        },
+      );
+      viewModel.clearSearch();
+    }
   }
 
   @override

@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
       //home: const AdminDashboard(),
       routes: {
         '/wishlist': (context) => WishListPage(),
-        '/searchresult': (ctx) => SearchResultPage(),
+        '/searchresult': (context) => SearchResultPage(),
         '/home': (context) => HomePage(),
         '/profile': (context) => MyProfile(),
       },
