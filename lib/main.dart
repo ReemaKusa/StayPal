@@ -15,7 +15,6 @@ import 'package:staypal/screens/profile/profile.dart';
 import 'package:staypal/screens/wishlistPageTwo/views/wishlist_view.dart';
 import 'package:staypal/screens/admin/views/admin_dashboard_view.dart';
 //import 'package:staypal/screens/reviewSection/views/review.dart';
-
 // import 'package:staypal/screens/auth/test_firestore_screen.dart'; // Uncomment if needed
 
 void main() async {
