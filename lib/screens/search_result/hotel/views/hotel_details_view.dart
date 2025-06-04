@@ -5,6 +5,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../homePage/widgets/custom_nav_bar.dart';
+import '../../../reviewSection/views/review.dart';
+
 
 class HotelDetailsPage extends StatefulWidget {
   final Map<String, dynamic> hotel;
@@ -113,78 +115,131 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
     return '${(price * _ticketCount).toStringAsFixed(2)} ₪';
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_name),
-        backgroundColor: Colors.deepOrange,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.share, color: Colors.white),
-            onPressed: _shareHotel,
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(_name),
+      backgroundColor: Colors.deepOrange,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.share, color: Colors.white),
+          onPressed: _shareHotel,
+        ),
+        IconButton(
+          icon: Icon(
+            _isLiked ? Icons.favorite : Icons.favorite_border,
+            color: _isLiked ? Colors.red : Colors.white,
           ),
-          IconButton(
-            icon: Icon(
-              _isLiked ? Icons.favorite : Icons.favorite_border,
-              color: _isLiked ? Colors.red : Colors.white,
-            ),
-            onPressed: _toggleLike,
-          ),
-        ],
-      ),
-      body:
-          _isLoading || _isBooking
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildImageSlider(),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _name,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          _buildDetailRow(Icons.location_on, _location),
-                          const SizedBox(height: 20),
-                          Text(
-                            _price,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              color: Colors.deepOrange,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          _buildSectionTitle('Description'),
-                          _buildSectionContent(_description),
-                          const SizedBox(height: 20),
-                          _buildSectionTitle('Details'),
-                          _buildSectionContent(_details),
-                          const SizedBox(height: 20),
-                          _buildFacilities(),
-                          const SizedBox(height: 30),
-                          _buildBookButton(context),
-                        ],
-                      ),
-                    ),
-                  ],
+          onPressed: _toggleLike,
+        ),
+      ],
+    ),
+    body: _isLoading || _isBooking
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Column(
+              children: [
+                // Image Slider with fixed height
+                SizedBox(
+                  height: 250,
+                  child: _buildImageSlider(),
                 ),
-              ),
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: 1, // or whatever index you want
-        searchKey: GlobalKey(),
-      ),
-    );
-  }
+                
+                // Main Content Area
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Hotel title
+                      Text(
+                        _name,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      
+                      // Location
+                      _buildDetailRow(Icons.location_on, _location),
+                      const SizedBox(height: 20),
+                      
+                      // Price
+                      Text(
+                        _price,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          color: Colors.deepOrange,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      // Description
+                      _buildSectionTitle('Description'),
+                      _buildSectionContent(_description),
+                      const SizedBox(height: 20),
+                      
+                      // Details
+                      _buildSectionTitle('Details'),
+                      _buildSectionContent(_details),
+                      const SizedBox(height: 20),
+                      
+                      // Facilities
+                      _buildFacilities(),
+                      const SizedBox(height: 30),
+                      
+                      // Feedback Section - Same as events page
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Hotel Reviews',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            
+                            // Reviews list with constrained height
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxHeight: MediaQuery.of(context).size.height * 0.8,
+                              ),
+                              child: FeedbackScreen(
+                                serviceId: widget.hotelId, // Make sure you have this property
+                                serviceName: _name,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      // Book Now button
+                      _buildBookButton(context),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+    bottomNavigationBar: CustomNavBar(
+      currentIndex: 1,
+      searchKey: GlobalKey(),
+    ),
+  );
+}
 
   Widget _buildImageSlider() {
     return SizedBox(
