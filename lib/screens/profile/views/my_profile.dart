@@ -16,6 +16,7 @@ import 'dart:typed_data';
 import '../../wishlistPage/views/wishlist_view.dart';
 import '../viewmodels/profile_viewmodel.dart';
 import '../models/user_model.dart';
+import '../../homePage/widgets/custom_nav_bar.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -57,25 +58,28 @@ class _MyProfileState extends State<MyProfile> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.deepOrange,
-        unselectedItemColor: Colors.grey,
-        currentIndex: viewModel.selectedIndex,
-        onTap: (index) {
-          viewModel.onItemTapped(context, index);
-          setState(() {});
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Wishlist',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
+      bottomNavigationBar: const CustomNavBar(
+        currentIndex: 3, // Profile is active
       ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   type: BottomNavigationBarType.fixed,
+      //   selectedItemColor: Colors.deepOrange,
+      //   unselectedItemColor: Colors.grey,
+      //   currentIndex: viewModel.selectedIndex,
+      //   onTap: (index) {
+      //     viewModel.onItemTapped(context, index);
+      //     setState(() {});
+      //   },
+      //   items: const [
+      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.favorite),
+      //       label: 'Wishlist',
+      //     ),
+      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+      //   ],
+      // ),
       body:
           viewModel.isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -179,7 +183,7 @@ class _MyProfileState extends State<MyProfile> {
         color: Colors.white,
 
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 12.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.0),
           child: ListTile(
             leading: Icon(icon, color: Colors.black, size: 20),
             title: Text(title, style: const TextStyle(fontSize: 18.0)),
