@@ -6,40 +6,47 @@ import '../../search_result/event/views/event_details_view.dart';
 import '../../search_result/hotel/views/hotel_details_view.dart';
 import '../../homePage/widgets/custom_nav_bar.dart';
 import '../viewmodels/search_result_view_model.dart';
-import 'package:provider/provider.dart'; 
+import 'package:provider/provider.dart';
 
 
 class SearchResultPage extends StatefulWidget {
-  final GlobalKey _searchKey = GlobalKey();
-  SearchResultPage({super.key});
+  SearchResultPage({Key? key}) : super(key: key);
 
   @override
   State<SearchResultPage> createState() => _SearchResultPageState();
 }
 
 class _SearchResultPageState extends State<SearchResultPage> {
+  late SearchResultViewModel _viewModel;
+
+  final GlobalKey _searchKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = SearchResultViewModel();
+
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final routeArgs = ModalRoute.of(context)?.settings.arguments;
+    if (routeArgs is Map<String, dynamic>) {
+      _viewModel.searchQuery = routeArgs['searchQuery'] as String?;
+      _viewModel.filterBy = routeArgs['filterBy'] as String?;
+      _viewModel.isNumericSearch = routeArgs['isNumeric'] ?? false;
+    }
+    _viewModel.initializeLikes(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Get arguments from navigation
-    final args = ModalRoute.of(context)?.settings.arguments as dynamic ?; /////////////////////////////// was Map
-    final searchQuery = args?['searchQuery'];
-    final filterBy = args?['filterBy'];
-
-    // Initialize viewModel
-    final viewModel = SearchResultViewModel()
-      ..searchQuery = searchQuery
-      ..filterBy = filterBy;
-    viewModel.initializeLikes(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: 0,
-        searchKey: widget._searchKey,
-      ),
       appBar: AppBar(
-        title: viewModel.searchQuery != null
-            ? Text('Results for "${viewModel.searchQuery}"')
+        title: _viewModel.searchQuery != null
+            ? Text('Results for "${_viewModel.searchQuery}"')
             : const Text('Hotels & Events'),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -55,32 +62,33 @@ class _SearchResultPageState extends State<SearchResultPage> {
           ),
         ],
       ),
+      bottomNavigationBar: CustomNavBar(currentIndex: 1),
       body: Column(
         children: [
           Padding(
-            key: widget._searchKey,
+            key: _searchKey,
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _tabButton(
-                  'Hotels', 
-                  viewModel.showHotels, 
-                  () => setState(() => viewModel.showHotels = true)
+                  'Hotels',
+                  _viewModel.showHotels,
+                  () => setState(() => _viewModel.showHotels = true),
                 ),
                 const SizedBox(width: 12),
                 _tabButton(
-                  'Events', 
-                  !viewModel.showHotels, 
-                  () => setState(() => viewModel.showHotels = false)
+                  'Events',
+                  !_viewModel.showHotels,
+                  () => setState(() => _viewModel.showHotels = false),
                 ),
               ],
             ),
           ),
           Expanded(
-            child: viewModel.showHotels
-                ? viewModel.buildHotelList(context)
-                : viewModel.buildEventList(context),
+            child: _viewModel.showHotels
+                ? _viewModel.buildHotelList(context)
+                : _viewModel.buildEventList(context),
           ),
         ],
       ),
@@ -90,12 +98,17 @@ class _SearchResultPageState extends State<SearchResultPage> {
   Widget _tabButton(String label, bool active, VoidCallback onTap) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: active ? Colors.orange : Colors.orange.shade200,
+        backgroundColor: active
+            ? const Color.fromARGB(255, 255, 94, 0)
+            : Colors.orange.shade200,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       onPressed: onTap,
       child: Text(label),
     );
+
   }
+
+
 }
