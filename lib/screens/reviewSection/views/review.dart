@@ -47,6 +47,8 @@ class _FeedbackScreenState extends State<FeedbackScreen>
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               SliverAppBar(
+                automaticallyImplyLeading: false,
+
                 title: Text('${widget.serviceName} Reviews'),
                 pinned: true,
                 floating: true,

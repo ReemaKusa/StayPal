@@ -50,7 +50,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
             : const Text('Hotels & Events'),
         backgroundColor: Colors.white,
         elevation: 0,
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_none, color: Colors.black),
