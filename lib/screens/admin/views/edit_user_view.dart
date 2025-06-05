@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:staypal/screens/auth/models/user_model.dart';
+import 'package:staypal/models/user_model.dart';
 
 class EditUserView extends StatefulWidget {
   final UserModel user;

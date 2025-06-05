@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:staypal/screens/admin/services/hotel_service.dart';
-import 'package:staypal/screens/admin/models/hotel_model.dart';
+import 'package:staypal/models/hotel_model.dart';
 import 'edit_hotel_view.dart';
 
 class ListHotelsView extends StatelessWidget {
