@@ -8,7 +8,7 @@ import 'package:staypal/screens/profile/views/personal_details.dart';
 import 'package:staypal/screens/profile/views/payment_methods.dart';
 import 'package:staypal/screens/profile/views/security_settings.dart';
 import 'package:staypal/screens/profile/my_bookings_screen.dart';
-import 'package:staypal/screens/wishlistPage/wishlist_page.dart';
+import 'package:staypal/screens/wishlistPage/views/wishlist_view.dart';
 import 'package:staypal/constants/app_constants.dart';
 
 class ProfileViewModel extends ChangeNotifier {

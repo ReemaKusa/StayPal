@@ -29,16 +29,14 @@ class HomePage extends StatelessWidget {
     final query = viewModel.searchQuery.trim();
     if (query.isEmpty) return;
 
-    final isNumeric = double.tryParse(query) != null;
-    final filterBy = isNumeric ? 'price' : 'location';
-    dynamic searchValue = isNumeric ? double.parse(query) : query;
-
     Navigator.pushNamed(
       context,
       '/searchresult',
-      arguments: {'searchQuery': searchValue, 'filterBy': filterBy},
+      arguments: {
+        
+        'searchQuery': query,
+      },
     );
-
     viewModel.clearSearch();
   }
 
