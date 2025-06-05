@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staypal/screens/admin/viewmodels/hotel_manager_viewmodel.dart';
 import 'package:staypal/models/hotel_model.dart';
 import 'package:staypal/screens/admin/views/edit_hotel_view.dart';
+import 'package:staypal/screens/admin/views/add_hotel_view.dart';
+import 'package:staypal/screens/auth/viewmodels/logout_viewmodel.dart';
 
 class HotelManagerView extends StatelessWidget {
   const HotelManagerView({super.key});
@@ -13,11 +15,46 @@ class HotelManagerView extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => HotelManagerViewModel()..fetchHotelsForManager(),
       child: Scaffold(
-        appBar: AppBar(title: const Text('My Hotels')),
-        backgroundColor: Colors.white,
+        appBar: AppBar(title: const Text('Hotel Manager Panel')),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(color: Colors.deepPurple),
+                child: Text(
+                  'Hotel Manager',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.hotel),
+                title: const Text('My Hotels'),
+                onTap: () {
+                  Navigator.pop(context); // close drawer
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Logout'),
+                onTap: () {
+                  Navigator.pop(context); // close drawer
+                  LogoutViewModel().logout(context);
+                },
+              ),
+            ],
+          ),
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // TODO: Navigate to AddHotelView if needed
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AddHotelView(assignToCurrentManager: true),
+              ),
+            ).then((_) {
+              context.read<HotelManagerViewModel>().fetchHotelsForManager();
+            });
           },
           child: const Icon(Icons.add),
         ),
@@ -36,7 +73,7 @@ class HotelManagerView extends StatelessWidget {
               itemBuilder: (context, index) {
                 final hotel = viewModel.myHotels[index];
                 final currentUid = FirebaseAuth.instance.currentUser!.uid;
-                final managerId = hotel.hotel['managerId'];
+                final managerId = hotel.managerId;
 
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -49,9 +86,7 @@ class HotelManagerView extends StatelessWidget {
                         if (managerId == currentUid) {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => EditHotelView(hotel: hotel),
-                            ),
+                            MaterialPageRoute(builder: (_) => EditHotelView(hotel: hotel)),
                           ).then((_) {
                             context.read<HotelManagerViewModel>().fetchHotelsForManager();
                           });
