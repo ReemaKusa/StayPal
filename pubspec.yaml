@@ -43,7 +43,7 @@ flutter:
 
 flutter_native_splash:
   color: "#FF5722"
-  image: assets/images/hotel_icon.jpg
+  image: assets/icon/flutter_app_logo.png
   android: true
   ios: true
   fullscreen: true

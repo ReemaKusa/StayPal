@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:staypal/screens/admin/views/EventOrganizerView.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
 import 'package:staypal/screens/profile/booking_complete.dart';
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
@@ -12,6 +13,10 @@ import 'package:provider/provider.dart';
 import 'package:staypal/screens/wishlistPage/views/wishlist_view.dart';
 import 'package:staypal/screens/searchResult/views/search_result_page.dart';
 import 'package:staypal/screens/homePage/views/home_page.dart';
+import 'package:staypal/screens/admin/views/admin_dashboard_view.dart';
+import 'package:staypal/screens/admin/views/hotel_manager_view.dart';
+import 'package:staypal/screens/admin/views/EventOrganizerView.dart';
+import 'package:staypal/screens/admin/views/EventOrganizerView.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,18 +48,24 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home:  MyProfile(),
-      //home: HomePage(),
+      home: HomePage(),
       //home:MainScreen(),
-      home: MyProfile(),
+      //home: MyProfile(),
       //home:AuthEntryScreen(),
-      //home:const DynamicAdminPanel(),
+      //home: AdminDashboard(),
+      //home: HotelManagerView(),
+      //home: EventOrganizerView(),
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),
         '/home': (context) => HomePage(),
         '/profile': (context) => MyProfile(),
         '/auth': (context) => AuthEntryView(),
-         '/login': (context) => AuthEntryView(),
+        '/login': (context) => AuthEntryView(),
+        '/adminDashboard': (context) => AdminDashboard(),
+        '/hotelManagerHome': (context) => HotelManagerView(),
+        '/eventOrganizerHome': (context) => EventOrganizerView(),
+        '/userHome': (context) => HomePage(),
 
 
       },

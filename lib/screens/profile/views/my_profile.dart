@@ -21,7 +21,7 @@ class MyProfile extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppColors.white,
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white,
             title: Text(
               'My Profile',
               style: TextStyle(

@@ -25,7 +25,7 @@ class AppSpacing {
 class AppFontSizes {
   static const double title = 20.0;
   static const double subtitle = 18.0;
-  static const double body = 16.0;
+  static const double body = 12.0;
 }
 
 class AppIconSizes {
