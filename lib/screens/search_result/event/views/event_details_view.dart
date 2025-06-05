@@ -85,19 +85,16 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               : SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Image Slider with fixed height
                     SizedBox(height: 250, child: _buildImageSlider()),
 
-                    // Main Content Area
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Event status warning
+
                           if (_viewModel.isEventExpired) _buildExpiredWarning(),
 
-                          // Event title
                           Text(
                             _viewModel.model.name,
                             style: const TextStyle(
@@ -107,7 +104,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                           ),
                           const SizedBox(height: 12),
 
-                          // Event details rows
                           _buildDetailRow(
                             Icons.location_on,
                             _viewModel.model.location,
@@ -122,16 +118,13 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                           ),
                           const SizedBox(height: 20),
 
-                          // Price section
                           _buildPriceSection(),
                           const SizedBox(height: 20),
 
-                          // Description
                           _buildSectionTitle('Description'),
                           _buildSectionContent(_viewModel.model.description),
                           const SizedBox(height: 20),
 
-                          // Additional details if available
                           if (_viewModel.model.details?.isNotEmpty ??
                               false) ...[
                             _buildSectionTitle('Details'),
@@ -139,12 +132,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                             const SizedBox(height: 20),
                           ],
 
-                          // Highlights if available
                           if (_viewModel.model.highlights.isNotEmpty)
                             _buildHighlights(),
                           const SizedBox(height: 30),
 
-                          // Feedback Section - Improved layout
                           Container(
                             width: double.infinity,
                             decoration: BoxDecoration(
@@ -164,7 +155,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                 ),
                                 const SizedBox(height: 12),
 
-                                // Reviews list with constrained height
                                 ConstrainedBox(
                                   constraints: BoxConstraints(
                                     maxHeight:
@@ -181,7 +171,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                           ),
                           const SizedBox(height: 20),
 
-                          // Book Now button
                           _buildBookButton(context),
                         ],
                       ),
