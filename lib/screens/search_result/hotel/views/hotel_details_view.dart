@@ -382,9 +382,16 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
+
+import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../homePage/widgets/custom_nav_bar.dart';
+import '../../../reviewSection/views/review.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:staypal/screens/homePage/widgets/custom_nav_bar.dart';
 import 'package:staypal/screens/reviewSection/views/review.dart';
+
 
 class HotelDetailsPage extends StatefulWidget {
   final Map<String, dynamic> hotel;
@@ -511,6 +518,125 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
           ),
         ],
       ),
+
+      body:
+          _isLoading || _isBooking
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 250, child: _buildImageSlider()),
+
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _name,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+
+                          _buildDetailRow(Icons.location_on, _location),
+                          const SizedBox(height: 20),
+
+                          Text(
+                            _price,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              color: Colors.deepOrange,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          _buildSectionTitle('Description'),
+                          _buildSectionContent(_description),
+                          const SizedBox(height: 20),
+
+                          _buildSectionTitle('Details'),
+                          _buildSectionContent(_details),
+                          const SizedBox(height: 20),
+
+                          _buildFacilities(),
+                          const SizedBox(height: 30),
+
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Hotel Reviews',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxHeight:
+                                        MediaQuery.of(context).size.height *
+                                        0.8,
+                                  ),
+                                  child: FeedbackScreen(
+                                    serviceId: widget.hotelId,
+                                    serviceName: _name,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          _buildBookButton(context),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+      bottomNavigationBar: CustomNavBar(
+        currentIndex: 1,
+        searchKey: GlobalKey(),
+      ),
+    );
+  }
+
+  Widget _buildImageSlider() {
+    return SizedBox(
+      height: 250,
+      child:
+          _images.isEmpty
+              ? Container(
+                color: Colors.grey[200],
+                child: const Center(
+                  child: Icon(Icons.hotel, size: 60, color: Colors.grey),
+                ),
+              )
+              : PageView.builder(
+                itemCount: _images.length,
+                itemBuilder: (context, index) {
+                  return CachedNetworkImage(
+                    imageUrl: _images[index].toString(),
+                    fit: BoxFit.cover,
+                    placeholder:
+                        (context, url) => Container(
+                          color: Colors.grey[200],
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+
       body: _isLoading || _isBooking
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -553,6 +679,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
                         ConstrainedBox(
                           constraints: BoxConstraints(
                             maxHeight: MediaQuery.of(context).size.height * 0.8,
+
                           ),
                           child: FeedbackScreen(
                             serviceId: widget.hotelId,
