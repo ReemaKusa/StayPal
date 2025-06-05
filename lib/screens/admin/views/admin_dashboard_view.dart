@@ -25,7 +25,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('StayPal Admin Panel')),
+      appBar: AppBar(title: const Text('StayPal Admin Panel'),backgroundColor: Colors.white,),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -107,6 +107,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
         ),
       ),
       body: _buildContent(),
+      backgroundColor: Colors.white,
     );
   }
 

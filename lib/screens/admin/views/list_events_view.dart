@@ -1,4 +1,3 @@
-// File: list_events_view.dart
 import 'package:flutter/material.dart';
 import 'package:staypal/screens/admin/services/event_service.dart';
 import 'package:staypal/screens/admin/models/event_model.dart';
