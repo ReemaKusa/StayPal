@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // <== تم إضافته
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import '../models/event_details_model.dart';
 
@@ -9,20 +9,25 @@ class EventDetailsViewModel with ChangeNotifier {
   bool _isLiked;
   int _ticketCount = 1;
   bool _isBooking = false;
-  int? _ticketLimit;
-  int? _ticketsSold;
+  int _ticketLimit = 0;
+  int _ticketsSold = 0;
 
   EventDetailsViewModel({
     required this.model,
     bool isInitiallyLiked = false,
-  }) : _isLiked = isInitiallyLiked;
+  }) : _isLiked = isInitiallyLiked {
+    _ticketLimit = model.limite;
+    _ticketsSold = model.ticketsSold;
+  }
 
   bool get isLiked => _isLiked;
   int get ticketCount => _ticketCount;
   bool get isBooking => _isBooking;
-  int? get ticketLimit => _ticketLimit;
-  int? get ticketsRemaining => _ticketLimit != null ? _ticketLimit! - (_ticketsSold ?? 0) : null;
-  bool get canAddMoreTickets => ticketsRemaining == null || _ticketCount < ticketsRemaining!;
+  int get ticketLimit => _ticketLimit;
+  int get ticketsSold => _ticketsSold;
+  int get ticketsRemaining => _ticketLimit - _ticketsSold;
+  bool get canAddMoreTickets => _ticketCount <= ticketsRemaining;
+  bool get isSoldOut => ticketsRemaining <= 0;
 
   set isBooking(bool value) {
     _isBooking = value;
@@ -35,22 +40,6 @@ class EventDetailsViewModel with ChangeNotifier {
   bool get isEventExpired {
     final eventDate = model.date?.toDate();
     return eventDate != null && eventDate.isBefore(DateTime.now());
-  }
-
-  Future<void> loadTicketLimit() async {
-    try {
-      final eventDoc = await FirebaseFirestore.instance
-          .collection('events')
-          .doc(model.eventId)
-          .get();
-
-      if (eventDoc.exists) {
-        _ticketLimit = eventDoc.data()?['limite'] as int?;
-        _ticketsSold = eventDoc.data()?['ticketsSold'] as int? ?? 0;
-      }
-    } catch (e) {
-      throw Exception('Failed to load ticket limit: $e');
-    }
   }
 
   String formatDate() {
@@ -79,7 +68,7 @@ class EventDetailsViewModel with ChangeNotifier {
   }
 
   void increaseTicketCount() {
-    if (_ticketCount < 20 && canAddMoreTickets) {
+    if (canAddMoreTickets) {
       _ticketCount++;
       notifyListeners();
     }
@@ -93,38 +82,46 @@ class EventDetailsViewModel with ChangeNotifier {
   }
 
   Future<void> bookEvent() async {
-    if (ticketsRemaining != null && _ticketCount > ticketsRemaining!) {
+    if (isSoldOut) throw Exception('Event is sold out');
+    if (_ticketCount > ticketsRemaining) {
       throw Exception('Not enough tickets available');
     }
 
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      throw Exception('User not logged in');
-    }
+    if (user == null) throw Exception('User not logged in');
 
-    final batch = FirebaseFirestore.instance.batch();
-    final eventRef = FirebaseFirestore.instance.collection('events').doc(model.eventId);
-
-    batch.update(eventRef, {
-      'ticketsSold': FieldValue.increment(_ticketCount),
-    });
-
-    final userBookingRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('bookings')
-        .doc();
-
-    batch.set(userBookingRef, {
-      'eventId': model.eventId,
-      'ticketCount': _ticketCount,
-      'bookingDate': DateTime.now(),
-      'totalPrice': _ticketCount * model.price,
-    });
-
-    await batch.commit();
-    _ticketsSold = (_ticketsSold ?? 0) + _ticketCount;
+    _isBooking = true;
     notifyListeners();
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('events')
+          .doc(model.eventId)
+          .update({
+            'ticketsSold': FieldValue.increment(_ticketCount),
+          });
+
+      _ticketsSold += _ticketCount;
+      notifyListeners();
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('bookings')
+          .add({
+            'eventId': model.eventId,
+            'ticketCount': _ticketCount,
+            'bookingDate': DateTime.now(),
+            'totalPrice': _ticketCount * model.price,
+          });
+
+    } catch (e) {
+      debugPrint('Booking error: $e');
+      rethrow;
+    } finally {
+      _isBooking = false;
+      notifyListeners();
+    }
   }
 
   String getShareContent() {

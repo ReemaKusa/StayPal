@@ -58,15 +58,5 @@ class HotelDetailsViewModel with ChangeNotifier {
     }
   }
 
-  String getShareContent() {
-    return '''
-🏨 ${model.name}
-📍 ${model.location}
-💰 ${formattedPrice} per night
-⭐ ${formattedRating}
-📄 ${model.description}
-
-${model.details}
-''';
-  }
+  
 }

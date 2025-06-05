@@ -42,5 +42,6 @@ class EventDetailsModel {
 
   bool get isFavorite => event['isFavorite'] == true;
 
-  num get limit => event['limit'] is num ? event['limit'] as num : 0;
+  int get limite => (event['limite'] as num?)?.toInt() ?? 0;
+  int get ticketsSold => (event['ticketsSold'] as num?)?.toInt() ?? 0;
 }

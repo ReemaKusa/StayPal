@@ -6,6 +6,8 @@ import '../../search_result/event/views/event_details_view.dart';
 import '../../search_result/hotel/views/hotel_details_view.dart';
 import '../../homePageTwo/widgets/custom_nav_bar.dart';
 import '../viewmodels/search_result_view_model.dart';
+import 'package:staypal/screens/notification/notification_view.dart'; // ✅ import للصفحة
+import 'package:staypal/screens/notification/notification_viewmodel.dart'; // ✅ import للفيوموديل
 
 class SearchResultPage extends StatefulWidget {
   final GlobalKey _searchKey = GlobalKey();
@@ -53,11 +55,22 @@ class _SearchResultPageState extends State<SearchResultPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_none, color: Colors.black),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NotificationScreen(
+                    viewModel: NotificationViewModel(),
+                  ),
+                ),
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.ios_share, color: Colors.black),
-            onPressed: () {},
+            onPressed: () {
+              // هذا الزر يمكنك ربطه بالمشاركة لاحقاً
+            },
           ),
         ],
       ),
