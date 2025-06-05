@@ -1,8 +1,4 @@
-
 import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:intl/intl.dart';
-// import 'package:rxdart/rxdart.dart';
 import '../../search_result/hotel/views/hotel_details_view.dart';
 import '../../search_result/event/views/event_details_view.dart';
 import '../../wishlistPage/viewmodels/wishlist_view_model.dart';

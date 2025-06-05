@@ -1,5 +1,4 @@
 
-
 import 'package:flutter/material.dart';
 import '../viewmodels/search_result_view_model.dart';
 import 'tab_button.dart';
