@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staypal/screens/admin/viewmodels/hotel_manager_viewmodel.dart';
-import 'package:staypal/screens/admin/models/hotel_model.dart';
+import 'package:staypal/models/hotel_model.dart';
 import 'package:staypal/screens/admin/views/edit_hotel_view.dart';
 
 class HotelManagerView extends StatelessWidget {

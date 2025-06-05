@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:staypal/screens/admin/services/event_service.dart';
-import 'package:staypal/screens/admin/models/event_model.dart';
+import 'package:staypal/models/event_model.dart';
 import 'edit_event_view.dart';
 
 class ListEventsView extends StatelessWidget {

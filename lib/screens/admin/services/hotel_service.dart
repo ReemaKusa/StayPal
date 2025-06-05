@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:staypal/screens/admin/models/hotel_model.dart';
+import 'package:staypal/models/hotel_model.dart';
 
 class HotelService {
   final hotelRef = FirebaseFirestore.instance.collection('hotel');

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:staypal/screens/auth/models/user_model.dart';
+import 'package:staypal/models/user_model.dart';
 
 class UserService {
   final CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
