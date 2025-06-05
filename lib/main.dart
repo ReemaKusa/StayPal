@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:staypal/screens/admin/views/EventOrganizerView.dart';
+import 'package:staypal/screens/admin/viewmodels/hotel_manager_viewmodel.dart';
+import 'package:staypal/screens/admin/views/event_organizer_view.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
 import 'package:staypal/screens/profile/booking_complete.dart';
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
@@ -15,8 +16,9 @@ import 'package:staypal/screens/searchResult/views/search_result_page.dart';
 import 'package:staypal/screens/homePage/views/home_page.dart';
 import 'package:staypal/screens/admin/views/admin_dashboard_view.dart';
 import 'package:staypal/screens/admin/views/hotel_manager_view.dart';
-import 'package:staypal/screens/admin/views/EventOrganizerView.dart';
-import 'package:staypal/screens/admin/views/EventOrganizerView.dart';
+import 'package:staypal/screens/admin/views/event_organizer_view.dart';
+import 'package:staypal/screens/admin/views/event_organizer_view.dart';
+import 'package:staypal/widgets/role_landing_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +31,7 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => ProfileViewModel()..loadUserData(),
         ),
+        ChangeNotifierProvider(create: (_) => HotelManagerViewModel()),
       ],
       child: const MyApp(),
     ),
@@ -48,13 +51,15 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home:  MyProfile(),
-      home: HomePage(),
+      //home: HomePage(),
       //home:MainScreen(),
       //home: MyProfile(),
       //home:AuthEntryScreen(),
       //home: AdminDashboard(),
       //home: HotelManagerView(),
       //home: EventOrganizerView(),
+      home:RoleLandingView(),
+
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),

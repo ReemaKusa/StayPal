@@ -2,39 +2,55 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HotelModel {
   final String hotelId;
-  final Map<String, dynamic> hotel;
+  final String name;
+  final String location;
+  final String description;
+  final String details;
+  final double price;
+  final double rating;
+  final List<String> images;
+  final List<String> facilities;
+  final bool isFavorite;
+  final Timestamp? createdAt;
+  final String managerId;
 
   HotelModel({
     required this.hotelId,
-    required this.hotel,
+    required this.name,
+    required this.location,
+    required this.description,
+    required this.details,
+    required this.price,
+    required this.rating,
+    required this.images,
+    required this.facilities,
+    required this.isFavorite,
+    required this.managerId,
+    this.createdAt,
   });
 
-  String get name => hotel['name']?.toString() ?? 'No Name';
-  String get location => hotel['location']?.toString() ?? 'No Location';
-  String get description => hotel['description']?.toString() ?? 'No Description';
-  String get details => hotel['details']?.toString() ?? 'No Details';
-  double get price {
-    final raw = hotel['price'];
-    if (raw is num) return raw.toDouble();
-    if (raw is String) return double.tryParse(raw) ?? 0.0;
-    return 0.0;
-  }
-  String get formattedPrice => '${price.toStringAsFixed(2)} ₪';
-
-  double get rating => (hotel['rating'] as num?)?.toDouble() ?? 0.0;
-  String get formattedRating => rating > 0 ? '$rating ★' : 'No Rating';
-
-  List<String> get images {
-    if (hotel['images'] is List) {
-      return List<String>.from(hotel['images'].whereType<String>());
-    }
-    return [];
-  }
-
   factory HotelModel.fromDocument(DocumentSnapshot doc) {
+    final rawData = doc.data();
+    if (rawData == null || rawData is! Map<String, dynamic>) {
+      throw StateError('Invalid or missing hotel data for document ID: \${doc.id}');
+    }
+
     return HotelModel(
       hotelId: doc.id,
-      hotel: doc.data() as Map<String, dynamic>,
+      name: rawData['name'] ?? '',
+      location: rawData['location'] ?? '',
+      description: rawData['description'] ?? '',
+      details: rawData['details'] ?? '',
+      price: (rawData['price'] ?? 0).toDouble(),
+      rating: (rawData['rating'] ?? 0).toDouble(),
+      images: List<String>.from(rawData['images'] ?? []),
+      facilities: List<String>.from(rawData['facilities'] ?? []),
+      isFavorite: rawData['isFavorite'] == true,
+      createdAt: rawData['createdAt'] is Timestamp ? rawData['createdAt'] as Timestamp : null,
+      managerId: rawData['managerId'] ?? '',
     );
   }
+
+  String get formattedPrice => '${price.toStringAsFixed(2)} ₪';
+  String get formattedRating => rating > 0 ? '\$rating ★' : 'No Rating';
 }
