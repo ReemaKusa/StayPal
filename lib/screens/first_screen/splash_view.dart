@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'splash_viewmodel.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,24 +9,50 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late final SplashViewModel _viewModel;
+  late AnimationController _controller;
+  late Animation<double> _opacityAnimation;
+  late Animation<double> _scaleAnimation;
+  late Animation<Offset> _textOffsetAnimation;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = SplashViewModel();
-    _viewModel.initAnimations(this);
-    _viewModel.addListener(_onViewModelChange);
-  }
 
-  void _onViewModelChange() {
-    if (mounted) setState(() {});
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+
+    _opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+      ),
+    );
+
+    _scaleAnimation = Tween(begin: 0.7, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.2, 0.7, curve: Curves.elasticOut),
+      ),
+    );
+
+    _textOffsetAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.5),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
+      ),
+    );
+
+    _controller.forward();
   }
 
   @override
   void dispose() {
-    _viewModel.removeListener(_onViewModelChange);
-    _viewModel.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -39,10 +64,10 @@ class _SplashScreenState extends State<SplashScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SlideTransition(
-              position: _viewModel.slideAnimation,
+            ScaleTransition(
+              scale: _scaleAnimation,
               child: FadeTransition(
-                opacity: _viewModel.fadeAnimation,
+                opacity: _opacityAnimation,
                 child: ClipOval(
                   child: Container(
                     width: 120,
@@ -51,79 +76,59 @@ class _SplashScreenState extends State<SplashScreen>
                       color: Colors.deepOrange.withOpacity(0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: Image.asset(
-                      'assets/images/hotel_icon.jpg',
-                      width: 120,
-                      height: 120,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(
-                          Icons.hotel,
-                          size: 60,
-                          color: Colors.deepOrange,
-                        );
-                      },
+                    child: Icon(
+                      Icons.hotel,
+                      size: 60,
+                      color: Colors.deepOrange[700],
                     ),
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            ScaleTransition(
-              scale: _viewModel.scaleAnimation,
-              child: Column(
-                children: [
-                  ShaderMask(
-                    shaderCallback: (bounds) => LinearGradient(
-                      colors: [Colors.orange[800]!, Colors.orange[400]!],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ).createShader(bounds),
-                    child: const Text(
-                      'StayPal',
-                      style: TextStyle(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 10,
-                            color: Colors.deepOrange,
-                            offset: Offset(2, 2),
-                          )
-                        ],
-                      ),
-                    ),
+
+            const SizedBox(height: 30),
+
+            SlideTransition(
+              position: _textOffsetAnimation,
+              child: ShaderMask(
+                shaderCallback: (bounds) => LinearGradient(
+                  colors: [Colors.orange[800]!, Colors.orange[400]!],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds),
+                child: const Text(
+                  'StayPal',
+                  style: TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Finding the best hotels and events for you',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.orange[700],
-                      fontWeight: FontWeight.w600,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 5,
-                          color: Colors.orange[100]!,
-                          offset: const Offset(1, 1),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (_viewModel.model.showLoader)
-              Padding(
-                padding: const EdgeInsets.only(top: 30),
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Colors.deepOrange[700]!,
-                  ),
-                  strokeWidth: 3,
                 ),
               ),
+            ),
+
+            const SizedBox(height: 10),
+
+            SlideTransition(
+              position: _textOffsetAnimation,
+              child: Text(
+                'Your perfect stay starts here',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.orange[700],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Colors.deepOrange,
+              ),
+              strokeWidth: 3,
+            ),
           ],
         ),
       ),
