@@ -12,17 +12,9 @@ import 'package:staypal/screens/wishlistPage/views/wishlist_view.dart';
 import 'package:staypal/constants/app_constants.dart';
 
 class ProfileViewModel extends ChangeNotifier {
-  void reset() {
-    _image = null;
-    _userData = null;
-    _isLoading = true;
-    _selectedIndex = 3;
-    notifyListeners();
-  }
-
   Uint8List? _image;
   Map<String, dynamic>? _userData;
-  bool _isLoading = true;
+  bool _isLoading = false;
   int _selectedIndex = 3;
 
   Uint8List? get image => _image;
@@ -30,20 +22,36 @@ class ProfileViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   int get selectedIndex => _selectedIndex;
 
-  Future<void> loadUserData() async {
-    if (_userData != null && _userData!.isNotEmpty)
-      return; // ✅ prevent reloading
+  void reset() {
+    _image = null;
+    _userData = null;
+    _isLoading = false;
+    _selectedIndex = 3;
+    notifyListeners();
+  }
 
+  Future<void> loadUserData() async {
     _isLoading = true;
     notifyListeners();
 
     final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId == null) return;
+    if (userId == null) {
+      _userData = {};
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
 
-    final doc =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    if (doc.exists) {
-      _userData = doc.data();
+    try {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      if (doc.exists) {
+        _userData = doc.data();
+      } else {
+        _userData = {};
+      }
+    } catch (e) {
+      print('❌ Error loading user data: $e');
+      _userData = {};
     }
 
     _isLoading = false;
@@ -57,6 +65,10 @@ class ProfileViewModel extends ChangeNotifier {
       notifyListeners();
 
       final imageUrl = await uploadImageToFirebase(_image!);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'imageUrl': imageUrl});
 
       _userData = null;
       await loadUserData();
@@ -66,8 +78,7 @@ class ProfileViewModel extends ChangeNotifier {
   ImageProvider get profileImage {
     if (_image != null) {
       return MemoryImage(_image!);
-    } else if (_userData?['imageUrl'] != null &&
-        _userData!['imageUrl'].toString().isNotEmpty) {
+    } else if (_userData?['imageUrl'] != null && _userData!['imageUrl'].toString().isNotEmpty) {
       return NetworkImage(_userData!['imageUrl']);
     } else {
       return const NetworkImage(AppConstants.defaultProfileImage);

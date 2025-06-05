@@ -29,8 +29,9 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => ProfileViewModel()..loadUserData(),
-        ),
+        create: (_) => ProfileViewModel(),
+  ),
+
         ChangeNotifierProvider(create: (_) => HotelManagerViewModel()),
       ],
       child: const MyApp(),
