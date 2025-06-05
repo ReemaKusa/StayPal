@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,31 +9,35 @@ class HotelManagerViewModel extends ChangeNotifier {
   bool isLoading = true;
   String? errorMessage;
 
-  Future<void> fetchHotelsForManager() async {
-    try {
-      isLoading = true;
-      errorMessage = null;
-      notifyListeners();
+  StreamSubscription<QuerySnapshot>? _hotelSubscription;
 
-      final uid = FirebaseAuth.instance.currentUser!.uid;
+  void fetchHotelsForManager() {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
 
-      final snapshot = await FirebaseFirestore.instance
-          .collection('hotel')
-          .where('managerId', isEqualTo: uid)
-          .get();
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
 
-      myHotels = snapshot.docs.map((doc) => HotelModel.fromDocument(doc)).toList();
-    } catch (e) {
-      errorMessage = 'Failed to load hotels: $e';
-      print('❌ Error fetching hotels: $e');
-    } finally {
-      isLoading = false;
-      notifyListeners();
-    }
-  }
+    // Cancel previous subscription if any
+    _hotelSubscription?.cancel();
 
-  Future<void> refreshHotels() async {
-    await fetchHotelsForManager();
+    _hotelSubscription = FirebaseFirestore.instance
+        .collection('hotel')
+        .where('managerId', isEqualTo: uid)
+        .snapshots()
+        .listen(
+          (snapshot) {
+        myHotels = snapshot.docs.map((doc) => HotelModel.fromDocument(doc)).toList();
+        isLoading = false;
+        notifyListeners();
+      },
+      onError: (error) {
+        errorMessage = 'Failed to load hotels: $error';
+        isLoading = false;
+        notifyListeners();
+      },
+    );
   }
 
   void clearState() {
@@ -40,5 +45,11 @@ class HotelManagerViewModel extends ChangeNotifier {
     isLoading = false;
     errorMessage = null;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _hotelSubscription?.cancel();
+    super.dispose();
   }
 }

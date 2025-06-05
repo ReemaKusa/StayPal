@@ -46,15 +46,17 @@ class HotelManagerView extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (_) => const AddHotelView(assignToCurrentManager: true),
               ),
-            ).then((_) {
+            );
+            // Ensure refresh after return
+            if (context.mounted) {
               context.read<HotelManagerViewModel>().fetchHotelsForManager();
-            });
+            }
           },
           child: const Icon(Icons.add),
         ),
