@@ -1,9 +1,8 @@
 
-
 import 'package:flutter/material.dart';
 
 class SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
-  
+
   final ValueChanged<String> onSearchChanged;
 
   SearchHeaderDelegate({required this.onSearchChanged});

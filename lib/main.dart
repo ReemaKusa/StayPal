@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:staypal/screens/admin/viewmodels/hotel_manager_viewmodel.dart';
 import 'package:staypal/screens/admin/views/event_organizer_view.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
-import 'package:staypal/screens/profile/booking_complete.dart';
+// import 'package:staypal/screens/profile/booking_complete.dart';
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
 
 import 'package:staypal/DB/firebase_options.dart'; 
@@ -16,8 +16,8 @@ import 'package:staypal/screens/searchResult/views/search_result_page.dart';
 import 'package:staypal/screens/homePage/views/home_page.dart';
 import 'package:staypal/screens/admin/views/admin_dashboard_view.dart';
 import 'package:staypal/screens/admin/views/hotel_manager_view.dart';
-import 'package:staypal/screens/admin/views/event_organizer_view.dart';
-import 'package:staypal/screens/admin/views/event_organizer_view.dart';
+// import 'package:staypal/screens/admin/views/event_organizer_view.dart';
+// import 'package:staypal/screens/admin/views/event_organizer_view.dart';
 import 'package:staypal/widgets/role_landing_view.dart';
 
 void main() async {
