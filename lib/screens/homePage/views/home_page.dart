@@ -425,6 +425,8 @@ class HomePage extends StatelessWidget {
         const SizedBox(height: 12),
         Column(
           children: viewModel.recommendedItems.map((item) {
+           /////////// print('Item tapped: ${item.title}, type: ${item.type}, id: ${item.id}');
+
             return Column(
               children: [
                 GestureDetector(
@@ -438,7 +440,7 @@ class HomePage extends StatelessWidget {
                         ),
                       );
 
-                      if (item.type == 'hotel') {
+                     if ((item.type ?? '').toLowerCase() == 'hotel') {
                         final doc = await FirebaseFirestore.instance
                             .collection('hotel')
                             .doc(item.id)
