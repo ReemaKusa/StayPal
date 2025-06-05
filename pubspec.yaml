@@ -29,22 +29,26 @@ dependencies:
   url_launcher: ^6.2.6
   font_awesome_flutter: ^10.7.0
 
- 
-
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^2.4.0
   flutter_lints: ^5.0.0
-  flutter_launcher_icons: ^0.14.3
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/
 
+flutter_native_splash:
+  color: "#FF5722"
+  image: assets/images/hotel_icon.jpg
+  android: true
+  ios: true
+  fullscreen: true
+
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/staypal_bold_icon_1024.png"
+  image_path: "assets/icon/flutter_app_logo.png"
