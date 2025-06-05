@@ -1,4 +1,3 @@
-// File: list_bookings_view.dart
 import 'package:flutter/material.dart';
 import 'package:staypal/screens/admin/models/booking_model.dart';
 import 'package:staypal/screens/admin/services/booking_service.dart';

@@ -12,7 +12,7 @@ class BookingModel {
 
   // Optional fields based on bookingType
   final int? tickets; // only for events
-  final int? roomCount; // only for hotels
+  final int? roomCount; 
   final DateTime? checkInDate;
   final DateTime? checkOutDate;
 

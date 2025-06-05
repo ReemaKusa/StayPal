@@ -17,6 +17,8 @@ import 'package:staypal/screens/admin/views/admin_dashboard_view.dart';
 //import 'package:staypal/screens/reviewSection/views/review.dart';
 
 // import 'package:staypal/screens/auth/test_firestore_screen.dart'; // Uncomment if needed
+import 'package:staypal/screens/admin/views/hotel_manager_view.dart';
+import 'package:staypal/screens/admin/views/EventOrganizerView.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,10 +42,14 @@ class MyApp extends StatelessWidget {
       ),
 
       //home:  MyProfile(),
-      home: HomePage(),
+      //home: HomePage(),
       //home:MainScreen(),
       //home:AuthEntryScreen(),
+      //home:HotelManagerView(),
+      home:EventOrganizerView(),
       //home: const AdminDashboard(),
+
+
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),

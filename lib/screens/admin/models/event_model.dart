@@ -22,6 +22,7 @@ class EventModel {
   }
 
   String get time => event['time']?.toString() ?? 'No Time';
+  String get organizerId => event['organizerId'] ?? '';
 
   DateTime? get date {
     final raw = event['date'];
