@@ -1,222 +1,7 @@
-// // File: add_event_view.dart
-// import 'package:flutter/material.dart';
-// import 'package:staypal/screens/admin/services/event_service.dart';
-//
-// class AddEventView extends StatefulWidget {
-//   const AddEventView({super.key});
-//
-//   @override
-//   State<AddEventView> createState() => _AddEventViewState();
-// }
-//
-// class _AddEventViewState extends State<AddEventView> {
-//   final _formKey = GlobalKey<FormState>();
-//   final _nameCtrl = TextEditingController();
-//   final _locationCtrl = TextEditingController();
-//   final _descriptionCtrl = TextEditingController();
-//   final _detailsCtrl = TextEditingController();
-//   final _priceCtrl = TextEditingController();
-//   final _imageCtrl = TextEditingController();
-//   final _dateCtrl = TextEditingController();
-//   final _timeCtrl = TextEditingController();
-//   final _highlightsCtrl = TextEditingController();
-//
-//   final _eventService = EventService();
-//   final List<String> _cities = [
-//     'Jerusalem', 'Ramallah', 'Nablus', 'Hebron', 'Bethlehem',
-//     'Jenin', 'Tulkarm', 'Qalqilya', 'Salfit', 'Tubas', 'Jericho', 'Gaza',
-//   ];
-//
-//   String? _selectedLocation;
-//   bool _isFavorite = false;
-//
-//   @override
-//   void dispose() {
-//     _nameCtrl.dispose();
-//     _locationCtrl.dispose();
-//     _descriptionCtrl.dispose();
-//     _detailsCtrl.dispose();
-//     _priceCtrl.dispose();
-//     _imageCtrl.dispose();
-//     _dateCtrl.dispose();
-//     _timeCtrl.dispose();
-//     _highlightsCtrl.dispose();
-//     super.dispose();
-//   }
-//
-//   void _submitEvent() async {
-//     if (_formKey.currentState!.validate()) {
-//       final eventData = {
-//         'name': _nameCtrl.text,
-//         'location': _selectedLocation ?? '',
-//         'description': _descriptionCtrl.text,
-//         'details': _detailsCtrl.text,
-//         'price': double.tryParse(_priceCtrl.text) ?? 0.0,
-//         'images': _imageCtrl.text.isNotEmpty ? [_imageCtrl.text] : [],
-//         'date': DateTime.tryParse(_dateCtrl.text.trim()),
-//         'time': _timeCtrl.text.trim(),
-//         'highlights': _highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),
-//         'isFavorite': _isFavorite,
-//         'createdAt': DateTime.now(),
-//       };
-//       await _eventService.addEvent(eventData);
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text('Event added successfully')),
-//       );
-//
-//       _formKey.currentState!.reset();
-//
-//       _nameCtrl.clear();
-//       _priceCtrl.clear();
-//       _descriptionCtrl.clear();
-//       _detailsCtrl.clear();
-//       _imageCtrl.clear();
-//       _dateCtrl.clear();
-//       _timeCtrl.clear();
-//       _highlightsCtrl.clear();
-//
-//       setState(() {
-//         _selectedLocation = null;
-//         _isFavorite = false;
-//       });
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: const Color(0xFFF5F5F5),
-//       appBar: AppBar(title: const Text('Add Event')),
-//       body: Center(
-//         child: Container(
-//           width: 600,
-//           padding: const EdgeInsets.all(24),
-//           margin: const EdgeInsets.symmetric(vertical: 32),
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(12),
-//             boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 12)],
-//           ),
-//           child: Form(
-//             key: _formKey,
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 const Text('Add Event Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-//                 const SizedBox(height: 20),
-//                 TextFormField(
-//                   controller: _nameCtrl,
-//                   decoration: const InputDecoration(
-//                     labelText: 'Event Name',
-//                     border: OutlineInputBorder(),
-//                   ),
-//                   validator: (value) => value!.isEmpty ? 'Enter event name' : null,
-//                 ),
-//                 const SizedBox(height: 16),
-//                 DropdownButtonFormField<String>(
-//                   value: _selectedLocation,
-//                   items: _cities.map((city) {
-//                     return DropdownMenuItem(
-//                       value: city,
-//                       child: Text(city),
-//                     );
-//                   }).toList(),
-//                   onChanged: (value) => setState(() => _selectedLocation = value!),
-//                   decoration: const InputDecoration(
-//                     labelText: 'City',
-//                     border: OutlineInputBorder(),
-//                   ),
-//                   validator: (value) => value == null || value.isEmpty ? 'Select a city' : null,
-//                 ),
-//                 const SizedBox(height: 16),
-//                 TextFormField(
-//                   controller: _priceCtrl,
-//                   keyboardType: TextInputType.number,
-//                   decoration: const InputDecoration(
-//                     labelText: 'Price',
-//                     border: OutlineInputBorder(),
-//                   ),
-//                   validator: (value) => value!.isEmpty ? 'Enter price' : null,
-//                 ),
-//                 const SizedBox(height: 16),
-//                 TextFormField(
-//                   controller: _descriptionCtrl,
-//                   decoration: const InputDecoration(
-//                     labelText: 'Short Description',
-//                     border: OutlineInputBorder(),
-//                   ),
-//                   maxLines: 2,
-//                 ),
-//                 const SizedBox(height: 16),
-//                 TextFormField(
-//                   controller: _detailsCtrl,
-//                   decoration: const InputDecoration(
-//                     labelText: 'Detailed Info',
-//                     border: OutlineInputBorder(),
-//                   ),
-//                   maxLines: 3,
-//                 ),
-//                 const SizedBox(height: 16),
-//                 TextFormField(
-//                   controller: _imageCtrl,
-//                   decoration: const InputDecoration(
-//                     labelText: 'Image URL',
-//                     border: OutlineInputBorder(),
-//                   ),
-//                 ),
-//                 const SizedBox(height: 16),
-//                 TextFormField(
-//                   controller: _dateCtrl,
-//                   decoration: const InputDecoration(
-//                     labelText: 'Date (yyyy-MM-dd)',
-//                     border: OutlineInputBorder(),
-//                   ),
-//                 ),
-//                 const SizedBox(height: 16),
-//                 TextFormField(
-//                   controller: _timeCtrl,
-//                   decoration: const InputDecoration(
-//                     labelText: 'Time (e.g. 7:00pm)',
-//                     border: OutlineInputBorder(),
-//                   ),
-//                 ),
-//                 const SizedBox(height: 16),
-//                 TextFormField(
-//                   controller: _highlightsCtrl,
-//                   decoration: const InputDecoration(
-//                     labelText: 'Highlights (comma separated)',
-//                     border: OutlineInputBorder(),
-//                   ),
-//                 ),
-//                 const SizedBox(height: 16),
-//                 SwitchListTile(
-//                   title: const Text('Is Favorite?'),
-//                   value: _isFavorite,
-//                   onChanged: (val) => setState(() => _isFavorite = val),
-//                 ),
-//                 const SizedBox(height: 20),
-//                 Center(
-//                   child: ElevatedButton(
-//                     style: ElevatedButton.styleFrom(
-//                       backgroundColor: Colors.deepOrange,
-//                       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-//                     ),
-//                     onPressed: _submitEvent,
-//                     child: const Text('Add Event'),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// File: add_event_view.dart
 import 'package:flutter/material.dart';
 import 'package:staypal/screens/admin/services/event_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddEventView extends StatefulWidget {
   const AddEventView({super.key});
@@ -228,7 +13,6 @@ class AddEventView extends StatefulWidget {
 class _AddEventViewState extends State<AddEventView> {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
-  final _locationCtrl = TextEditingController();
   final _descriptionCtrl = TextEditingController();
   final _detailsCtrl = TextEditingController();
   final _priceCtrl = TextEditingController();
@@ -242,26 +26,51 @@ class _AddEventViewState extends State<AddEventView> {
     'Jerusalem', 'Ramallah', 'Nablus', 'Hebron', 'Bethlehem',
     'Jenin', 'Tulkarm', 'Qalqilya', 'Salfit', 'Tubas', 'Jericho', 'Gaza',
   ];
-
   String? _selectedLocation;
   bool _isFavorite = false;
 
+  List<Map<String, String>> _organizers = [];
+  String? _selectedOrganizerId;
+  bool _isAdmin = false;
+
   @override
-  void dispose() {
-    _nameCtrl.dispose();
-    _locationCtrl.dispose();
-    _descriptionCtrl.dispose();
-    _detailsCtrl.dispose();
-    _priceCtrl.dispose();
-    _imageCtrl.dispose();
-    _dateCtrl.dispose();
-    _timeCtrl.dispose();
-    _highlightsCtrl.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _loadRoleAndOrganizers();
+  }
+
+  Future<void> _loadRoleAndOrganizers() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final role = doc.data()?['role'];
+
+    if (role == 'admin') {
+      setState(() => _isAdmin = true);
+
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('role', isEqualTo: 'event_organizer')
+          .get();
+
+      final organizers = snapshot.docs.map((doc) {
+        final data = doc.data();
+        return {
+          'uid': doc.id,
+          'name': data['fullName']?.toString() ?? 'Unnamed',
+        };
+      }).toList();
+
+      setState(() {
+        _organizers = organizers;
+        print('Fetched ${_organizers.length} organizers');
+      });
+    }
   }
 
   void _submitEvent() async {
     if (_formKey.currentState!.validate()) {
+      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
       final eventData = {
         'name': _nameCtrl.text,
         'location': _selectedLocation ?? '',
@@ -274,8 +83,18 @@ class _AddEventViewState extends State<AddEventView> {
         'highlights': _highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),
         'isFavorite': _isFavorite,
         'createdAt': DateTime.now(),
+        'organizerId': _isAdmin ? _selectedOrganizerId : currentUserId,
       };
+
+      if (_isAdmin && _selectedOrganizerId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select an event organizer')),
+        );
+        return;
+      }
+
       await _eventService.addEvent(eventData);
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Event added successfully')),
       );
@@ -293,8 +112,22 @@ class _AddEventViewState extends State<AddEventView> {
       setState(() {
         _selectedLocation = null;
         _isFavorite = false;
+        _selectedOrganizerId = null;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _descriptionCtrl.dispose();
+    _detailsCtrl.dispose();
+    _priceCtrl.dispose();
+    _imageCtrl.dispose();
+    _dateCtrl.dispose();
+    _timeCtrl.dispose();
+    _highlightsCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -325,87 +158,74 @@ class _AddEventViewState extends State<AddEventView> {
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: _nameCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Event Name',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'Event Name', border: OutlineInputBorder()),
                     validator: (value) => value!.isEmpty ? 'Enter event name' : null,
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     value: _selectedLocation,
                     items: _cities.map((city) {
-                      return DropdownMenuItem(
-                        value: city,
-                        child: Text(city),
-                      );
+                      return DropdownMenuItem(value: city, child: Text(city));
                     }).toList(),
                     onChanged: (value) => setState(() => _selectedLocation = value!),
-                    decoration: const InputDecoration(
-                      labelText: 'City',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'City', border: OutlineInputBorder()),
                     validator: (value) => value == null || value.isEmpty ? 'Select a city' : null,
                   ),
                   const SizedBox(height: 16),
+                  if (_isAdmin)
+                    DropdownButtonFormField<String>(
+                      value: _selectedOrganizerId,
+                      items: _organizers.map((org) {
+                        return DropdownMenuItem(
+                          value: org['uid'],
+                          child: Text(org['name'] ?? 'Unnamed'),
+                        );
+                      }).toList(),
+                      onChanged: (val) => setState(() => _selectedOrganizerId = val),
+                      decoration: const InputDecoration(
+                        labelText: 'Assign to Event Organizer',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (val) => val == null ? 'Select an organizer' : null,
+                    ),
+                  if (_isAdmin) const SizedBox(height: 16),
                   TextFormField(
                     controller: _priceCtrl,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Price',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'Price', border: OutlineInputBorder()),
                     validator: (value) => value!.isEmpty ? 'Enter price' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _descriptionCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Short Description',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'Short Description', border: OutlineInputBorder()),
                     maxLines: 2,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _detailsCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Detailed Info',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'Detailed Info', border: OutlineInputBorder()),
                     maxLines: 3,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _imageCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Image URL',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'Image URL', border: OutlineInputBorder()),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _dateCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Date (yyyy-MM-dd)',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'Date (yyyy-MM-dd)', border: OutlineInputBorder()),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _timeCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Time (e.g. 7:00pm)',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'Time (e.g. 7:00pm)', border: OutlineInputBorder()),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _highlightsCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Highlights (comma separated)',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'Highlights (comma separated)', border: OutlineInputBorder()),
                   ),
                   const SizedBox(height: 16),
                   SwitchListTile(

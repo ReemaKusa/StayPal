@@ -1,6 +1,6 @@
 // File: booking_service.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:staypal/screens/admin/models/booking_model.dart';
+import 'package:staypal/models/booking_model.dart';
 
 class BookingService {
   final bookingRef = FirebaseFirestore.instance.collection('bookings');

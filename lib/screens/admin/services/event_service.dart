@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:staypal/screens/admin/models/event_model.dart';
+import 'package:staypal/models/event_model.dart';
 
 class EventService {
   final eventRef = FirebaseFirestore.instance.collection('event');

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:staypal/screens/admin/services/user_service.dart';
-import 'package:staypal/screens/auth/models/user_model.dart';
+import 'package:staypal/models/user_model.dart';
 import 'package:staypal/screens/admin/views/user_details_view.dart';
 
 class ListUsersView extends StatefulWidget {

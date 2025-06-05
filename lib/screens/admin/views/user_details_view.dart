@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:staypal/screens/auth/models/user_model.dart';
+import 'package:staypal/models/user_model.dart';
 import 'package:staypal/screens/admin/views/edit_user_view.dart';
 
 class UserDetailsView extends StatefulWidget {
@@ -13,11 +13,13 @@ class UserDetailsView extends StatefulWidget {
 
 class _UserDetailsViewState extends State<UserDetailsView> {
   late bool isActive;
+  late String userRole;
 
   @override
   void initState() {
     super.initState();
     isActive = widget.user.isActive;
+    userRole = widget.user.role;
   }
 
   Future<void> _toggleUserActive(bool value) async {
@@ -28,11 +30,29 @@ class _UserDetailsViewState extends State<UserDetailsView> {
         .update({'isActive': value});
   }
 
+  Future<void> _toggleUserRole() async {
+    final newRole = userRole == 'admin' ? 'user' : 'admin';
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.user.uid)
+        .update({'role': newRole});
+
+    setState(() {
+      userRole = newRole;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('✅ Role updated to "$newRole"')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = widget.user;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(title: const Text('User Details')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -50,14 +70,18 @@ class _UserDetailsViewState extends State<UserDetailsView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 12), // for spacing below the edit button
+                    const SizedBox(height: 12),
                     Center(
                       child: CircleAvatar(
                         radius: 48,
-                        backgroundImage: user.imageUrl.isNotEmpty ? NetworkImage(user.imageUrl) : null,
+                        backgroundImage: user.imageUrl.isNotEmpty
+                            ? NetworkImage(user.imageUrl)
+                            : null,
                         child: user.imageUrl.isEmpty
-                            ? Text(user.fullName.isNotEmpty ? user.fullName[0] : '?',
-                            style: const TextStyle(fontSize: 32))
+                            ? Text(
+                                user.fullName.isNotEmpty ? user.fullName[0] : '?',
+                                style: const TextStyle(fontSize: 32),
+                              )
                             : null,
                       ),
                     ),
@@ -80,6 +104,19 @@ class _UserDetailsViewState extends State<UserDetailsView> {
                       title: const Text('User is Active'),
                       value: isActive,
                       onChanged: _toggleUserActive,
+                    ),
+                    const Divider(height: 32),
+                    Text('Current Role: $userRole',
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: _toggleUserRole,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            userRole == 'admin' ? Colors.redAccent : Colors.green,
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                      ),
+                      child: Text(userRole == 'admin' ? 'Remove Admin' : 'Make Admin'),
                     ),
                   ],
                 ),
@@ -117,9 +154,12 @@ class _UserDetailsViewState extends State<UserDetailsView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-              width: 120,
-              child: Text('$label:',
-                  style: const TextStyle(fontWeight: FontWeight.bold))),
+            width: 120,
+            child: Text(
+              '$label:',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
           Expanded(child: Text(value)),
         ],
       ),

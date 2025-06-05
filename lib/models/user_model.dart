@@ -12,6 +12,7 @@ class UserModel {
   final String zipCode;
   final String imageUrl;
   final bool isActive;
+  final String role;
 
 
   UserModel({
@@ -27,6 +28,7 @@ class UserModel {
     required this.country,
     required this.zipCode,
     required this.imageUrl,
+    required this.role,
     this.createdAt,
   });
 
@@ -45,6 +47,7 @@ class UserModel {
       imageUrl: map['imageUrl'] ?? '',
       createdAt: map['createdAt']?.toDate(),
       isActive: map['isActive'] ?? true,
+      role: map['role'] ?? 'user',
     );
   }
 
@@ -62,6 +65,7 @@ class UserModel {
       'zipCode': zipCode,
       'imageUrl': imageUrl,
       'createdAt': createdAt,
+      'role': role,
     };
   }
 }
