@@ -6,7 +6,7 @@ import './review_item_widget.dart';
 import './empty_reviews_widget.dart';
 import './leave_review_tab.dart';
 import './search_header_delegate.dart';
-import '../model/review_model.dart';
+import '../../../models/review_model.dart';
 
 class FeedbackScreen extends StatefulWidget {
   final String serviceId;

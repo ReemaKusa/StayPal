@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../../homePage/widgets/custom_nav_bar.dart';
+import '../../../../widgets/custom_nav_bar.dart';
 import '../../../reviewSection/views/review.dart';
 
 class HotelDetailsPage extends StatefulWidget {

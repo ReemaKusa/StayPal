@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import '../viewmodels/event_details_viewmodel.dart';
 import '../models/event_details_model.dart';
 import '../../../reviewSection/views/review.dart';
-import '../../../homePage/widgets/custom_nav_bar.dart';
+import '../../../../widgets/custom_nav_bar.dart';
 
 class EventDetailsPage extends StatefulWidget {
   final Map<String, dynamic> event;
