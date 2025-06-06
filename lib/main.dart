@@ -19,6 +19,7 @@ import 'package:staypal/screens/admin/views/hotel_manager_view.dart';
 // import 'package:staypal/screens/admin/views/event_organizer_view.dart';
 // import 'package:staypal/screens/admin/views/event_organizer_view.dart';
 import 'package:staypal/widgets/role_landing_view.dart';
+//import 'package:staypal/screens/appSplash/views/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,8 @@ class MyApp extends StatelessWidget {
       //home: HotelManagerView(),
       home: EventOrganizerView(),
      // home:RoleLandingView(),
+     // home: SplashScreen(),
+
 
       routes: {
         '/wishlist': (context) => WishListPage(),
