@@ -8,8 +8,8 @@ import './popular_hotels_section.dart';
 import './recommended_section.dart';
 //import '../../search_result/hotel/views/hotel_details_view.dart';
 //import '../../search_result/event/views/event_details_view.dart';
-import '../widgets/custom_nav_bar.dart';
-import '../widgets/webNavBar/web_nav_bar.dart';
+import '../../../widgets/custom_nav_bar.dart';
+import '../../../widgets/webNavBar/web_nav_bar.dart';
 
 class HomePage extends StatelessWidget {
   final GlobalKey searchKey = GlobalKey();

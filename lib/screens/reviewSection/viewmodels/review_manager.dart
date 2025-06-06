@@ -2,7 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../model/review_model.dart';
+import '../../../models/review_model.dart';
 
 class ReviewManager {
   Future<Review> prepareReviewData(
