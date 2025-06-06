@@ -16,6 +16,7 @@ class EditEventViewModel extends ChangeNotifier {
   final dateCtrl = TextEditingController();
   final timeCtrl = TextEditingController();
   final highlightsCtrl = TextEditingController();
+  final availableTicketsCtrl = TextEditingController();
 
   final List<String> cities = [
     'Jerusalem',
@@ -38,21 +39,24 @@ class EditEventViewModel extends ChangeNotifier {
   List<Map<String, dynamic>> organizers = [];
   String? selectedOrganizerId;
   bool isLoading = true;
+  String? eventId;
 
   final _eventService = EventService();
 
   void initialize(EventModel event) async {
+    eventId = event.eventId;
     nameCtrl.text = event.name;
     priceCtrl.text = event.price.toString();
     descriptionCtrl.text = event.description;
     detailsCtrl.text = event.details;
     imageCtrl.text = event.images.isNotEmpty ? event.images.first : '';
     selectedLocation = event.location;
-    dateCtrl.text = event.date?.toIso8601String().substring(0, 10) ?? '';
+    dateCtrl.text = event.date.toIso8601String().substring(0, 10);
     timeCtrl.text = event.time;
     highlightsCtrl.text = event.highlights.join(', ');
     isFavorite = event.isFavorite;
     selectedOrganizerId = event.organizerId;
+    availableTicketsCtrl.text = event.limite.toString();
 
     await _checkAdminAndFetchOrganizers();
     isLoading = false;
@@ -61,25 +65,22 @@ class EditEventViewModel extends ChangeNotifier {
 
   Future<void> _checkAdminAndFetchOrganizers() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-    final userDoc =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
     if (userDoc.exists && userDoc.data()?['role'] == 'admin') {
       isAdmin = true;
-      final snapshot =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .where('role', isEqualTo: 'event_organizer')
-              .get();
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('role', isEqualTo: 'event_organizer')
+          .get();
 
-      organizers =
-          snapshot.docs.map((doc) {
-            final data = doc.data();
-            return {
-              'uid': doc.id,
-              'name': data['fullName']?.toString() ?? 'Unnamed',
-            };
-          }).toList();
+      organizers = snapshot.docs.map((doc) {
+        final data = doc.data();
+        return {
+          'uid': doc.id,
+          'name': data['fullName']?.toString() ?? 'Unnamed',
+        };
+      }).toList();
     }
   }
 
@@ -128,6 +129,16 @@ class EditEventViewModel extends ChangeNotifier {
           border: OutlineInputBorder(),
         ),
         validator: (value) => value!.isEmpty ? 'Enter price' : null,
+      ),
+      const SizedBox(height: AppSpacing.medium),
+      TextFormField(
+        controller: availableTicketsCtrl,
+        keyboardType: TextInputType.number,
+        decoration: const InputDecoration(
+          labelText: 'Available Tickets',
+          border: OutlineInputBorder(),
+        ),
+        validator: (value) => value!.isEmpty ? 'Enter available tickets' : null,
       ),
       const SizedBox(height: AppSpacing.medium),
       TextFormField(
@@ -193,61 +204,22 @@ class EditEventViewModel extends ChangeNotifier {
           children: [
             const SizedBox(height: AppSpacing.medium),
             DropdownButtonFormField<String>(
-              value: selectedLocation,
+              value: selectedOrganizerId,
               isExpanded: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
+                labelText: 'Assigned Organizer',
+                border: OutlineInputBorder(),
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.85),
-                labelText: 'Please select...',
-                labelStyle: TextStyle(
-                  color: Colors.grey.shade400,
-                  fontWeight: FontWeight.w500,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
+                fillColor: AppColors.white,
               ),
-              icon: const Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: Colors.grey,
-              ),
-              dropdownColor: Colors.white.withOpacity(0.95),
-              onChanged: (String? newValue) {
-                selectedLocation = newValue;
-                notifyListeners();
-              },
-              items:
-                  cities.map((city) {
-                    return DropdownMenuItem<String>(
-                      value: city,
-
-                      child: Container(
-                        color: AppColors.red,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 8,
-                        ),
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                        ),
-                        child: Text(
-                          city,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-              validator:
-                  (value) =>
-                      value == null || value.isEmpty ? 'Select a city' : null,
+              items: organizers.map((org) {
+                return DropdownMenuItem<String>(
+                  value: org['uid'],
+                  child: Text(org['name'] ?? 'Unnamed'),
+                );
+              }).toList(),
+              onChanged: (val) => selectedOrganizerId = val,
+              validator: (val) => val == null ? 'Select an organizer' : null,
             ),
           ],
         ),
@@ -256,28 +228,33 @@ class EditEventViewModel extends ChangeNotifier {
 
   Future<void> updateEvent(BuildContext context) async {
     if (formKey.currentState!.validate()) {
-      final updatedData = {
-        'name': nameCtrl.text,
-        'location': selectedLocation ?? '',
-        'price': double.tryParse(priceCtrl.text) ?? 0.0,
-        'description': descriptionCtrl.text,
-        'details': detailsCtrl.text,
-        'images': imageCtrl.text.isNotEmpty ? [imageCtrl.text] : [],
-        'date': DateTime.tryParse(dateCtrl.text),
-        'time': timeCtrl.text.trim(),
-        'highlights':
-            highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),
-        'isFavorite': isFavorite,
-        'updatedAt': DateTime.now(),
-        'organizerId': selectedOrganizerId,
-      };
+      final event = EventModel(
+        eventId: eventId ?? '',
+        name: nameCtrl.text,
+        location: selectedLocation ?? '',
+        price: double.tryParse(priceCtrl.text) ?? 0.0,
+        description: descriptionCtrl.text,
+        details: detailsCtrl.text,
+        images: imageCtrl.text.isNotEmpty ? [imageCtrl.text] : [],
+        date: DateTime.tryParse(dateCtrl.text) ?? DateTime.now(),
+        time: timeCtrl.text.trim(),
+        highlights: highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),
+        limite: int.tryParse(availableTicketsCtrl.text) ?? 0,
+        ticketsSold: 0,
+        rating: 0.0,
+        isFavorite: isFavorite,
+        createdAt: DateTime.now(),
+        organizerId: selectedOrganizerId ?? '',
+      );
 
-      await _eventService.updateEvent(selectedOrganizerId!, updatedData);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Event updated successfully')),
-        );
-        Navigator.pop(context);
+      if (eventId != null) {
+        await _eventService.updateEvent(eventId!, event);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Event updated successfully')),
+          );
+          Navigator.pop(context);
+        }
       }
     }
   }
@@ -350,7 +327,7 @@ class EditEventViewModel extends ChangeNotifier {
                             backgroundColor: AppColors.white,
                             side: BorderSide(color: AppColors.greyTransparent),
 
-                            
+
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                 AppBorderRadius.card,
