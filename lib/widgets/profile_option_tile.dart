@@ -36,7 +36,7 @@ class ProfileOptionTile extends StatelessWidget {
         ),
         leading: Icon(
           icon,
-          color: AppColors.primary,
+          color: AppColors.black,
           size: AppIconSizes.tileIcon,
         ),
         title: Text(
