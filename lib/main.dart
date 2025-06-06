@@ -18,7 +18,7 @@ import 'package:staypal/screens/admin/views/admin_dashboard_view.dart';
 import 'package:staypal/screens/admin/views/hotel_manager_view.dart';
 // import 'package:staypal/screens/admin/views/event_organizer_view.dart';
 // import 'package:staypal/screens/admin/views/event_organizer_view.dart';
-import 'package:staypal/widgets/role_landing_view.dart';
+//import 'package:staypal/widgets/role_landing_view.dart';
 //import 'package:staypal/screens/appSplash/views/splash_screen.dart';
 
 void main() async {
@@ -60,6 +60,7 @@ class MyApp extends StatelessWidget {
       //home: AdminDashboard(),
       //home: HotelManagerView(),
       home: EventOrganizerView(),
+      //home: HomePage(),
      // home:RoleLandingView(),
      // home: SplashScreen(),
 
