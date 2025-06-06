@@ -55,6 +55,7 @@ class SignUpViewModel {
           'country': '',
           'zipCode': '',
           'imageUrl': '',
+          'role': 'user', // 👈 Auto assign role
         });
 
         await user.sendEmailVerification();
