@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:staypal/screens/admin/services/event_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:staypal/models/event_model.dart';
 
 class AddEventView extends StatefulWidget {
   const AddEventView({super.key});
@@ -75,29 +76,26 @@ class _AddEventViewState extends State<AddEventView> {
     if (_formKey.currentState!.validate()) {
       final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-      final eventData = {
-        'name': _nameCtrl.text,
-        'location': _selectedLocation ?? '',
-        'description': _descriptionCtrl.text,
-        'details': _detailsCtrl.text,
-        'price': double.tryParse(_priceCtrl.text) ?? 0.0,
-        'images': _imageCtrl.text.isNotEmpty ? [_imageCtrl.text] : [],
-        'date': DateTime.tryParse(_dateCtrl.text.trim()),
-        'time': _timeCtrl.text.trim(),
-        'highlights': _highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),
-        'isFavorite': _isFavorite,
-        'createdAt': DateTime.now(),
-        'organizerId': _isAdmin ? _selectedOrganizerId : currentUserId,
-      };
+      final newEvent = EventModel(
+        eventId: '', // Will be assigned in service
+        name: _nameCtrl.text,
+        location: _selectedLocation ?? '',
+        description: _descriptionCtrl.text,
+        details: _detailsCtrl.text,
+        price: double.tryParse(_priceCtrl.text) ?? 0.0,
+        images: _imageCtrl.text.isNotEmpty ? [_imageCtrl.text] : [],
+        date: DateTime.tryParse(_dateCtrl.text.trim()) ?? DateTime.now(),
+        time: _timeCtrl.text.trim(),
+        highlights: _highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),
+        isFavorite: _isFavorite,
+        createdAt: DateTime.now(),
+        rating: 0.0,
+        ticketsSold: 0,
+        limite: 0,
+        organizerId: _isAdmin ? _selectedOrganizerId ?? '' : currentUserId,
+      );
 
-      if (_isAdmin && _selectedOrganizerId == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select an event organizer')),
-        );
-        return;
-      }
-
-      await _eventService.addEvent(eventData);
+      await _eventService.addEvent(newEvent);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Event added successfully')),
