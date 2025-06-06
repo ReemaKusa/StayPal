@@ -18,7 +18,7 @@ class EventOrganizerViewModel extends ChangeNotifier {
 
     QuerySnapshot snapshot;
     if (role == 'admin') {
-      snapshot = await FirebaseFirestore.instance.collection('event').get(); // show all events
+      snapshot = await FirebaseFirestore.instance.collection('event').get(); 
     } else {
       snapshot = await FirebaseFirestore.instance
           .collection('event')
@@ -28,7 +28,7 @@ class EventOrganizerViewModel extends ChangeNotifier {
 
     myEvents = snapshot.docs.map((doc) => EventModel.fromDocument(doc)).toList();
   } catch (e) {
-    print('❌ Failed to fetch events: $e');
+    print(' Failed to fetch events: $e');
   } finally {
     isLoading = false;
     notifyListeners();
@@ -37,6 +37,6 @@ class EventOrganizerViewModel extends ChangeNotifier {
 
   Future<void> deleteEvent(String eventId) async {
     await FirebaseFirestore.instance.collection('event').doc(eventId).delete();
-    await fetchMyEvents(); // refresh list after delete
+    await fetchMyEvents();
   }
 }
