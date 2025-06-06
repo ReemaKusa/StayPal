@@ -57,11 +57,14 @@ class EditEventView extends StatelessWidget {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.white,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: AppPadding.buttonVertical,
+                              padding: const EdgeInsets.all(
+                                AppPadding.containerPadding,
                               ),
+
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                                borderRadius: BorderRadius.circular(
+                                  AppBorderRadius.card,
+                                ),
                               ),
                             ),
                             onPressed: () => viewModel.updateEvent(context),
@@ -80,7 +83,9 @@ class EditEventView extends StatelessWidget {
                                 vertical: AppPadding.buttonVertical,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                                borderRadius: BorderRadius.circular(
+                                  AppBorderRadius.card,
+                                ),
                               ),
                             ),
                             onPressed: () => viewModel.deleteEvent(context),

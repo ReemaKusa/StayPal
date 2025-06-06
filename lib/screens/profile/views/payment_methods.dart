@@ -68,8 +68,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                         style: TextStyle(color: Colors.black54, fontSize: 14),
                       ),
                     ],
-                  ),
-                );
+                  )                );
               }
 
               return ListView.builder(

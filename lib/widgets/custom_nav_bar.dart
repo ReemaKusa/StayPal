@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
 
 class CustomNavBar extends StatelessWidget {
@@ -19,8 +21,14 @@ class CustomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      selectedItemColor: Colors.deepOrange,
-      unselectedItemColor: Colors.grey,
+      selectedItemColor: AppColors.primary,
+      unselectedItemColor: AppColors.grey,
+      backgroundColor: AppColors.white,
+      selectedFontSize: AppFontSizes.body,
+      unselectedFontSize: AppFontSizes.body,
+
+
+
       currentIndex: currentIndex,
       onTap: (index) => _handleNavigation(context, index),
       items: const [

@@ -50,7 +50,7 @@ class ProfileViewModel extends ChangeNotifier {
         _userData = {};
       }
     } catch (e) {
-      print('❌ Error loading user data: $e');
+      print('Error loading user data: $e');
       _userData = {};
     }
 
