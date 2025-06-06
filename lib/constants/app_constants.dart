@@ -1,5 +1,6 @@
 class AppHeights {
   static double cardHeight = 72.0;
+  static double cardManagerHeight = 100.0;
 }
 
 class AppConstants {
@@ -10,8 +11,21 @@ class AppConstants {
 class AppPadding {
   static const double cardPadding = 5.0;
   static const double screenPadding = 24.0;
-
+  static const double horizontalPadding = 12.0;
+  static const double horizontalPaddingTitle = 20.0;
   static const double iconPadding = 6.0;
+
+  static const double formVertical = 32.0;
+  static const double formHorizontal = 16.0;
+  static const double containerPadding = 24.0;
+  static const double buttonHorizontal = 40.0;
+  static const double buttonVertical = 16.0;
+  static const double buttonIconHorizontal = 32.0;
+  static const double buttonIconVertical = 14.0;
+}
+
+class AppMargin {
+  static const double verticalMargin = 10.0;
 }
 
 class AppSpacing {
@@ -20,6 +34,9 @@ class AppSpacing {
   static const double small = 8.0;
   static const double medium = 16.0;
   static const double xSmall = 4.0;
+
+  static const double section = 24.0;
+  static const double betweenButtons = 12.0;
 }
 
 class AppFontSizes {
@@ -36,7 +53,7 @@ class AppIconSizes {
 
 class AppSizes {
   static const double avatarRadius = 60.0;
-  static const double iconSizeLarge = 48;
+  static const double iconSizeLarge = 35;
   static const double radiusLarge = 12;
   static const double paddingMedium = 16;
   static const double spacingLarge = 24;
@@ -44,4 +61,12 @@ class AppSizes {
 
 class AppBorderRadius {
   static const double card = 12.0;
+}
+
+class AppDimensions {
+  static const double formWidth = 600.0;
+}
+
+class AppShadows {
+  static const double cardBlur = 12.0;
 }
