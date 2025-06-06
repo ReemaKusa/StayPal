@@ -18,8 +18,18 @@ class EditEventViewModel extends ChangeNotifier {
   final highlightsCtrl = TextEditingController();
 
   final List<String> cities = [
-    'Jerusalem', 'Ramallah', 'Nablus', 'Hebron', 'Bethlehem',
-    'Jenin', 'Tulkarm', 'Qalqilya', 'Salfit', 'Tubas', 'Jericho', 'Gaza',
+    'Jerusalem',
+    'Ramallah',
+    'Nablus',
+    'Hebron',
+    'Bethlehem',
+    'Jenin',
+    'Tulkarm',
+    'Qalqilya',
+    'Salfit',
+    'Tubas',
+    'Jericho',
+    'Gaza',
   ];
 
   String? selectedLocation;
@@ -51,22 +61,25 @@ class EditEventViewModel extends ChangeNotifier {
 
   Future<void> _checkAdminAndFetchOrganizers() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-    final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
     if (userDoc.exists && userDoc.data()?['role'] == 'admin') {
       isAdmin = true;
-      final snapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('role', isEqualTo: 'event_organizer')
-          .get();
+      final snapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .where('role', isEqualTo: 'event_organizer')
+              .get();
 
-      organizers = snapshot.docs.map((doc) {
-        final data = doc.data();
-        return {
-          'uid': doc.id,
-          'name': data['fullName']?.toString() ?? 'Unnamed',
-        };
-      }).toList();
+      organizers =
+          snapshot.docs.map((doc) {
+            final data = doc.data();
+            return {
+              'uid': doc.id,
+              'name': data['fullName']?.toString() ?? 'Unnamed',
+            };
+          }).toList();
     }
   }
 
@@ -82,32 +95,29 @@ class EditEventViewModel extends ChangeNotifier {
       ),
       const SizedBox(height: AppSpacing.medium),
       DropdownButtonFormField<String>(
-  value: selectedLocation,
-  isExpanded: true,
-  decoration: const InputDecoration(
-    labelText: 'City',
-    border: OutlineInputBorder(),
-    filled: true,
-    fillColor: AppColors.white,
-  ),
-  icon: const Icon(Icons.keyboard_arrow_down_rounded),
-  onChanged: (String? newValue) {
-    selectedLocation = newValue;
-    notifyListeners();
-  },
-  items: cities.map((city) {
-    return DropdownMenuItem<String>(
-      value: city,
-      child: Text(
-        city,
-        overflow: TextOverflow.ellipsis,
-        maxLines: 1,
+        value: selectedLocation,
+        isExpanded: true,
+        decoration: const InputDecoration(
+          labelText: 'City',
+          border: OutlineInputBorder(),
+          filled: true,
+          fillColor: AppColors.white,
+        ),
+        icon: const Icon(Icons.keyboard_arrow_down_rounded),
+        onChanged: (String? newValue) {
+          selectedLocation = newValue;
+          notifyListeners();
+        },
+        items:
+            cities.map((city) {
+              return DropdownMenuItem<String>(
+                value: city,
+                child: Text(city, overflow: TextOverflow.ellipsis, maxLines: 1),
+              );
+            }).toList(),
+        validator:
+            (value) => value == null || value.isEmpty ? 'Select a city' : null,
       ),
-    );
-  }).toList(),
-  validator: (value) =>
-      value == null || value.isEmpty ? 'Select a city' : null,
-),
 
       const SizedBox(height: AppSpacing.medium),
       TextFormField(
@@ -183,22 +193,61 @@ class EditEventViewModel extends ChangeNotifier {
           children: [
             const SizedBox(height: AppSpacing.medium),
             DropdownButtonFormField<String>(
-              value: selectedOrganizerId,
+              value: selectedLocation,
               isExpanded: true,
-              decoration: const InputDecoration(
-                labelText: 'Assigned Organizer',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
                 filled: true,
-                fillColor: AppColors.white,
+                fillColor: Colors.white.withOpacity(0.85),
+                labelText: 'Please select...',
+                labelStyle: TextStyle(
+                  color: Colors.grey.shade400,
+                  fontWeight: FontWeight.w500,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
-              items: organizers.map((org) {
-                return DropdownMenuItem<String>(
-                  value: org['uid'],
-                  child: Text(org['name'] ?? 'Unnamed'),
-                );
-              }).toList(),
-              onChanged: (val) => selectedOrganizerId = val,
-              validator: (val) => val == null ? 'Select an organizer' : null,
+              icon: const Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: Colors.grey,
+              ),
+              dropdownColor: Colors.white.withOpacity(0.95),
+              onChanged: (String? newValue) {
+                selectedLocation = newValue;
+                notifyListeners();
+              },
+              items:
+                  cities.map((city) {
+                    return DropdownMenuItem<String>(
+                      value: city,
+
+                      child: Container(
+                        color: AppColors.red,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 8,
+                        ),
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                        ),
+                        child: Text(
+                          city,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+              validator:
+                  (value) =>
+                      value == null || value.isEmpty ? 'Select a city' : null,
             ),
           ],
         ),
@@ -216,7 +265,8 @@ class EditEventViewModel extends ChangeNotifier {
         'images': imageCtrl.text.isNotEmpty ? [imageCtrl.text] : [],
         'date': DateTime.tryParse(dateCtrl.text),
         'time': timeCtrl.text.trim(),
-        'highlights': highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),
+        'highlights':
+            highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),
         'isFavorite': isFavorite,
         'updatedAt': DateTime.now(),
         'organizerId': selectedOrganizerId,
@@ -235,22 +285,102 @@ class EditEventViewModel extends ChangeNotifier {
   Future<void> deleteEvent(BuildContext context) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this event? This cannot be undone.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete')),
-        ],
-      ),
+      barrierDismissible: false,
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppBorderRadius.card),
+            ),
+            backgroundColor: AppColors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(AppPadding.containerPadding),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Confirm Delete',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.subtitle,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.medium),
+                  const Text(
+                    'Are you sure you want to delete this event?\nThis cannot be undone.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.body,
+                      color: AppColors.grey,
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.large),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                              vertical: AppPadding.buttonVertical,
+                            ),
+                            side: BorderSide(color: AppColors.greyTransparent),
+                            backgroundColor: AppColors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppBorderRadius.card,
+                              ),
+                            ),
+                          ),
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.medium),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                              vertical: AppPadding.buttonVertical,
+                            ),
+                            backgroundColor: AppColors.white,
+                            side: BorderSide(color: AppColors.greyTransparent),
+
+                            
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppBorderRadius.card,
+                              ),
+                            ),
+                          ),
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text(
+                            'Delete',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
     );
 
     if (confirm == true) {
       await _eventService.deleteEvent(selectedOrganizerId!);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Event deleted')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Event deleted')));
         Navigator.pop(context);
       }
     }

@@ -58,9 +58,14 @@ class MyApp extends StatelessWidget {
       //home: MyProfile(),
       //home:AuthEntryScreen(),
       //home: AdminDashboard(),
-      //home: HotelManagerView(),
-      home: EventOrganizerView(),
+
+    //home: HotelManagerView(),
+     home: EventOrganizerView(),
+
+    
+
       //home: HomePage(),
+
      // home:RoleLandingView(),
      // home: SplashScreen(),
 

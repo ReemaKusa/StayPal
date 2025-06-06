@@ -72,7 +72,7 @@ class EventOrganizerView extends StatelessWidget {
                       border: Border.all(color: AppColors.greyTransparent),
                       boxShadow: const [
                         BoxShadow(
-                          color: Colors.black12,
+                          color: AppColors.white,
                           blurRadius: 4,
                           offset: Offset(0, 2),
                         ),
@@ -94,7 +94,7 @@ class EventOrganizerView extends StatelessWidget {
                         event.date?.toLocal().toString().split(" ")[0] ?? 'No date',
                         style: const TextStyle(
                           fontSize: AppFontSizes.body,
-                          color: Colors.black54,
+                          color: AppColors.black,
                         ),
                       ),
                       trailing: Wrap(
@@ -116,23 +116,86 @@ class EventOrganizerView extends StatelessWidget {
                           IconButton(
                             icon: const Icon(Icons.delete, color: AppColors.primary),
                             onPressed: () async {
-                              final confirm = await showDialog<bool>(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                  title: const Text('Delete Event'),
-                                  content: const Text('Are you sure you want to delete this event?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context, false),
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context, true),
-                                      child: const Text('Delete'),
-                                    ),
-                                  ],
-                                ),
-                              );
+                       final confirm = await showDialog<bool>(
+  context: context,
+  barrierDismissible: false,
+  builder: (context) => Dialog(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppBorderRadius.card),
+    ),
+    backgroundColor: AppColors.white,
+    child: Padding(
+      padding: const EdgeInsets.all(AppPadding.buttonVertical),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Confirm Delete',
+            style: TextStyle(
+              fontSize: AppFontSizes.subtitle,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.medium),
+          const Text(
+            'Are you sure you want to delete this event?\nThis cannot be undone.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: AppFontSizes.body),
+          ),
+          const SizedBox(height: AppSpacing.large),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppPadding.buttonVertical,
+                    ),
+                    side: BorderSide(color: AppColors.primary),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                    ),
+                  ),
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.medium),
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppPadding.buttonVertical,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                    ),
+                  ),
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  ),
+);
+
                               if (confirm == true) {
                                 await context.read<EventOrganizerViewModel>().deleteEvent(event.eventId);
                                 ScaffoldMessenger.of(context).showSnackBar(
