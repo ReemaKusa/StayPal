@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../model/splash_model.dart';
+import '../../../models/splash_model.dart';
 import './animation_controller_manager.dart';
 import './logo_animations.dart';
 import './text_animations.dart';
