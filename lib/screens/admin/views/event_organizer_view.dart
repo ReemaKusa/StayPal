@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:staypal/screens/admin/viewmodels/EventOrganizerviewmodel.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/constants/color_constants.dart';
+import 'package:staypal/screens/admin/viewmodels/EventOrganizerViewModel.dart';
 import 'package:staypal/screens/admin/views/edit_event_view.dart';
 import 'package:staypal/screens/admin/views/add_event_view.dart';
+import 'package:staypal/widgets/add_button.dart';
 
 class EventOrganizerView extends StatelessWidget {
   const EventOrganizerView({super.key});
@@ -11,46 +14,94 @@ class EventOrganizerView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => EventOrganizerViewModel()..fetchMyEvents(),
-      child: Builder(
-        builder: (context) => Scaffold(
-          appBar: AppBar(title: const Text('My Events')),
-          backgroundColor: Colors.white,
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AddEventView()),
-              ).then((_) {
-                context.read<EventOrganizerViewModel>().fetchMyEvents(); // ✅ Safe here
-              });
-            },
-            child: const Icon(Icons.add),
-          ),
-          body: Consumer<EventOrganizerViewModel>(
-            builder: (context, viewModel, _) {
-              if (viewModel.isLoading) {
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+        appBar: AppBar(
+  backgroundColor: AppColors.white,
+  elevation: 0.5,
+  iconTheme: const IconThemeData(color: AppColors.primary),
+  title: const Padding(
+    padding: EdgeInsets.only(left: AppPadding.horizontalPaddingTitle,
+    top: AppPadding.horizontalPadding),
+    child: Text(
+      'Event Organizer Panel',
+      style: TextStyle(
+        fontSize: AppFontSizes.title, 
+        fontWeight: FontWeight.bold,
+        color: AppColors.black,
+      ),
+    ),
+  ),
+),
+
+        floatingActionButton: AddButton(
+          targetView: const AddEventView(),
+          onReturn: () {
+            context.read<EventOrganizerViewModel>().fetchMyEvents();
+          },
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(AppPadding.screenPadding),
+          child: Consumer<EventOrganizerViewModel>(
+            builder: (context, vm, _) {
+              if (vm.isLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (viewModel.myEvents.isEmpty) {
-                return const Center(child: Text('No events found.'));
+              if (vm.myEvents.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'No events found.',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.subtitle,
+                      color: AppColors.black,
+                    ),
+                  ),
+                );
               }
 
-              return ListView.builder(
-                itemCount: viewModel.myEvents.length,
+              return ListView.separated(
+                itemCount: vm.myEvents.length,
+                separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.cardVerticalMargin),
                 itemBuilder: (context, index) {
-                  final event = viewModel.myEvents[index];
-
-                  return Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  final event = vm.myEvents[index];
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                      border: Border.all(color: AppColors.greyTransparent),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
                     child: ListTile(
-                      title: Text(event.name),
-                      subtitle: Text(event.date?.toLocal().toString().split(" ")[0] ?? 'No date'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: AppPadding.horizontalPadding,
+                        vertical: AppPadding.iconPadding,
+                      ),
+                      title: Text(
+                        event.name,
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.subtitle,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Text(
+                        event.date?.toLocal().toString().split(" ")[0] ?? 'No date',
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.body,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      trailing: Wrap(
+                        spacing: AppSpacing.xSmall,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.deepPurple),
+                            icon: const Icon(Icons.edit, color: AppColors.primary),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -63,7 +114,7 @@ class EventOrganizerView extends StatelessWidget {
                             },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                            icon: const Icon(Icons.delete, color: AppColors.primary),
                             onPressed: () async {
                               final confirm = await showDialog<bool>(
                                 context: context,
@@ -85,7 +136,7 @@ class EventOrganizerView extends StatelessWidget {
                               if (confirm == true) {
                                 await context.read<EventOrganizerViewModel>().deleteEvent(event.eventId);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('✅ Event deleted')),
+                                  const SnackBar(content: Text(' Event deleted')),
                                 );
                               }
                             },

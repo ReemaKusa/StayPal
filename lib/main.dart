@@ -63,6 +63,7 @@ class MyApp extends StatelessWidget {
      // home:RoleLandingView(),
      // home: SplashScreen(),
 
+
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),
