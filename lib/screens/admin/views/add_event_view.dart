@@ -23,6 +23,11 @@ class _AddEventViewState extends State<AddEventView> {
   final _highlightsCtrl = TextEditingController();
 
   final _eventService = EventService();
+
+  static const double kPadding = 16.0;
+  static const double kCardRadius = 12.0;
+  static const double kCardElevation = 12.0;
+
   final List<String> _cities = [
     'Jerusalem', 'Ramallah', 'Nablus', 'Hebron', 'Bethlehem',
     'Jenin', 'Tulkarm', 'Qalqilya', 'Salfit', 'Tubas', 'Jericho', 'Gaza',
@@ -63,7 +68,6 @@ class _AddEventViewState extends State<AddEventView> {
 
       setState(() {
         _organizers = organizers;
-        print('Fetched ${_organizers.length} organizers');
       });
     }
   }
@@ -134,42 +138,68 @@ class _AddEventViewState extends State<AddEventView> {
     final containerWidth = screenWidth < 700 ? screenWidth * 0.9 : 600.0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(title: const Text('Add Event')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text(
+          'Add Event',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 32),
         child: Center(
           child: Container(
             width: containerWidth,
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(kPadding + 8),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 12)],
+              borderRadius: BorderRadius.circular(kCardRadius),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Add Event Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Add Event Details',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: _nameCtrl,
-                    decoration: const InputDecoration(labelText: 'Event Name', border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      labelText: 'Event Name',
+                      border: OutlineInputBorder(),
+                    ),
                     validator: (value) => value!.isEmpty ? 'Enter event name' : null,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: kPadding),
                   DropdownButtonFormField<String>(
                     value: _selectedLocation,
                     items: _cities.map((city) {
                       return DropdownMenuItem(value: city, child: Text(city));
                     }).toList(),
                     onChanged: (value) => setState(() => _selectedLocation = value!),
-                    decoration: const InputDecoration(labelText: 'City', border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      labelText: 'City',
+                      border: OutlineInputBorder(),
+                    ),
                     validator: (value) => value == null || value.isEmpty ? 'Select a city' : null,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: kPadding),
                   if (_isAdmin)
                     DropdownButtonFormField<String>(
                       value: _selectedOrganizerId,
@@ -186,60 +216,69 @@ class _AddEventViewState extends State<AddEventView> {
                       ),
                       validator: (val) => val == null ? 'Select an organizer' : null,
                     ),
-                  if (_isAdmin) const SizedBox(height: 16),
+                  if (_isAdmin) const SizedBox(height: kPadding),
                   TextFormField(
                     controller: _priceCtrl,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(labelText: 'Price', border: OutlineInputBorder()),
                     validator: (value) => value!.isEmpty ? 'Enter price' : null,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: kPadding),
                   TextFormField(
                     controller: _descriptionCtrl,
                     decoration: const InputDecoration(labelText: 'Short Description', border: OutlineInputBorder()),
                     maxLines: 2,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: kPadding),
                   TextFormField(
                     controller: _detailsCtrl,
                     decoration: const InputDecoration(labelText: 'Detailed Info', border: OutlineInputBorder()),
                     maxLines: 3,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: kPadding),
                   TextFormField(
                     controller: _imageCtrl,
                     decoration: const InputDecoration(labelText: 'Image URL', border: OutlineInputBorder()),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: kPadding),
                   TextFormField(
                     controller: _dateCtrl,
                     decoration: const InputDecoration(labelText: 'Date (yyyy-MM-dd)', border: OutlineInputBorder()),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: kPadding),
                   TextFormField(
                     controller: _timeCtrl,
                     decoration: const InputDecoration(labelText: 'Time (e.g. 7:00pm)', border: OutlineInputBorder()),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: kPadding),
                   TextFormField(
                     controller: _highlightsCtrl,
                     decoration: const InputDecoration(labelText: 'Highlights (comma separated)', border: OutlineInputBorder()),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: kPadding),
                   SwitchListTile(
                     title: const Text('Is Favorite?'),
                     value: _isFavorite,
                     onChanged: (val) => setState(() => _isFavorite = val),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: kPadding + 4),
                   Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(kCardRadius),
+                          ),
+                        ),
+                        onPressed: _submitEvent,
+                        child: const Text(
+                          'Add Event',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                      onPressed: _submitEvent,
-                      child: const Text('Add Event'),
                     ),
                   ),
                 ],

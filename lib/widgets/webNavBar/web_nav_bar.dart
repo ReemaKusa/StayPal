@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
-import './logo_title.dart';
-import'./nav_items_row.dart';
-import'./actions_row.dart';
+import 'logo_title.dart';
+import'nav_items_row.dart';
+import'actions_row.dart';
 
 class WebNavBar extends StatelessWidget implements PreferredSizeWidget {
   final int currentIndex;

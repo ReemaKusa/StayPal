@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../models/popular_hotels_model.dart';
-import '../models/recommended_item_model.dart';
-import '../models/upcoming_events_model.dart';
+import '../../../models/popular_hotels_model.dart';
+import '../../../models/recommended_item_model.dart';
+import '../../../models/upcoming_events_model.dart';
 
 class HomeViewModel with ChangeNotifier {
   List<UpcomingEventsModel> upcomingEvents = [];

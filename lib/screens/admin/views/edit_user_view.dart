@@ -65,7 +65,7 @@ class _EditUserViewState extends State<EditUserView> {
           .update(updatedData);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('✅ User updated successfully')),
+        const SnackBar(content: Text(' User updated successfully')),
       );
 
       Navigator.pop(context);
@@ -89,7 +89,7 @@ class _EditUserViewState extends State<EditUserView> {
               _buildGenderDropdown(),
               _buildField(_zipCtrl, 'Zip Code'),
               _buildField(_countryCtrl, 'Country'),
-              _buildRoleDropdown(), // ✅ Insert role dropdown here
+              _buildRoleDropdown(), 
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _updateUser,

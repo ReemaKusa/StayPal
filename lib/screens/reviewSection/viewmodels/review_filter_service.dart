@@ -1,6 +1,6 @@
 
 
-import '../model/review_model.dart';
+import '../../../models/review_model.dart';
 
 class ReviewFilterService {
   static List<Review> filterReviews(List<Review> reviews, String query) {
