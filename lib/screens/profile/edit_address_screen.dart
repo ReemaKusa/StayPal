@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/constants/color_constants.dart';
 
 class EditAddressScreen extends StatefulWidget {
-  const EditAddressScreen({super.key});
+  EditAddressScreen({super.key});
 
   @override
   State<EditAddressScreen> createState() => _EditAddressScreenState();
 }
 
 class _EditAddressScreenState extends State<EditAddressScreen> {
-  final TextEditingController _addressCtrl = TextEditingController();
-  final TextEditingController _zipCtrl = TextEditingController();
-  final TextEditingController _cityCtrl = TextEditingController();
+  final _addressCtrl = TextEditingController();
+  final _zipCtrl = TextEditingController();
+  final _cityCtrl = TextEditingController();
+
+  final _addressFocus = FocusNode();
+  final _zipFocus = FocusNode();
+  final _cityFocus = FocusNode();
 
   @override
   void initState() {
     super.initState();
     loadCurrentAddress();
+    _addressFocus.addListener(() => setState(() {}));
+    _zipFocus.addListener(() => setState(() {}));
+    _cityFocus.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _addressFocus.dispose();
+    _zipFocus.dispose();
+    _cityFocus.dispose();
+    super.dispose();
   }
 
   Future<void> loadCurrentAddress() async {
@@ -50,77 +67,121 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
     Navigator.pop(context);
   }
 
+  OutlineInputBorder _inputBorder(FocusNode focusNode) => OutlineInputBorder(
+    borderSide: BorderSide(
+      color: focusNode.hasFocus ? AppColors.primary : AppColors.greyTransparent,
+    ),
+    borderRadius: BorderRadius.circular(AppBorderRadius.card),
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
-        elevation: 0,
+        backgroundColor: AppColors.white,
         title: Text(
-          "Address",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          'Address',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: AppFontSizes.title,
+          ),
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(AppPadding.formHorizontal),
         child: Column(
           children: [
             TextField(
               readOnly: true,
               decoration: InputDecoration(
                 labelText: 'Country/Region',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(color: AppColors.grey),
+
+                border: OutlineInputBorder(
+                  
+                  borderSide: BorderSide(color: AppColors.primary),
+                  borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                ),
+                filled: true,
+                fillColor: AppColors.white,
               ),
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: AppColors.black),
               controller: TextEditingController(text: 'Palestine'),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: AppSpacing.large),
             TextField(
               controller: _addressCtrl,
+              focusNode: _addressFocus,
               decoration: InputDecoration(
                 labelText: 'Address',
-                border: OutlineInputBorder(),
+                                labelStyle: TextStyle(color: AppColors.grey),
+
+                filled: true,
+                fillColor: AppColors.white,
+                border: _inputBorder(_addressFocus),
+                focusedBorder: _inputBorder(_addressFocus),
+                enabledBorder: _inputBorder(_addressFocus),
               ),
             ),
-             SizedBox(height: 16),
+            SizedBox(height: AppSpacing.large),
             Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _zipCtrl,
+                    focusNode: _zipFocus,
                     decoration: InputDecoration(
                       labelText: 'Zip Code',
-                      border: OutlineInputBorder(),
+                                      labelStyle: TextStyle(color: AppColors.grey),
+
+                      filled: true,
+                      fillColor: AppColors.white,
+                      border: _inputBorder(_zipFocus),
+                      focusedBorder: _inputBorder(_zipFocus),
+                      enabledBorder: _inputBorder(_zipFocus),
                     ),
                   ),
                 ),
-                SizedBox(width: 16),
+                SizedBox(width: AppSpacing.large),
                 Expanded(
                   child: TextField(
                     controller: _cityCtrl,
-                    decoration: const InputDecoration(
+                    focusNode: _cityFocus,
+                    decoration: InputDecoration(
                       labelText: 'Town/City',
-                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(color: AppColors.grey),
+
+                      filled: true,
+                      fillColor: AppColors.white,
+                      border: _inputBorder(_cityFocus),
+                      focusedBorder: _inputBorder(_cityFocus),
+                      enabledBorder: _inputBorder(_cityFocus),
                     ),
                   ),
                 ),
               ],
             ),
-            const Spacer(),
+            Spacer(),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange[700],
-                minimumSize: const Size.fromHeight(50),
+                backgroundColor: AppColors.white,
+                minimumSize: Size.fromHeight(AppPadding.buttonVertical * 3),
+                side: BorderSide(color: AppColors.greyTransparent),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                ),
               ),
               onPressed: saveAddress,
-              child: const Text(
-                'Save',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: const EdgeInsets.all(AppPadding.buttonVertical),
+                child: Text(
+                  'Save',
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: AppFontSizes.bottonfont,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

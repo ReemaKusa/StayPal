@@ -31,8 +31,8 @@ class ProfileOptionTile extends StatelessWidget {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppPadding.cardPadding,
-          vertical: AppPadding.iconPadding,
+         horizontal: AppPadding. horizontalPaddingTitle,
+         vertical: AppPadding.cardPadding
         ),
         leading: Icon(
           icon,

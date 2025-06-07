@@ -1,4 +1,4 @@
-class UserModel {
+/*class UserModel {
   final String id;
   final String fullName;
   final String email;
@@ -27,4 +27,4 @@ class UserModel {
       'imageUrl': imageUrl,
     };
   }
-}
+}*/
