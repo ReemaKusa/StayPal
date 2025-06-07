@@ -6,10 +6,9 @@ import './search_field.dart';
 import './upcoming_events_section.dart';
 import './popular_hotels_section.dart';
 import './recommended_section.dart';
-//import '../../search_result/hotel/views/hotel_details_view.dart';
-//import '../../search_result/event/views/event_details_view.dart';
 import '../../../widgets/custom_nav_bar.dart';
 import '../../../widgets/webNavBar/web_nav_bar.dart';
+import './home_header_image.dart';
 
 class HomePage extends StatelessWidget {
   final GlobalKey searchKey = GlobalKey();
@@ -106,6 +105,9 @@ class HomePage extends StatelessWidget {
           const SizedBox(height: 8),
           _buildSearchButton(context),
         ],
+              const SizedBox(height: 16),
+      const HomeHeaderImage(),
+
         const SizedBox(height: 24),
         const UpcomingEventsSection(),
         const SizedBox(height: 28),
@@ -131,8 +133,10 @@ class HomePage extends StatelessWidget {
           const SizedBox(height: 12),
           _buildSearchButton(context),
         ],
+      const SizedBox(height: 24),
+      const HomeHeaderImage(isWeb: true),
         const SizedBox(height: 32),
-        const UpcomingEventsSection(isWeb: true),
+        const UpcomingEventsSection(),
         const SizedBox(height: 40),
         const PopularHotelsSection(isWeb: true),
         const SizedBox(height: 40),
