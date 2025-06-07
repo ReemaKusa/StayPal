@@ -43,6 +43,7 @@ flutter:
   assets:
     - assets/icon/
     - assets/images/
+    - assets/fonts/NotoSans-Regular.ttf
 
 flutter_native_splash:
   color: "#FF5722"

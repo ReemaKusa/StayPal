@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/utils/dialogs_logout.dart';
+import 'package:staypal/screens/admin/views/my_bookings_manager_view.dart';
+import 'package:staypal/screens/admin/views/my_ratings_manager_view.dart';
+
 
 class HotelManagerDrawer extends StatelessWidget {
   const HotelManagerDrawer({super.key});
@@ -92,7 +95,10 @@ class HotelManagerDrawer extends StatelessWidget {
             title: 'My Reviews',
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, '/my-reviews');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MyRatingsManagerView()),
+              );
             },
           ),
           _buildOptionTile(
@@ -100,7 +106,10 @@ class HotelManagerDrawer extends StatelessWidget {
             title: 'My Bookings',
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, '/my-bookings');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MyBookingsManagerView()),
+              );
             },
           ),
 

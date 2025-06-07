@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:staypal/screens/booking/views/purchase_event_ticket_view.dart';
 import 'package:intl/intl.dart';
 import '../viewmodels/event_details_viewmodel.dart';
 import '../models/event_details_model.dart';
@@ -376,39 +377,26 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         height: 56,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor:
-                _viewModel.isEventExpired ? Colors.grey : Colors.deepOrange,
+            backgroundColor: Colors.deepOrange,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             elevation: 3,
           ),
-          onPressed:
-              _viewModel.isEventExpired
-                  ? null
-                  : () async {
-                    setState(() => _isLoading = true);
-                    try {
-                      await _viewModel.bookEvent();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Booking successful!'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Error: ${e.toString()}'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                    setState(() => _isLoading = false);
-                  },
-          child: Text(
-            _viewModel.isEventExpired ? 'Event Expired' : 'Book Now',
-            style: const TextStyle(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PurchaseEventTicketView(
+                  event: _viewModel.model.toEventModel(),
+                  ticketCount: _viewModel.ticketCount,
+                ),
+              ),
+            );
+          },
+          child: const Text(
+            'Buy Ticket',
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.white,
