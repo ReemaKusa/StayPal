@@ -60,12 +60,16 @@ class CustomRoleDrawer extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        leading: Icon(icon, color: AppColors.primary, size: AppIconSizes.tileIcon),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        leading: Icon(
+          icon,
+          color: AppColors.primary,
+          size: AppIconSizes.tileIcon,
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: AppIconSizes.smallIcon),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          size: AppIconSizes.smallIcon,
+        ),
         onTap: onTap,
       ),
     );
@@ -103,24 +107,12 @@ class CustomRoleDrawer extends StatelessWidget {
           _buildOptionTile(
             icon: Icons.reviews,
             title: 'My Reviews',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const MyRatingsManagerView()),
-              );
-            },
+            onTap: optionOnTap,
           ),
           _buildOptionTile(
             icon: Icons.book_online,
             title: 'My Bookings',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const MyBookingsManagerView()),
-              );
-            },
+            onTap: optionOnTap,
           ),
 
           _buildSectionTitle('Account'),
