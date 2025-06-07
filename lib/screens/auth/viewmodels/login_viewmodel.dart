@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:staypal/screens/homePage/home_page.dart';
-import 'package:staypal/screens/homePageTwo/views/home_page.dart';
+import 'package:staypal/screens/auth/views/email_verification_view.dart';
 
 class LoginViewModel {
   final TextEditingController emailCtrl = TextEditingController();
@@ -24,9 +23,22 @@ class LoginViewModel {
     }
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email, password: password);
-      _goToHome(context);
+      final credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      final user = credential.user;
+
+      if (user != null) {
+        await user.reload();
+        if (!user.emailVerified) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const EmailVerificationView()),
+          );
+          return;
+        }
+
+        await _redirectBasedOnRole(context, user.uid);
+      }
     } on FirebaseAuthException catch (e) {
       _showMessage(context, e.message ?? 'Login failed');
     }
@@ -44,12 +56,12 @@ class LoginViewModel {
       );
 
       final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.signInWithCredential(credential);
       final user = userCredential.user;
 
       if (user != null) {
         await _saveUserToFirestore(user);
-        _goToHome(context);
+        await _redirectBasedOnRole(context, user.uid);
       }
     } catch (e) {
       _showMessage(context, 'Google Sign-In error: $e');
@@ -58,7 +70,7 @@ class LoginViewModel {
 
   Future<void> _saveUserToFirestore(User user) async {
     final userRef =
-        FirebaseFirestore.instance.collection('users').doc(user.uid);
+    FirebaseFirestore.instance.collection('users').doc(user.uid);
     final doc = await userRef.get();
     if (!doc.exists) {
       await userRef.set({
@@ -66,15 +78,35 @@ class LoginViewModel {
         'name': user.displayName ?? '',
         'email': user.email ?? '',
         'createdAt': FieldValue.serverTimestamp(),
+        'role': 'user', // Default role
       });
     }
   }
 
-  void _goToHome(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) =>  HomePage()),
-    );
+  Future<void> _redirectBasedOnRole(BuildContext context, String uid) async {
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+    if (!userDoc.exists || !userDoc.data()!.containsKey('role')) {
+      _showMessage(context, 'User role not found.');
+      return;
+    }
+
+    final role = userDoc['role'];
+
+    switch (role) {
+      case 'admin':
+        Navigator.pushReplacementNamed(context, '/adminDashboard');
+        break;
+      case 'hotel_manager':
+        Navigator.pushReplacementNamed(context, '/hotelManagerHome');
+        break;
+      case 'event_organizer':
+        Navigator.pushReplacementNamed(context, '/eventOrganizerHome');
+        break;
+      default:
+        Navigator.pushReplacementNamed(context, '/userHome'); // ✅ FIXED
+        break;
+    }
   }
 
   void _showMessage(BuildContext context, String msg) {
@@ -82,20 +114,20 @@ class LoginViewModel {
   }
 
   InputDecoration inputDecoration(String hint) => InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: Colors.white,
-        hintStyle: const TextStyle(color: Colors.black54),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.black12),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.orangeAccent, width: 2),
-        ),
-      );
+    hintText: hint,
+    filled: true,
+    fillColor: Colors.white,
+    hintStyle: const TextStyle(color: Colors.black54),
+    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.black12),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.orangeAccent, width: 2),
+    ),
+  );
 
   InputDecoration passwordInputDecoration(
       String hint, bool isHidden, VoidCallback onToggle) {

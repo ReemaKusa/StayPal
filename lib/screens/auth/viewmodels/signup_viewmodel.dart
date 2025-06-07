@@ -40,12 +40,23 @@ class SignUpViewModel {
 
       if (user != null) {
         await user.updateDisplayName(fullName);
+
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'uid': user.uid,
           'fullName': fullName,
           'email': email,
           'createdAt': FieldValue.serverTimestamp(),
+          'isActive': true,
+          'dob': '',
+          'gender': '',
+          'phone': '',
+          'address': '',
+          'city': '',
+          'country': '',
+          'zipCode': '',
+          'imageUrl': '',
         });
+
         await user.sendEmailVerification();
 
         if (!context.mounted) return;
@@ -66,19 +77,19 @@ class SignUpViewModel {
   }
 
   InputDecoration inputDecoration(String hint) => InputDecoration(
-        filled: true,
-        fillColor: Colors.white,
-        hintText: hint,
-        hintStyle: const TextStyle(color: Colors.black54),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.black12),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color.fromRGBO(255, 87, 34, 1), width: 2),
-        ),
-      );
+    filled: true,
+    fillColor: Colors.white,
+    hintText: hint,
+    hintStyle: const TextStyle(color: Colors.black54),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.black12),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Color.fromRGBO(255, 87, 34, 1), width: 2),
+    ),
+  );
 
   InputDecoration passwordInputDecoration(String hint, bool isHidden, VoidCallback onToggle) {
     return inputDecoration(hint).copyWith(

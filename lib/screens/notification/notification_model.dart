@@ -6,6 +6,7 @@ class NotificationModel {
   final bool isRead;
   final String? imageUrl;
   final String? actionRoute;
+  final String type; // 'like' or 'booking'
 
   NotificationModel({
     required this.id,
@@ -15,6 +16,7 @@ class NotificationModel {
     this.isRead = false,
     this.imageUrl,
     this.actionRoute,
+    required this.type,
   });
 
   NotificationModel copyWith({
@@ -25,6 +27,7 @@ class NotificationModel {
     bool? isRead,
     String? imageUrl,
     String? actionRoute,
+    String? type,
   }) {
     return NotificationModel(
       id: id ?? this.id,
@@ -34,6 +37,7 @@ class NotificationModel {
       isRead: isRead ?? this.isRead,
       imageUrl: imageUrl ?? this.imageUrl,
       actionRoute: actionRoute ?? this.actionRoute,
+      type: type ?? this.type,
     );
   }
 }
