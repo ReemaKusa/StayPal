@@ -130,6 +130,7 @@ class ListHotelsView extends StatelessWidget {
                             Positioned(
                               top: AppSpacing.small,
                               right: AppSpacing.small,
+
                               child: IconButton(
                                 icon: const Icon(Icons.edit, color: AppColors.primary),
                                 onPressed: () {

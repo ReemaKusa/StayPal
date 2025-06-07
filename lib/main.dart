@@ -54,11 +54,12 @@ class MyApp extends StatelessWidget {
     //  home:  MyProfile(),
       //home:MainScreen(),
       //home:AuthEntryScreen(),
-  home: AdminDashboard(),
+  //home: AdminDashboard(),
       // home: SplashScreen(),
       // home: HotelManagerView(),
       //home: EventOrganizerView(),
-  //  home:RoleLandingView(),
+  
+    home:RoleLandingView(),
       //home:EmailVerificationView(),
       routes: {
         '/wishlist': (context) => WishListPage(),

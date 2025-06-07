@@ -78,11 +78,13 @@ class _EditHotelViewState extends State<EditHotelView> {
         'price': double.tryParse(_priceCtrl.text) ?? 0.0,
         'description': _descriptionCtrl.text,
         'details': _detailsCtrl.text,
-        'images': _imagesCtrl.text
-            .split(',')
-            .map((url) => url.trim())
-            .where((url) => url.isNotEmpty)
-            .toList(),        'facilities': _selectedFacilities,
+        'images':
+            _imagesCtrl.text
+                .split(',')
+                .map((url) => url.trim())
+                .where((url) => url.isNotEmpty)
+                .toList(),
+        'facilities': _selectedFacilities,
         'isFavorite': _isFavorite,
         'updatedAt': DateTime.now(),
       };
@@ -92,9 +94,17 @@ class _EditHotelViewState extends State<EditHotelView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Hotel updated successfully'),
-            backgroundColor: AppColors.primary,
-          ),
+            content: Text('Hotel updated successfully', style:TextStyle(
+              color:AppColors.primary,
+              fontWeight: FontWeight.bold,
+              fontSize: AppFontSizes.bottonfont
+
+            )),
+            shape: BeveledRectangleBorder(
+                side: BorderSide(color: AppColors.greyTransparent)
+              ),
+              backgroundColor: AppColors.white,
+          )
         );
         Navigator.pop(context);
       }
@@ -312,7 +322,10 @@ class _EditHotelViewState extends State<EditHotelView> {
                             label,
                           );
                           return FilterChip(
+                                                    showCheckmark: false,
+
                             label: Row(
+
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
@@ -356,12 +369,7 @@ class _EditHotelViewState extends State<EditHotelView> {
                           );
                         }).toList(),
                   ),
-                  const SizedBox(height: AppSpacing.medium),
-                  SwitchListTile(
-                    title: const Text('Is Favorite?'),
-                    value: _isFavorite,
-                    onChanged: (val) => setState(() => _isFavorite = val),
-                  ),
+                
                   const SizedBox(height: AppSpacing.section),
                   Row(
                     children: [

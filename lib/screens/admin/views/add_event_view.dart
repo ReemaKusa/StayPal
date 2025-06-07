@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/screens/admin/services/event_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -168,13 +170,13 @@ class _AddEventViewState extends State<AddEventView> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(kCardRadius),
-              boxShadow: [
+              
+               boxShadow: [
                 BoxShadow(
-                  color:Colors.black,
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  color: Colors.black12,
+                  blurRadius: AppShadows.cardBlur,
                 ),
-              ],
+               ],
             ),
             child: Form(
               key: _formKey,
