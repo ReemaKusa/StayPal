@@ -127,7 +127,6 @@ class _PersonalDetailsState extends State<PersonalDetails> {
       title: Text(
         label,
         style: TextStyle(
-          fontWeight: FontWeight.bold,
           fontSize: AppFontSizes.subtitle,
         ),
       ),

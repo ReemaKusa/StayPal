@@ -78,7 +78,11 @@ class PersonalDetailsViewModel {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size.fromHeight(50),
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: AppColors.white,
+                         shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppBorderRadius.card),
+    ),
+    side: BorderSide(color: AppColors.greyTransparent),
                       ),
                       onPressed: () async {
                         if (selectedGender != null) {
@@ -90,8 +94,9 @@ class PersonalDetailsViewModel {
                       child: Text(
                         'Save',
                         style: TextStyle(
-                          color: AppColors.white,
+                          color: AppColors.primary,
                           fontSize: AppFontSizes.subtitle,
+
                         ),
                       ),
                     ),
@@ -135,9 +140,11 @@ class PersonalDetailsViewModel {
                 padding: EdgeInsets.all(AppPadding.formHorizontal),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: AppColors.white,
                     minimumSize: Size.fromHeight(50),
                     shape: RoundedRectangleBorder(
+                      
+                      side: BorderSide(color: AppColors.greyTransparent),
                       borderRadius: BorderRadius.circular(AppBorderRadius.card),
                     ),
                   ),
@@ -152,8 +159,7 @@ class PersonalDetailsViewModel {
                   child: Text(
                     'Save',
                     style: TextStyle(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
                       fontSize: AppFontSizes.subtitle,
                     ),
                   ),

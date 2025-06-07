@@ -5,9 +5,19 @@ import 'package:staypal/utils/dialogs_logout.dart';
 import 'package:staypal/screens/admin/views/my_bookings_manager_view.dart';
 import 'package:staypal/screens/admin/views/my_ratings_manager_view.dart';
 
+class CustomRoleDrawer extends StatelessWidget {
+  final String roleTitle;
+  final String optionTitle;
+  final IconData optionIcon;
+  final VoidCallback optionOnTap;
 
-class HotelManagerDrawer extends StatelessWidget {
-  const HotelManagerDrawer({super.key});
+  const CustomRoleDrawer({
+    super.key,
+    required this.roleTitle,
+    required this.optionTitle,
+    required this.optionIcon,
+    required this.optionOnTap,
+  });
 
   Widget _buildSectionTitle(String title) {
     return Padding(
@@ -68,12 +78,12 @@ class HotelManagerDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
+          DrawerHeader(
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                'Hotel Manager',
-                style: TextStyle(
+                roleTitle,
+                style: const TextStyle(
                   color: AppColors.black,
                   fontSize: AppFontSizes.title,
                   fontWeight: FontWeight.bold,
@@ -84,9 +94,9 @@ class HotelManagerDrawer extends StatelessWidget {
 
           _buildSectionTitle('Manage'),
           _buildOptionTile(
-            icon: Icons.hotel,
-            title: 'My Hotels',
-            onTap: () => Navigator.pop(context),
+            icon: optionIcon,
+            title: optionTitle,
+            onTap: optionOnTap,
           ),
 
           _buildSectionTitle('Activity'),
