@@ -84,7 +84,7 @@ class AuthEntryView extends StatelessWidget {
                       ),
                     ),
 
-                    // ✅ Web-only "Go Back to Home" button
+
                     if (kIsWeb) ...[
                       const SizedBox(height: 24),
                       TextButton(
@@ -112,3 +112,4 @@ class AuthEntryView extends StatelessWidget {
     );
   }
 }
+

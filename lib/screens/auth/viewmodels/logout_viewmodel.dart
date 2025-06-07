@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
+import 'package:staypal/screens/homePage/views/home_page.dart';
 
 class LogoutViewModel {
   Future<void> logout(BuildContext context) async {
@@ -16,7 +17,7 @@ class LogoutViewModel {
       // ✅ Navigate to login screen and clear navigation stack
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const AuthEntryView()),
+        MaterialPageRoute(builder: (_) => HomePage()),
             (route) => false,
       );
     } catch (e) {
