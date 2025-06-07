@@ -35,7 +35,7 @@ class HotelBookingModel {
       hotelId: data['hotelId'] ?? '',
       checkIn: _convert(data['checkIn']),
       checkOut: _convert(data['checkOut']),
-      price: (data['price'] as num?)?.toDouble() ?? 0.0, // ✅ here
+      price: (data['price'] as num?)?.toDouble() ?? 0.0,
       status: data['status'] ?? 'pending',
       createdAt: _convert(data['createdAt']),
     );
