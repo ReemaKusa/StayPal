@@ -54,8 +54,7 @@ class _EditHotelViewState extends State<EditHotelView> {
     _priceCtrl.text = widget.hotel.price.toString();
     _descriptionCtrl.text = widget.hotel.description;
     _detailsCtrl.text = widget.hotel.details;
-    _imagesCtrl.text =
-        widget.hotel.images.isNotEmpty ? widget.hotel.images.first : '';
+    _imagesCtrl.text = widget.hotel.images.join(', ');
     _selectedLocation = widget.hotel.location;
     _selectedFacilities = List<String>.from(widget.hotel.facilities);
     _isFavorite = widget.hotel.isFavorite;
@@ -79,8 +78,11 @@ class _EditHotelViewState extends State<EditHotelView> {
         'price': double.tryParse(_priceCtrl.text) ?? 0.0,
         'description': _descriptionCtrl.text,
         'details': _detailsCtrl.text,
-        'images': _imagesCtrl.text.isNotEmpty ? [_imagesCtrl.text] : [],
-        'facilities': _selectedFacilities,
+        'images': _imagesCtrl.text
+            .split(',')
+            .map((url) => url.trim())
+            .where((url) => url.isNotEmpty)
+            .toList(),        'facilities': _selectedFacilities,
         'isFavorite': _isFavorite,
         'updatedAt': DateTime.now(),
       };
