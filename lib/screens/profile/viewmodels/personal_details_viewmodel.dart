@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:staypal/constants/color_constants.dart';
+import 'package:staypal/constants/app_constants.dart';
 
 class PersonalDetailsViewModel {
   Map<String, dynamic> userData = {};
@@ -13,7 +15,8 @@ class PersonalDetailsViewModel {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
 
-    final doc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
     if (doc.exists) {
       userData = doc.data()!;
       selectedGender = userData['gender'];
@@ -33,35 +36,49 @@ class PersonalDetailsViewModel {
 
   void selectGender(BuildContext context, VoidCallback onUpdate) {
     showModalBottomSheet(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       context: context,
       builder: (_) {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return SizedBox(
-              height: 240,
+              height: AppSizes.sizedbox,
               child: Column(
                 children: [
                   RadioListTile<String>(
-                    activeColor: Colors.deepOrange,
-                    title: const Text("Male", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    activeColor: AppColors.primary,
+                    title: Text(
+                      "Male",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppFontSizes.subtitle,
+                      ),
+                    ),
                     value: 'Male',
                     groupValue: selectedGender,
-                    onChanged: (value) => setModalState(() => selectedGender = value),
+                    onChanged:
+                        (value) => setModalState(() => selectedGender = value),
                   ),
                   RadioListTile<String>(
-                    activeColor: Colors.deepOrange,
-                    title:  Text("Female", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    activeColor: AppColors.primary,
+                    title: Text(
+                      "Female",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppFontSizes.subtitle,
+                      ),
+                    ),
                     value: 'Female',
                     groupValue: selectedGender,
-                    onChanged: (value) => setModalState(() => selectedGender = value),
+                    onChanged:
+                        (value) => setModalState(() => selectedGender = value),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(AppPadding.formHorizontal),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(50),
-                        backgroundColor: Colors.deepOrange,
+                        minimumSize: Size.fromHeight(50),
+                        backgroundColor: AppColors.primary,
                       ),
                       onPressed: () async {
                         if (selectedGender != null) {
@@ -70,7 +87,13 @@ class PersonalDetailsViewModel {
                           Navigator.pop(context);
                         }
                       },
-                      child: const Text('Save', style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontSize: AppFontSizes.subtitle,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -87,13 +110,15 @@ class PersonalDetailsViewModel {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      backgroundColor: AppColors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppBorderRadius.card),
+        ),
       ),
       builder: (_) {
         return SizedBox(
-          height: 300,
+          height: AppSizes.sizedbox,
           child: Column(
             children: [
               Expanded(
@@ -102,26 +127,36 @@ class PersonalDetailsViewModel {
                   initialDateTime: DateTime(2000),
                   minimumDate: DateTime(1900),
                   maximumDate: DateTime.now(),
-                  onDateTimeChanged: (DateTime newDate) => selectedDate = newDate,
+                  onDateTimeChanged:
+                      (DateTime newDate) => selectedDate = newDate,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(AppPadding.formHorizontal),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepOrange,
-                    minimumSize: const Size.fromHeight(50),
+                    backgroundColor: AppColors.primary,
+                    minimumSize: Size.fromHeight(50),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppBorderRadius.card),
                     ),
                   ),
                   onPressed: () async {
-                    String formatted = DateFormat('yyyy-MM-dd').format(selectedDate);
+                    String formatted = DateFormat(
+                      'yyyy-MM-dd',
+                    ).format(selectedDate);
                     await updateField('dob', formatted);
                     onUpdate();
                     Navigator.pop(context);
                   },
-                  child: const Text('Save', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                  child: Text(
+                    'Save',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppFontSizes.subtitle,
+                    ),
+                  ),
                 ),
               ),
             ],

@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:staypal/constants/color_constants.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/widgets/visa_card.dart';
 
 class AddCardScreen extends StatefulWidget {
   const AddCardScreen({super.key});
@@ -15,6 +18,14 @@ class _AddCardScreenState extends State<AddCardScreen> {
   final _numberCtrl = TextEditingController();
   final _expiryCtrl = TextEditingController();
   final _cvvCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _numberCtrl.addListener(() => setState(() {}));
+    _nameCtrl.addListener(() => setState(() {}));
+    _expiryCtrl.addListener(() => setState(() {}));
+  }
 
   Future<void> saveCard() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -42,67 +53,10 @@ class _AddCardScreenState extends State<AddCardScreen> {
   }
 
   Widget _buildCardPreview() {
-    final lastFour =
-        _numberCtrl.text.replaceAll(' ', '').length >= 4
-            ? _numberCtrl.text.replaceAll(' ', '').substring(12)
-            : '****';
-
-    return Container(
-      width: double.infinity,
-      height: 200,
-      margin: EdgeInsets.symmetric(vertical: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          colors: [
-            Color.fromARGB(255, 65, 67, 159),
-            Color.fromARGB(255, 31, 32, 79),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color.fromARGB(255, 70, 68, 88),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      padding: EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Image.asset(
-                'assets/images/logos--visa.webp',
-                height: 30,
-                color: Colors.white,
-              ),
-            ],
-          ),
-          const Text(
-            'CARD NUMBER',
-            style: TextStyle(color: Colors.white70, fontSize: 10),
-          ),
-          Text(
-            '**** **** **** $lastFour',
-
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              letterSpacing: 2,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            'VALID THROUGH: ${_expiryCtrl.text.isNotEmpty ? _expiryCtrl.text : 'MM/YY'}',
-            style: const TextStyle(color: Colors.white70, fontSize: 12),
-          ),
-        ],
-      ),
+    return PaymentCardWidget(
+      cardNumber: _numberCtrl.text,
+      cardHolder: _nameCtrl.text,
+      expiryDate: _expiryCtrl.text,
     );
   }
 
@@ -116,21 +70,29 @@ class _AddCardScreenState extends State<AddCardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.xSmall),
         TextField(
           controller: controller,
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
           maxLength: maxLength,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: const TextStyle(color: AppColors.grey),
             filled: true,
-            fillColor: Color(0xFFF8F8F8),
+            fillColor: AppColors.white,
             counterText: '',
-            border: OutlineInputBorder(borderSide: BorderSide.none),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppBorderRadius.card),
+              borderSide: const BorderSide(color: AppColors.greyTransparent),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppBorderRadius.card),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+            ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.medium),
       ],
     );
   }
@@ -138,22 +100,31 @@ class _AddCardScreenState extends State<AddCardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.black),
         title: const Text(
-          'Payment Details',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          'Add Card',
+          style: TextStyle(
+            color: AppColors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: AppFontSizes.title,
+          ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppPadding.formHorizontal,
+          vertical: AppPadding.formVertical,
+        ),
         child: Column(
           children: [
             _buildCardPreview(),
             _buildInputField(
               _numberCtrl,
-              'Card number',
+              'Card Number',
               keyboardType: TextInputType.number,
               maxLength: 19,
               inputFormatters: [
@@ -162,23 +133,23 @@ class _AddCardScreenState extends State<AddCardScreen> {
                 CardNumberInputFormatter(),
               ],
             ),
-            _buildInputField(_nameCtrl, 'Name on card'),
+            _buildInputField(_nameCtrl, 'Name On Card'),
             Row(
               children: [
                 Expanded(
                   child: _buildInputField(
                     _expiryCtrl,
-                    'Expiry date',
+                    'Expiry Date',
                     keyboardType: TextInputType.number,
                     maxLength: 5,
                     inputFormatters: [ExpiryDateInputFormatter()],
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSpacing.large),
                 Expanded(
                   child: _buildInputField(
                     _cvvCtrl,
-                    'Security code',
+                    'CVV',
                     keyboardType: TextInputType.number,
                     maxLength: 3,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -186,24 +157,29 @@ class _AddCardScreenState extends State<AddCardScreen> {
                 ),
               ],
             ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: saveCard,
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size.fromHeight(50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+            const SizedBox(height: 200),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: saveCard,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.white,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppPadding.buttonVertical,
+                  ),
+                  side: BorderSide(color: AppColors.greyTransparent),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                  ),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                backgroundColor: Colors.orange[700],
-              ),
-              child: Text(
-                'SAVE CHANGES',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  letterSpacing: 1,
+                child: const Text(
+                  'Save Card',
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: AppFontSizes.bottonfont,
+                    letterSpacing: 1,
+                  ),
                 ),
               ),
             ),
@@ -220,8 +196,8 @@ class CardNumberInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    var digits = newValue.text.replaceAll(' ', '');
-    var buffer = StringBuffer();
+    final digits = newValue.text.replaceAll(' ', '');
+    final buffer = StringBuffer();
     for (int i = 0; i < digits.length; i++) {
       buffer.write(digits[i]);
       if ((i + 1) % 4 == 0 && i + 1 != digits.length) buffer.write(' ');
@@ -251,4 +227,4 @@ class ExpiryDateInputFormatter extends TextInputFormatter {
       selection: TextSelection.collapsed(offset: newText.length),
     );
   }
-}
+}*/

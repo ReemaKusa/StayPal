@@ -14,6 +14,7 @@ class AppPadding {
   static const double horizontalPadding = 12.0;
   static const double horizontalPaddingTitle = 20.0;
   static const double iconPadding = 6.0;
+  static const double visaPadding = 90;
 
   static const double formVertical = 32.0;
   static const double formHorizontal = 16.0;
@@ -43,6 +44,7 @@ class AppFontSizes {
   static const double title = 20.0;
   static const double subtitle = 18.0;
   static const double body = 12.0;
+  static const double bottonfont = 14.0;
 }
 
 class AppIconSizes {
@@ -57,6 +59,9 @@ class AppSizes {
   static const double radiusLarge = 12;
   static const double paddingMedium = 16;
   static const double spacingLarge = 24;
+  static const double cardPositionVertical = 35;
+  static const double cardPositionHorizantal = 18;
+  static const double sizedbox = 200;
 }
 
 class AppBorderRadius {
