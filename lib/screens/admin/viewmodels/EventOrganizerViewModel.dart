@@ -56,22 +56,31 @@ class EventOrganizerViewModel extends ChangeNotifier {
       notifyListeners();
 
       final user = FirebaseAuth.instance.currentUser!;
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
       final role = userDoc['role'];
 
       QuerySnapshot snapshot;
       if (role == 'admin') {
-        snapshot = await FirebaseFirestore.instance.collection('event').get(); // show all events
+        snapshot =
+            await FirebaseFirestore.instance
+                .collection('event')
+                .get(); // show all events
       } else {
-        snapshot = await FirebaseFirestore.instance
-            .collection('event')
-            .where('organizerId', isEqualTo: user.uid)
-            .get();
+        snapshot =
+            await FirebaseFirestore.instance
+                .collection('event')
+                .where('organizerId', isEqualTo: user.uid)
+                .get();
       }
 
-      myEvents = snapshot.docs.map((doc) => EventModel.fromFirestore(doc)).toList();
+      myEvents =
+          snapshot.docs.map((doc) => EventModel.fromFirestore(doc)).toList();
     } catch (e) {
-      print('❌ Failed to fetch events: $e');
+      print('Failed to fetch events: $e');
     } finally {
       isLoading = false;
       notifyListeners();
@@ -80,6 +89,6 @@ class EventOrganizerViewModel extends ChangeNotifier {
 
   Future<void> deleteEvent(String eventId) async {
     await FirebaseFirestore.instance.collection('event').doc(eventId).delete();
-    await fetchMyEvents(); // refresh list after delete
+    await fetchMyEvents();
   }
 }

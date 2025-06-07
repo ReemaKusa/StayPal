@@ -9,7 +9,7 @@ import 'package:staypal/screens/profile/booking_details_payment.dart';
 // import 'package:staypal/screens/profile/booking_complete.dart';
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
 import 'package:staypal/DB/firebase_options.dart';
-// import 'package:staypal/screens/auth/test_firestore_screen.dart'; 
+// import 'package:staypal/screens/auth/test_firestore_screen.dart';
 import 'package:staypal/screens/profile/views/my_profile.dart';
 import 'package:provider/provider.dart';
 import 'package:staypal/screens/wishlistPage/views/wishlist_view.dart';
@@ -29,9 +29,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-        create: (_) => ProfileViewModel(),
-  ),
+        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
 
         ChangeNotifierProvider(create: (_) => HotelManagerViewModel()),
         ChangeNotifierProvider(create: (_) => EventOrganizerViewModel()),
@@ -53,13 +51,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-     home:  MyProfile(),
+      // home:  MyProfile(),
       //home:MainScreen(),
       //home:AuthEntryScreen(),
       //home: AdminDashboard(),
-     // home: SplashScreen(),
-      //home: HotelManagerView(),
-      //home: EventOrganizerView(),
+      // home: SplashScreen(),
+      // home: HotelManagerView(),
+      home: EventOrganizerView(),
       //home:RoleLandingView(),
       //home:EmailVerificationView(),
       routes: {

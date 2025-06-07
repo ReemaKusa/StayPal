@@ -155,7 +155,6 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:staypal/constants/app_constants.dart';
@@ -164,6 +163,7 @@ import 'package:staypal/screens/admin/viewmodels/EventOrganizerViewModel.dart';
 import 'package:staypal/screens/admin/views/edit_event_view.dart';
 import 'package:staypal/screens/admin/views/add_event_view.dart';
 import 'package:staypal/widgets/add_button.dart';
+import 'package:staypal/widgets/drawer.dart';
 
 class EventOrganizerView extends StatelessWidget {
   const EventOrganizerView({super.key});
@@ -174,6 +174,18 @@ class EventOrganizerView extends StatelessWidget {
       create: (_) => EventOrganizerViewModel()..fetchMyEvents(),
       child: Scaffold(
         backgroundColor: AppColors.white,
+        drawer: CustomRoleDrawer(
+          roleTitle: 'Event Organizer',
+          optionTitle: 'My Events',
+          optionIcon: Icons.event,
+          optionOnTap: () {
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const EventOrganizerView()),
+            );
+          },
+        ),
         appBar: AppBar(
           backgroundColor: AppColors.white,
           elevation: 0.5,
@@ -221,13 +233,15 @@ class EventOrganizerView extends StatelessWidget {
 
               return ListView.separated(
                 itemCount: vm.myEvents.length,
-                separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.cardVerticalMargin),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: AppSpacing.cardVerticalMargin),
                 itemBuilder: (context, index) {
                   final event = vm.myEvents[index];
                   return Container(
                     decoration: BoxDecoration(
                       color: AppColors.white,
-                      borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                      borderRadius:
+                          BorderRadius.circular(AppBorderRadius.card),
                       border: Border.all(color: AppColors.greyTransparent),
                       boxShadow: const [
                         BoxShadow(
@@ -260,105 +274,136 @@ class EventOrganizerView extends StatelessWidget {
                         spacing: AppSpacing.xSmall,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.edit, color: AppColors.primary),
+                            icon: const Icon(Icons.edit,
+                                color: AppColors.primary),
                             onPressed: () async {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => EditEventView(event: event),
+                                  builder: (_) =>
+                                      EditEventView(event: event),
                                 ),
                               );
-                              context.read<EventOrganizerViewModel>().fetchMyEvents();
+                              context
+                                  .read<EventOrganizerViewModel>()
+                                  .fetchMyEvents();
                             },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: AppColors.primary),
+                            icon: const Icon(Icons.delete,
+                                color: AppColors.primary),
                             onPressed: () async {
-                       final confirm = await showDialog<bool>(
-  context: context,
-  barrierDismissible: false,
-  builder: (context) => Dialog(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppBorderRadius.card),
-    ),
-    backgroundColor: AppColors.white,
-    child: Padding(
-      padding: const EdgeInsets.all(AppPadding.buttonVertical),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'Confirm Delete',
-            style: TextStyle(
-              fontSize: AppFontSizes.subtitle,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.medium),
-          const Text(
-            'Are you sure you want to delete this event?\nThis cannot be undone.',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: AppFontSizes.body),
-          ),
-          const SizedBox(height: AppSpacing.large),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppPadding.buttonVertical,
-                    ),
-                    side: BorderSide(color: AppColors.primary),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppBorderRadius.card),
-                    ),
-                  ),
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.medium),
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppPadding.buttonVertical,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppBorderRadius.card),
-                    ),
-                  ),
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text(
-                    'Delete',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  ),
-);
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) => Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        AppBorderRadius.card),
+                                  ),
+                                  backgroundColor: AppColors.white,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(
+                                        AppPadding.buttonVertical),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Text(
+                                          'Confirm Delete',
+                                          style: TextStyle(
+                                            fontSize: AppFontSizes.subtitle,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                            height: AppSpacing.medium),
+                                        const Text(
+                                          'Are you sure you want to delete this event?\nThis cannot be undone.',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: AppFontSizes.body),
+                                        ),
+                                        const SizedBox(
+                                            height: AppSpacing.large),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: OutlinedButton(
+                                                style: OutlinedButton.styleFrom(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    vertical: AppPadding
+                                                        .buttonVertical,
+                                                  ),
+                                                  side: const BorderSide(
+                                                      color:
+                                                          AppColors.primary),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            AppBorderRadius
+                                                                .card),
+                                                  ),
+                                                ),
+                                                onPressed: () =>
+                                                    Navigator.pop(
+                                                        context, false),
+                                                child: const Text(
+                                                  'Cancel',
+                                                  style: TextStyle(
+                                                    color: AppColors.primary,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                                width: AppSpacing.medium),
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                style: ElevatedButton
+                                                    .styleFrom(
+                                                  backgroundColor:
+                                                      AppColors.primary,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    vertical: AppPadding
+                                                        .buttonVertical,
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            AppBorderRadius
+                                                                .card),
+                                                  ),
+                                                ),
+                                                onPressed: () => Navigator.pop(
+                                                    context, true),
+                                                child: const Text(
+                                                  'Delete',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
 
                               if (confirm == true) {
-                                await context.read<EventOrganizerViewModel>().deleteEvent(event.eventId);
+                                await context
+                                    .read<EventOrganizerViewModel>()
+                                    .deleteEvent(event.eventId);
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Event deleted')),
+                                    const SnackBar(
+                                        content: Text('Event deleted')),
                                   );
                                 }
                               }
