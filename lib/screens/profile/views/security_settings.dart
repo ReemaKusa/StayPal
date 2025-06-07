@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/screens/profile/viewmodels/security_settings_viewmodel.dart';
 
 class SecuritySetting extends StatelessWidget {
@@ -9,68 +11,76 @@ class SecuritySetting extends StatelessWidget {
     final viewModel = SecuritySettingsViewModel();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-        title: const Text(
+        backgroundColor: AppColors.white,
+        title: Text(
           'Security Settings',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: AppFontSizes.title,
+          ),
         ),
         leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back),
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppPadding.formHorizontal,
+        ),
         children: [
-          const SizedBox(height: 20),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              leading: const Icon(Icons.lock_outline, color: Colors.black),
-              title: const Text(
-                'Change Password',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              trailing: const Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: Colors.black,
-              ),
-              onTap: () => viewModel.showChangePasswordDialog(context),
-            ),
+         SizedBox(height: AppSpacing.large),
+          _buildOptionTile(
+            icon: Icons.lock_outline,
+            title: 'Change Password',
+            onTap: () => viewModel.showChangePasswordDialog(context),
           ),
-          const SizedBox(height: 12),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              leading: const Icon(Icons.email_outlined, color: Colors.black),
-              title: const Text(
-                'Reset Password via Email',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              trailing: const Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: Colors.black,
-              ),
-              onTap: () => viewModel.sendResetEmail(context),
-            ),
+          const SizedBox(height: AppSpacing.medium),
+          _buildOptionTile(
+            icon: Icons.email_outlined,
+            title: 'Reset Password via Email',
+            
+            onTap: () => viewModel.sendResetEmail(context),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildOptionTile({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppBorderRadius.card),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.greyTransparent,
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 14,
+        ),
+        leading: Icon(icon, color: AppColors.black),
+        title: Text(
+          title,
+        ),
+        trailing:  Icon(
+          Icons.arrow_forward_ios,
+          size: AppIconSizes.smallIcon,
+          color: AppColors.primary,
+        ),
+        onTap: onTap,
       ),
     );
   }
