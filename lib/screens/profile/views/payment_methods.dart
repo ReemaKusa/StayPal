@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:staypal/screens/profile/add_card_screen.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/screens/profile/views/add_visa.dart';
@@ -82,44 +81,41 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                             fontSize: AppFontSizes.body,
                           ),
                         ),
-                        SizedBox(height: 150),
+                        SizedBox(height: 100),
                         Align(
                           alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 410, 0, 0),
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.white,
-                                  padding: const EdgeInsets.symmetric(
-                    vertical: AppPadding.buttonVertical,
-                  ),
-                                  side: BorderSide(
-                                    color: AppColors.greyTransparent,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.white,
+                                padding: const EdgeInsets.symmetric(
+                                              vertical: AppPadding.buttonVertical,
+                                            ),
+                                side: BorderSide(
+                                  color: AppColors.greyTransparent,
                                 ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const AddCardView(),
-                                    ),
-                                  ).then((_) => setState(() {}));
-                                },
-                                child: const Text(
-                                  'Add Card',
-                                  style: TextStyle(
-                                    fontSize: AppFontSizes.bottonfont,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.primary,
-                                                        letterSpacing: 1,
-                                
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const AddCardView(),
                                   ),
+                                ).then((_) => setState(() {}));
+                              },
+                              child: const Text(
+                                'Add Card',
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.bottonfont,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                                      letterSpacing: 1,
+                              
                                 ),
                               ),
                             ),

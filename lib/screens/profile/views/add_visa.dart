@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
-import 'package:staypal/screens/profile/add_card_screen.dart';
 import 'package:staypal/screens/profile/viewmodels/add_visa.dart';
 import 'package:staypal/utils/input_formatter.dart';
 import 'package:staypal/widgets/visa_card.dart';
@@ -56,7 +55,9 @@ class _AddCardForm extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.large),
 
-            _buildInputField(vm.numberCtrl, 'Card Number',
+            _buildInputField(
+              vm.numberCtrl,
+              'Card Number',
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
                 LengthLimitingTextInputFormatter(19),
@@ -71,7 +72,9 @@ class _AddCardForm extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _buildInputField(vm.expiryCtrl, 'Expiry Date',
+                  child: _buildInputField(
+                    vm.expiryCtrl,
+                    'Expiry Date',
                     inputFormatters: [ExpiryDateInputFormatter()],
                     keyboardType: TextInputType.number,
                     maxLength: 5,
@@ -79,7 +82,9 @@ class _AddCardForm extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.large),
                 Expanded(
-                  child: _buildInputField(vm.cvvCtrl, 'CVV',
+                  child: _buildInputField(
+                    vm.cvvCtrl,
+                    'CVV',
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     keyboardType: TextInputType.number,
                     maxLength: 3,
@@ -99,7 +104,7 @@ class _AddCardForm extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                     vertical: AppPadding.buttonVertical,
                   ),
-                  side: const BorderSide(color: AppColors.primary),
+                  side: const BorderSide(color: AppColors.greyTransparent),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppBorderRadius.card),
                   ),
