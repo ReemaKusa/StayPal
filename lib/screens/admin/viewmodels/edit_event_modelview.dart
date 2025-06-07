@@ -49,7 +49,7 @@ class EditEventViewModel extends ChangeNotifier {
     priceCtrl.text = event.price.toString();
     descriptionCtrl.text = event.description;
     detailsCtrl.text = event.details;
-    imageCtrl.text = event.images.isNotEmpty ? event.images.first : '';
+    imageCtrl.text = event.images.join(', ');
     selectedLocation = event.location;
     dateCtrl.text = event.date.toIso8601String().substring(0, 10);
     timeCtrl.text = event.time;
@@ -235,8 +235,11 @@ class EditEventViewModel extends ChangeNotifier {
         price: double.tryParse(priceCtrl.text) ?? 0.0,
         description: descriptionCtrl.text,
         details: detailsCtrl.text,
-        images: imageCtrl.text.isNotEmpty ? [imageCtrl.text] : [],
-        date: DateTime.tryParse(dateCtrl.text) ?? DateTime.now(),
+        images: imageCtrl.text
+            .split(',')
+            .map((url) => url.trim())
+            .where((url) => url.isNotEmpty)
+            .toList(),        date: DateTime.tryParse(dateCtrl.text) ?? DateTime.now(),
         time: timeCtrl.text.trim(),
         highlights: highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),
         limite: int.tryParse(availableTicketsCtrl.text) ?? 0,

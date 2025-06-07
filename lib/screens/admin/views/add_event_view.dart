@@ -85,7 +85,11 @@ class _AddEventViewState extends State<AddEventView> {
         description: _descriptionCtrl.text,
         details: _detailsCtrl.text,
         price: double.tryParse(_priceCtrl.text) ?? 0.0,
-        images: _imageCtrl.text.isNotEmpty ? [_imageCtrl.text] : [],
+        images: _imageCtrl.text
+            .split(',')
+            .map((url) => url.trim())
+            .where((url) => url.isNotEmpty)
+            .toList(),
         date: DateTime.tryParse(_dateCtrl.text.trim()) ?? DateTime.now(),
         time: _timeCtrl.text.trim(),
         highlights: _highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),

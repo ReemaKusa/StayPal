@@ -78,8 +78,11 @@ class _AddHotelViewState extends State<AddHotelView> {
         'description': _descriptionCtrl.text,
         'details': _detailsCtrl.text,
         'price': double.tryParse(_priceCtrl.text) ?? 0.0,
-        'images': _imagesCtrl.text.isNotEmpty ? [_imagesCtrl.text] : [],
-        'facilities': _selectedFacilities,
+        'images': _imagesCtrl.text
+            .split(',')
+            .map((url) => url.trim())
+            .where((url) => url.isNotEmpty)
+            .toList(),        'facilities': _selectedFacilities,
         'isFavorite': _isFavorite,
         'createdAt': DateTime.now(),
         'managerId': managerId,
