@@ -51,14 +51,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+
       // home:  MyProfile(),
       //home:MainScreen(),
       //home:AuthEntryScreen(),
       //home: AdminDashboard(),
       // home: SplashScreen(),
       // home: HotelManagerView(),
-      home: EventOrganizerView(),
-      //home:RoleLandingView(),
+      //home: EventOrganizerView(),
+      home:RoleLandingView(),
       //home:EmailVerificationView(),
       routes: {
         '/wishlist': (context) => WishListPage(),
