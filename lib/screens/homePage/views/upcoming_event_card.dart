@@ -1,24 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../search_result/event/views/event_details_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../models/upcoming_events_model.dart'; 
 
 class EventCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String imageUrl;
-  final String description;
-  final String id;
-  final bool isFavorite;
+  final UpcomingEventsModel event; 
   final bool isWeb;
 
   const EventCard({
     super.key,
-    required this.title,
-    required this.subtitle,
-    required this.imageUrl,
-    required this.description,
-    required this.id,
-    required this.isFavorite,
+    required this.event,
     this.isWeb = false,
   });
 
@@ -48,7 +39,8 @@ class EventCard extends StatelessWidget {
               child: AspectRatio(
                 aspectRatio: 1,
                 child: Image.network(
-                  imageUrl,
+                  event.imageUrl,
+
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: Colors.grey[100],
@@ -67,7 +59,7 @@ class EventCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          title,
+                          event.title, 
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: isWeb ? 18 : 16),
@@ -75,8 +67,9 @@ class EventCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
+
                         Text(
-                          subtitle,
+                          event.subtitle,
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: isWeb ? 14 : 12),
@@ -89,7 +82,7 @@ class EventCard extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Text(
-                          description,
+                          event.description,
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: isWeb ? 14 : 12),
@@ -135,7 +128,7 @@ class EventCard extends StatelessWidget {
         builder: (context) => const Center(child: CircularProgressIndicator()),
       );
 
-      final doc = await FirebaseFirestore.instance.collection('event').doc(id).get();
+      final doc = await FirebaseFirestore.instance.collection('event').doc(event.id).get();
 
       Navigator.of(context).pop();
 
@@ -145,8 +138,8 @@ class EventCard extends StatelessWidget {
           MaterialPageRoute(
             builder: (_) => EventDetailsPage(
               event: doc.data() ?? {},
-              eventId: id,
-              isInitiallyLiked: isFavorite,
+              eventId: event.id,
+              isInitiallyLiked: event.isFavorite,
             ),
           ),
         );

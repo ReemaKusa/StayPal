@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../search_result/hotel/views/hotel_details_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../models/popular_hotels_model.dart';
 
 class HotelCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String imageUrl;
-  final String id;
-  final bool isFavorite;
+  final PopularHotelsModel hotel;
   final bool isWeb;
 
   const HotelCard({
     super.key,
-    required this.title,
-    required this.subtitle,
-    required this.imageUrl,
-    required this.id,
-    required this.isFavorite,
+    required this.hotel,
     this.isWeb = false,
   });
 
@@ -50,7 +43,7 @@ class HotelCard extends StatelessWidget {
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(16)),
                   image: DecorationImage(
-                    image: NetworkImage(imageUrl),
+                    image: NetworkImage(hotel.imageUrl),
                     fit: BoxFit.cover,
                     onError: (exception, stackTrace) => Container(
                       color: Colors.grey[300],
@@ -66,7 +59,7 @@ class HotelCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    hotel.title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: isWeb ? 18 : 16),
@@ -75,7 +68,7 @@ class HotelCard extends StatelessWidget {
                   ),
                   SizedBox(height: isWeb ? 6 : 4),
                   Text(
-                    subtitle,
+                    hotel.subtitle,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: isWeb ? 16 : 14),
@@ -116,7 +109,7 @@ class HotelCard extends StatelessWidget {
         builder: (context) => const Center(child: CircularProgressIndicator()),
       );
 
-      final doc = await FirebaseFirestore.instance.collection('hotel').doc(id).get();
+      final doc = await FirebaseFirestore.instance.collection('hotel').doc(hotel.id).get();
 
       Navigator.of(context).pop();
 
@@ -126,8 +119,8 @@ class HotelCard extends StatelessWidget {
           MaterialPageRoute(
             builder: (_) => HotelDetailsPage(
               hotel: doc.data() ?? {},
-              hotelId: id,
-              isInitiallyLiked: isFavorite,
+              hotelId: hotel.id,
+              isInitiallyLiked: hotel.isFavorite,
             ),
           ),
         );

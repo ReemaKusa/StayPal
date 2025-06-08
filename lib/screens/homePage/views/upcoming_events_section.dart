@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/home_view_model.dart';
-import 'event_card.dart';
+import 'upcoming_event_card.dart';
 
 class UpcomingEventsSection extends StatelessWidget {
   final bool isWeb;
@@ -36,12 +36,7 @@ class UpcomingEventsSection extends StatelessWidget {
             itemBuilder: (context, index) {
               final event = viewModel.upcomingEvents[index];
               return EventCard(
-                title: event.title,
-                subtitle: event.subtitle,
-                imageUrl: event.imageUrl,
-                description: event.description,
-                id: event.id,
-                isFavorite: event.isFavorite,
+                event: event, 
                 isWeb: true,
               );
             },
@@ -63,12 +58,7 @@ class UpcomingEventsSection extends StatelessWidget {
             return Column(
               children: [
                 EventCard(
-                  title: event.title,
-                  subtitle: event.subtitle,
-                  imageUrl: event.imageUrl,
-                  description: event.description,
-                  id: event.id,
-                  isFavorite: event.isFavorite,
+                  event: event,
                 ),
                 const SizedBox(height: 16),
               ],

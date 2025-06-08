@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../search_result/event/views/event_details_view.dart';
 import '../../search_result/hotel/views/hotel_details_view.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../models/recommended_item_model.dart';
 
 class RecommendedCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String imageUrl;
-  final String id;
-  final bool isFavorite;
-  final String type;
+  final RecommendedItemModel item;
   final bool isWeb;
 
   const RecommendedCard({
     super.key,
-    required this.title,
-    required this.subtitle,
-    required this.imageUrl,
-    required this.id,
-    required this.isFavorite,
-    required this.type,
+    required this.item,
     this.isWeb = false,
   });
 
@@ -42,43 +33,51 @@ class RecommendedCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              width: MediaQuery.of(context).size.width * (isWeb ? 0.2 : 0.3),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  bottomLeft: Radius.circular(16)),
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
-                  onError: (exception, stackTrace) => Container(
-                    color: Colors.grey[300],
-                    child: Icon(Icons.image, size: 40, color: Colors.grey),
-                  ),
+            // Image section
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                bottomLeft: Radius.circular(16),
+              ),
+              child: Image.network(
+                item.imageUrl,
+                width: MediaQuery.of(context).size.width * (isWeb ? 0.2 : 0.3),
+                height: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: Colors.grey[300],
+                  alignment: Alignment.center,
+                  child: const Icon(Icons.broken_image, size: 40, color: Colors.grey),
                 ),
               ),
             ),
+
             SizedBox(width: isWeb ? 20 : 12),
+
+            // Content section
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: isWeb ? 16 : 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      title,
+                      item.title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: isWeb ? 18 : 16),
+                        fontSize: isWeb ? 18 : 16,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: isWeb ? 8 : 4),
                     Text(
-                      subtitle,
+                      item.subtitle,
                       style: TextStyle(
                         color: Colors.grey,
-                        fontSize: isWeb ? 16 : 14),
+                        fontSize: isWeb ? 16 : 14,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -86,6 +85,8 @@ class RecommendedCard extends StatelessWidget {
                 ),
               ),
             ),
+
+            // Arrow icon
             Padding(
               padding: EdgeInsets.all(isWeb ? 20 : 12),
               child: Icon(
@@ -108,52 +109,67 @@ class RecommendedCard extends StatelessWidget {
         builder: (context) => const Center(child: CircularProgressIndicator()),
       );
 
-      if (type.toLowerCase() == 'hotel') {
-        final doc = await FirebaseFirestore.instance.collection('hotel').doc(id).get();
+      final type = item.type.isEmpty ? _determineTypeFromTitle(item.title) : item.type.toLowerCase();
+
+      if (type == 'hotel') {
+        final doc = await FirebaseFirestore.instance.collection('hotel').doc(item.id).get();
         Navigator.of(context).pop();
-        
+
         if (doc.exists) {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => HotelDetailsPage(
                 hotel: doc.data() ?? {},
-                hotelId: id,
-                isInitiallyLiked: isFavorite,
+                hotelId: item.id,
+                isInitiallyLiked: item.isFavorite,
               ),
             ),
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Hotel details not found')),
-          );
+          _showError(context, 'Hotel details not found');
         }
       } else {
-        final doc = await FirebaseFirestore.instance.collection('event').doc(id).get();
+        final doc = await FirebaseFirestore.instance.collection('event').doc(item.id).get();
         Navigator.of(context).pop();
-        
+
         if (doc.exists) {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => EventDetailsPage(
                 event: doc.data() ?? {},
-                eventId: id,
-                isInitiallyLiked: isFavorite,
+                eventId: item.id,
+                isInitiallyLiked: item.isFavorite,
               ),
             ),
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Event details not found')),
-          );
+          _showError(context, 'Event details not found');
         }
       }
     } catch (e) {
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      _showError(context, 'Error: ${e.toString()}');
     }
+  }
+
+  void _showError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  String _determineTypeFromTitle(String title) {
+    const hotelKeywords = ['hotel', 'resort', 'inn', 'lodge', 'suite', 'villa'];
+    final lowerTitle = title.toLowerCase();
+    if (hotelKeywords.any((word) => lowerTitle.contains(word))) {
+      return 'hotel';
+    }
+    return 'event';
   }
 }

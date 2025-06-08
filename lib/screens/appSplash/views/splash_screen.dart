@@ -4,7 +4,7 @@ import './splash_text.dart';
 import './animated_logo.dart';
 import './splash_loader.dart';
 import './splash_background.dart';
-//import '../../homePage/views/home_page.dart';
+import 'package:staypal/widgets/role_landing_view.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -30,12 +30,12 @@ class _SplashScreenState extends State<SplashScreen>
   void _onViewModelChange() => setState(() {});
 
   void _navigateToHome() {
-    // Future.delayed(const Duration(milliseconds: 300), () {
-    //   Navigator.pushReplacement(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => HomePage()),
-    //   );
-    // });
+    Future.delayed(const Duration(milliseconds: 300), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => RoleLandingView()),
+      );
+    });
   }
 
   @override
