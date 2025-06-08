@@ -41,7 +41,7 @@ class HotelManagerView extends StatelessWidget {
             Navigator.pop(context);
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const MyBookingsManagerView()),
+              MaterialPageRoute(builder: (_) => const MyRatingsManagerView()),
             );
           },
         ),
