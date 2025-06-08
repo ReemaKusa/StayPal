@@ -10,4 +10,16 @@ class UserService {
       return UserModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
     }).toList();
   }
+
+  Future<UserModel?> fetchUserById(String userId) async {
+    try {
+      final doc = await usersRef.doc(userId).get();
+      if (doc.exists) {
+        return UserModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+      }
+    } catch (e) {
+      print('Error fetching user by ID: $e');
+    }
+    return null;
+  }
 }

@@ -160,7 +160,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
       case 'list_users':
         return const ListUsersView();
       case 'list_bookings':
-        return const ListBookingsView();
+        return const ListAllBookingsView();
       case 'dashboard':
       default:
       return FutureBuilder(
