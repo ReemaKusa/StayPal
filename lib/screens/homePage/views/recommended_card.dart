@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../search_result/event/views/event_details_view.dart';
-import '../../search_result/hotel/views/hotel_details_view.dart';
+import '../../detailsPage/event/views/event_details_view.dart';
+import '../../detailsPage/hotel/views/hotel_details_view.dart';
 import '../../../models/recommended_item_model.dart';
 
 class RecommendedCard extends StatelessWidget {

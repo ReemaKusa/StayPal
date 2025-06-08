@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import './search_result_view_model.dart';
 import './listing_card.dart';
-import '../../search_result/event/views/event_details_view.dart';
+import '../../detailsPage/event/views/event_details_view.dart';
 
 class EventList extends StatelessWidget {
   final SearchResultViewModel viewModel;

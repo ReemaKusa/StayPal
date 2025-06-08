@@ -58,12 +58,11 @@ class MyApp extends StatelessWidget {
       // home: HotelManagerView(),
       //home: EventOrganizerView(),
 
-      home: RoleLandingView(),
+      // home: RoleLandingView(),
 
       //home:EmailVerificationView(),
-      //home: SplashScreen(), 
+      home: SplashScreen(), 
       routes: {
-        //'/': (context) => RoleLandingView(),
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),
         '/home': (context) => HomePage(),

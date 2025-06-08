@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import './search_result_view_model.dart';
 import './listing_card.dart';
-import '../../search_result/hotel/views/hotel_details_view.dart';
+import '../../detailsPage/hotel/views/hotel_details_view.dart';
 
 
 class HotelList extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../search_result/event/views/event_details_view.dart';
+import '../../detailsPage/event/views/event_details_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../models/upcoming_events_model.dart'; 
 
