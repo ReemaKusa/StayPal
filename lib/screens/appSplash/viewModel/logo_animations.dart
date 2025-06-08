@@ -9,19 +9,19 @@ class LogoAnimations {
 
   void initAnimations(AnimationController controller) {
     scale = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.5, end: 1.1), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 1.1, end: 1.0), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 0.5, end: 1.1), weight: 0.5), 
+      TweenSequenceItem(tween: Tween(begin: 1.1, end: 1.0), weight: 0.5),
     ]).animate(
       CurvedAnimation(
         parent: controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOutBack),
+        curve: const Interval(0.0, 0.4, curve: Curves.easeOutBack),
       ),
     );
 
     opacity = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: controller,
-        curve: const Interval(0.0, 0.4, curve: Curves.easeOutQuint),
+        curve: const Interval(0.0, 0.3, curve: Curves.easeOutQuint),
       ),
     );
 
@@ -31,14 +31,14 @@ class LogoAnimations {
     ).animate(
       CurvedAnimation(
         parent: controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+        curve: const Interval(0.0, 0.4, curve: Curves.easeOutCubic),
       ),
     );
 
     rotation = Tween<double>(begin: -0.1, end: 0).animate(
       CurvedAnimation(
         parent: controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOutBack),
+        curve: const Interval(0.0, 0.4, curve: Curves.easeOutBack),
       ),
     );
   }

@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen>
   void _onViewModelChange() => setState(() {});
 
   void _navigateToHome() {
-    Future.delayed(const Duration(milliseconds: 300), () {
+    Future.delayed(const Duration(milliseconds: 150), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => RoleLandingView()),

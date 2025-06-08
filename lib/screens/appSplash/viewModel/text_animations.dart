@@ -9,14 +9,14 @@ class TextAnimations {
     opacity = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: controller,
-        curve: const Interval(0.5, 0.8, curve: Curves.easeInOut),
+        curve: const Interval(0.3, 0.6, curve: Curves.easeInOut),
       ),
     );
 
     scale = Tween<double>(begin: 0.95, end: 1).animate(
       CurvedAnimation(
         parent: controller,
-        curve: const Interval(0.5, 0.8, curve: Curves.easeOut),
+        curve: const Interval(0.3, 0.6, curve: Curves.easeOut),
       ),
     );
   }
