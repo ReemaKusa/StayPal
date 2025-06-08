@@ -21,7 +21,10 @@ class HotelService {
   Future<void> updateHotel(String id, Map<String, dynamic> hotelData) async {
     await hotelRef.doc(id).update(hotelData);
   }
-
+  Future<String> getHotelNameById(String hotelId) async {
+    final doc = await FirebaseFirestore.instance.collection('hotels').doc(hotelId).get();
+    return doc.exists ? (doc.data()?['name'] ?? 'Unnamed Hotel') : 'Unknown Hotel';
+  }
   Future<void> deleteHotel(String id) async {
     await hotelRef.doc(id).delete();
   }

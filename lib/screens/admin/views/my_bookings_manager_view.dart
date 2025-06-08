@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staypal/models/hotel_booking_model.dart';
+import 'package:staypal/constants/color_constants.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/widgets/drawer.dart';
+import 'my_ratings_manager_view.dart';
+import 'hotel_manager_view.dart';
 
 class MyBookingsManagerView extends StatefulWidget {
   const MyBookingsManagerView({super.key});
@@ -76,9 +81,36 @@ class _MyBookingsManagerViewState extends State<MyBookingsManagerView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
+      drawer: CustomRoleDrawer(
+        roleTitle: 'Hotel Manager',
+        optionTitle: 'My Hotels',
+        optionIcon: Icons.hotel,
+        onManageTap: () {
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const HotelManagerView()),
+          );
+        },
+        onBookingsTap: () {
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const MyBookingsManagerView()),
+          );
+        },
+        onReviewsTap: () {
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const MyRatingsManagerView()),
+          );
+        },
+      ),
       appBar: AppBar(
         title: const Text('My Hotel Bookings'),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.white,
       ),
       body: FutureBuilder<List<HotelBookingModel>>(
         future: fetchHotelBookings(),
@@ -126,23 +158,24 @@ class _MyBookingsManagerViewState extends State<MyBookingsManagerView> {
                           Text('Total: ${booking.price.toStringAsFixed(2)} ₪'),
                           Text('Booked on: ${booking.formattedCreatedAt}'),
                           const SizedBox(height: 12),
-                          if (booking.status == 'pending') Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ElevatedButton.icon(
-                                onPressed: () => _updateBookingStatus(booking.bookingId, 'confirmed'),
-                                icon: const Icon(Icons.check),
-                                label: const Text('Confirm'),
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                              ),
-                              ElevatedButton.icon(
-                                onPressed: () => _updateBookingStatus(booking.bookingId, 'cancelled'),
-                                icon: const Icon(Icons.cancel),
-                                label: const Text('Cancel'),
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                              ),
-                            ],
-                          ),
+                          if (booking.status == 'pending')
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ElevatedButton.icon(
+                                  onPressed: () => _updateBookingStatus(booking.bookingId, 'confirmed'),
+                                  icon: const Icon(Icons.check),
+                                  label: const Text('Confirm'),
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                                ),
+                                ElevatedButton.icon(
+                                  onPressed: () => _updateBookingStatus(booking.bookingId, 'cancelled'),
+                                  icon: const Icon(Icons.cancel),
+                                  label: const Text('Cancel'),
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
