@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:staypal/screens/admin/viewmodels/hotel_manager_viewmodel.dart';
+import 'package:staypal/screens/admin/views/add_event_view.dart';
+import 'package:staypal/screens/admin/views/event_organizer_bookings_view.dart';
 import 'package:staypal/screens/admin/views/event_organizer_view.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
+import 'package:staypal/screens/profile/views/my_bookings_screen.dart';
 // import 'package:staypal/screens/profile/booking_complete.dart';
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
 import 'package:staypal/DB/firebase_options.dart';
@@ -15,7 +18,7 @@ import 'package:staypal/screens/homePage/views/home_page.dart';
 import 'package:staypal/screens/admin/views/admin_dashboard_view.dart';
 import 'package:staypal/screens/admin/views/hotel_manager_view.dart';
 // import 'package:staypal/screens/admin/views/event_organizer_view.dart';
-import 'package:staypal/screens/admin/viewmodels/EventOrganizerViewModel.dart';
+import 'package:staypal/screens/admin/viewmodels/event_organizer_viewmodel.dart';
 import 'package:staypal/widgets/role_landing_view.dart';
 import 'package:staypal/screens/appSplash/views/splash_screen.dart';
 
@@ -46,11 +49,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'StayPal',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         useMaterial3: true,
       ),
 
-      //  home:  MyProfile(),
+       // home:  AddEventView(),
       //home:MainScreen(),
       //home:AuthEntryScreen(),
       //home: AdminDashboard(),
@@ -58,10 +61,10 @@ class MyApp extends StatelessWidget {
       // home: HotelManagerView(),
       //home: EventOrganizerView(),
 
-      home: RoleLandingView(),
-
+      //home: MyBookingsScreen(),
+//home: EventOrganizerBookingsView(),
       //home:EmailVerificationView(),
-      //home: SplashScreen(), 
+      home: SplashScreen(), 
       routes: {
         //'/': (context) => RoleLandingView(),
         '/wishlist': (context) => WishListPage(),

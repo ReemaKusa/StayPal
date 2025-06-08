@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
-import 'package:staypal/screens/profile/edit_address_screen.dart';
-import 'package:staypal/screens/profile/edit_name_screen.dart';
-import 'package:staypal/screens/profile/edit_phone_screen.dart';
+import 'package:staypal/screens/profile/views/edit_address_screen.dart';
+import 'package:staypal/screens/profile/views/edit_name_screen.dart';
+import 'package:staypal/screens/profile/views/edit_phone_screen.dart';
 import 'package:staypal/screens/profile/viewmodels/personal_details_viewmodel.dart';
 
 class PersonalDetails extends StatefulWidget {
