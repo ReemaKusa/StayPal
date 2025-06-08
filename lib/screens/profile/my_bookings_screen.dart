@@ -1,240 +1,11 @@
-// import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:staypal/models/hotel_booking_model.dart';
-//
-// class MyBookingsScreen extends StatefulWidget {
-//   const MyBookingsScreen({super.key});
-//
-//   @override
-//   State<MyBookingsScreen> createState() => _MyBookingsScreenState();
-// }
-//
-// class _MyBookingsScreenState extends State<MyBookingsScreen> {
-//   String _selectedType = 'hotel';
-//
-//   Future<List<HotelBookingModel>> fetchHotelBookings() async {
-//     final user = FirebaseAuth.instance.currentUser;
-//     if (user == null) throw Exception('User not logged in');
-//
-//     final snapshot = await FirebaseFirestore.instance
-//         .collection('hotel_bookings')
-//         .where('userId', isEqualTo: user.uid)
-//         .orderBy('createdAt', descending: true)
-//         .get();
-//
-//     return snapshot.docs
-//         .map((doc) => HotelBookingModel.fromFirestore(doc))
-//         .toList();
-//   }
-//
-//   Future<String> fetchHotelName(String hotelId) async {
-//     try {
-//       final doc =
-//       await FirebaseFirestore.instance.collection('hotel').doc(hotelId).get();
-//       return doc.data()?['name'] ?? 'Unknown Hotel';
-//     } catch (_) {
-//       return 'Unknown Hotel';
-//     }
-//   }
-//
-//   Future<void> _cancelBooking(String bookingId) async {
-//     try {
-//       await FirebaseFirestore.instance
-//           .collection('hotel_bookings')
-//           .doc(bookingId)
-//           .update({'status': 'cancelled'});
-//
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text('Booking cancelled')),
-//       );
-//       setState(() {}); // Refresh UI
-//     } catch (e) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text('Failed to cancel: $e')),
-//       );
-//     }
-//   }
-//
-//   void _showCancelConfirmation(String bookingId) {
-//     showDialog(
-//       context: context,
-//       builder: (ctx) => AlertDialog(
-//         title: const Text('Cancel Booking'),
-//         content: const Text('Are you sure you want to cancel this booking?'),
-//         actions: [
-//           TextButton(
-//             onPressed: () => Navigator.pop(ctx),
-//             child: const Text('No'),
-//           ),
-//           TextButton(
-//             onPressed: () async {
-//               Navigator.pop(ctx);
-//               await _cancelBooking(bookingId);
-//             },
-//             child: const Text(
-//               'Yes, Cancel',
-//               style: TextStyle(color: Colors.red),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('My Bookings'),
-//         backgroundColor: Colors.orange[700],
-//       ),
-//       body: Column(
-//         children: [
-//           const SizedBox(height: 16),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               ChoiceChip(
-//                 label: const Text('Hotels'),
-//                 selected: _selectedType == 'hotel',
-//                 onSelected: (_) => setState(() => _selectedType = 'hotel'),
-//                 selectedColor: Colors.orange[700],
-//               ),
-//               const SizedBox(width: 10),
-//               ChoiceChip(
-//                 label: const Text('Events'),
-//                 selected: _selectedType == 'event',
-//                 onSelected: (_) => setState(() => _selectedType = 'event'),
-//                 selectedColor: Colors.orange[700],
-//               ),
-//             ],
-//           ),
-//           const SizedBox(height: 16),
-//           if (_selectedType == 'hotel') Expanded(child: _buildHotelBookingList()),
-//           if (_selectedType == 'event')
-//             const Expanded(
-//               child: Center(child: Text('Event bookings coming soon...')),
-//             ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildHotelBookingList() {
-//     return FutureBuilder<List<HotelBookingModel>>(
-//       future: fetchHotelBookings(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           return const Center(child: CircularProgressIndicator());
-//         }
-//         if (snapshot.hasError) {
-//           return Center(child: Text('Error: ${snapshot.error}'));
-//         }
-//
-//         final bookings = snapshot.data ?? [];
-//         if (bookings.isEmpty) {
-//           return const Center(child: Text('No hotel bookings found.'));
-//         }
-//
-//         return ListView.builder(
-//           padding: const EdgeInsets.all(16),
-//           itemCount: bookings.length,
-//           itemBuilder: (context, index) {
-//             final booking = bookings[index];
-//             return FutureBuilder<String>(
-//               future: fetchHotelName(booking.hotelId),
-//               builder: (context, nameSnap) {
-//                 final hotelName = nameSnap.data ?? '...';
-//                 return _buildHotelCard(booking, hotelName);
-//               },
-//             );
-//           },
-//         );
-//       },
-//     );
-//   }
-//
-//   Widget _buildHotelCard(HotelBookingModel booking, String hotelName) {
-//     final nights = booking.checkOut.difference(booking.checkIn).inDays;
-//     final priceText = '${booking.price.toStringAsFixed(2)} ₪';
-//     final statusColor = booking.status == 'confirmed'
-//         ? Colors.green
-//         : booking.status == 'cancelled'
-//         ? Colors.red
-//         : Colors.orange;
-//
-//     return Card(
-//       elevation: 4,
-//       margin: const EdgeInsets.only(bottom: 16),
-//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-//       child: Padding(
-//         padding: const EdgeInsets.all(16),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Text(hotelName,
-//                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-//             const SizedBox(height: 8),
-//             Text('Check-In: ${booking.formattedCheckIn}',
-//                 style: const TextStyle(fontSize: 16)),
-//             Text('Check-Out: ${booking.formattedCheckOut}',
-//                 style: const TextStyle(fontSize: 16)),
-//             Text('$nights night${nights > 1 ? 's' : ''} stay'),
-//             const SizedBox(height: 8),
-//             Text('Total Price: $priceText',
-//                 style: const TextStyle(fontSize: 16)),
-//             const SizedBox(height: 8),
-//             Row(
-//               children: [
-//                 const Text('Status: ',
-//                     style: TextStyle(fontWeight: FontWeight.bold)),
-//                 Container(
-//                   padding:
-//                   const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-//                   decoration: BoxDecoration(
-//                     color: statusColor.withOpacity(0.1),
-//                     borderRadius: BorderRadius.circular(8),
-//                   ),
-//                   child: Text(
-//                     booking.status.toUpperCase(),
-//                     style: TextStyle(
-//                       color: statusColor,
-//                       fontWeight: FontWeight.bold,
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             const SizedBox(height: 8),
-//             Text('Booked on: ${booking.formattedCreatedAt}',
-//                 style: const TextStyle(color: Colors.black54)),
-//             if (booking.status == 'pending')
-//               Align(
-//                 alignment: Alignment.centerRight,
-//                 child: TextButton.icon(
-//                   onPressed: () =>
-//                       _showCancelConfirmation(booking.bookingId),
-//                   icon: const Icon(Icons.cancel, color: Colors.red),
-//                   label: const Text(
-//                     'Cancel',
-//                     style: TextStyle(
-//                         color: Colors.red, fontWeight: FontWeight.bold),
-//                   ),
-//                 ),
-//               ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staypal/models/hotel_booking_model.dart';
 import 'package:staypal/models/event_ticket_model.dart';
+import 'package:intl/intl.dart';
+import 'package:staypal/screens/detailsPage/hotel/views/hotel_details_view.dart';
+import 'package:staypal/screens/detailsPage/event/views/event_details_view.dart';
 
 class MyBookingsScreen extends StatefulWidget {
   const MyBookingsScreen({super.key});
@@ -259,12 +30,12 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     return snapshot.docs.map((doc) => HotelBookingModel.fromFirestore(doc)).toList();
   }
 
-  Future<String> fetchHotelName(String hotelId) async {
+  Future<Map<String, dynamic>> fetchHotelDetails(String hotelId) async {
     try {
       final doc = await FirebaseFirestore.instance.collection('hotel').doc(hotelId).get();
-      return doc.data()?['name'] ?? 'Unknown Hotel';
+      return doc.data() ?? {};
     } catch (_) {
-      return 'Unknown Hotel';
+      return {};
     }
   }
 
@@ -281,71 +52,205 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     return snapshot.docs.map((doc) => EventTicketModel.fromFirestore(doc)).toList();
   }
 
-  Future<String> fetchEventName(String eventId) async {
+  Future<Map<String, dynamic>> fetchEventDetails(String eventId) async {
     try {
       final doc = await FirebaseFirestore.instance.collection('event').doc(eventId).get();
-      return doc.data()?['name'] ?? 'Unknown Event';
+      return doc.data() ?? {};
     } catch (_) {
-      return 'Unknown Event';
+      return {};
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = screenWidth * 0.9; 
+
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('My Bookings'),
+        title: const Text(
+          'My Bookings',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+            letterSpacing: 0.5,
+          ),
+        ),
+        centerTitle: true,
         backgroundColor: Colors.orange[700],
+        elevation: 0,
+        toolbarHeight: 70,
       ),
       body: Column(
         children: [
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ChoiceChip(
-                label: const Text('Hotels'),
-                selected: _selectedType == 'hotel',
-                onSelected: (_) => setState(() => _selectedType = 'hotel'),
-                selectedColor: Colors.orange[700],
-              ),
-              const SizedBox(width: 10),
-              ChoiceChip(
-                label: const Text('Events'),
-                selected: _selectedType == 'event',
-                onSelected: (_) => setState(() => _selectedType = 'event'),
-                selectedColor: Colors.orange[700],
-              ),
-            ],
+          const SizedBox(height: 24),
+
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.all(4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () => setState(() => _selectedType = 'hotel'),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: _selectedType == 'hotel' ? Colors.orange[700] : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Hotels',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: _selectedType == 'hotel' ? Colors.white : Colors.grey[700],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: InkWell(
+                    onTap: () => setState(() => _selectedType = 'event'),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: _selectedType == 'event' ? Colors.orange[700] : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Events',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: _selectedType == 'event' ? Colors.white : Colors.grey[700],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          if (_selectedType == 'hotel') Expanded(child: _buildHotelBookingList()),
-          if (_selectedType == 'event') Expanded(child: _buildEventTicketList()),
+          const SizedBox(height: 20),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _selectedType == 'hotel'
+                  ? _buildHotelBookingList(cardWidth)
+                  : _buildEventTicketList(cardWidth),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildHotelBookingList() {
+  Widget _buildHotelBookingList(double cardWidth) {
     return FutureBuilder<List<HotelBookingModel>>(
       future: fetchHotelBookings(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
-        if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[700]!),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Loading your stays...',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 48, color: Colors.orange[700]),
+                const SizedBox(height: 16),
+                Text(
+                  'Failed to load bookings',
+                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Please try again later',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                ),
+              ],
+            ),
+          );
+        }
 
         final bookings = snapshot.data ?? [];
-        if (bookings.isEmpty) return const Center(child: Text('No hotel bookings found.'));
+        if (bookings.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+                Text(
+                  'No Hotel Bookings Yet',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey[700],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Text(
+                    'Your upcoming hotel stays will appear here when you make a booking',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 20),
           itemCount: bookings.length,
           itemBuilder: (context, index) {
             final booking = bookings[index];
-            return FutureBuilder<String>(
-              future: fetchHotelName(booking.hotelId),
-              builder: (context, nameSnap) {
-                final hotelName = nameSnap.data ?? '...';
-                return _buildHotelCard(booking, hotelName);
+            return FutureBuilder<Map<String, dynamic>>(
+              future: fetchHotelDetails(booking.hotelId),
+              builder: (context, detailsSnap) {
+                final hotelName = detailsSnap.data?['name'] ?? 'Loading...';
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: _buildHotelCard(booking, hotelName, cardWidth, detailsSnap.data ?? {}),
+                );
               },
             );
           },
@@ -354,26 +259,98 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     );
   }
 
-  Widget _buildEventTicketList() {
+  Widget _buildEventTicketList(double cardWidth) {
     return FutureBuilder<List<EventTicketModel>>(
       future: fetchEventTickets(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
-        if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[700]!),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Loading your tickets...',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 48, color: Colors.orange[700]),
+                const SizedBox(height: 16),
+                Text(
+                  'Failed to load tickets',
+                  style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Please try again later',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                ),
+              ],
+            ),
+          );
+        }
 
         final tickets = snapshot.data ?? [];
-        if (tickets.isEmpty) return const Center(child: Text('No event tickets found.'));
+        if (tickets.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+                Text(
+                  'No Event Tickets Yet',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey[700],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Text(
+                    'Your purchased event tickets will appear here',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 20),
           itemCount: tickets.length,
           itemBuilder: (context, index) {
             final ticket = tickets[index];
-            return FutureBuilder<String>(
-              future: fetchEventName(ticket.eventId),
-              builder: (context, nameSnap) {
-                final eventName = nameSnap.data ?? '...';
-                return _buildEventCard(ticket, eventName);
+            return FutureBuilder<Map<String, dynamic>>(
+              future: fetchEventDetails(ticket.eventId),
+              builder: (context, detailsSnap) {
+                final eventName = detailsSnap.data?['name'] ?? 'Loading...';
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: _buildEventCard(ticket, eventName, cardWidth, detailsSnap.data ?? {}),
+                );
               },
             );
           },
@@ -382,59 +359,300 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     );
   }
 
-  Widget _buildHotelCard(HotelBookingModel booking, String hotelName) {
+  Widget _buildHotelCard(HotelBookingModel booking, String hotelName, double width, Map<String, dynamic> hotelDetails) {
     final nights = booking.checkOut.difference(booking.checkIn).inDays;
-    final priceText = '${booking.price.toStringAsFixed(2)} ₪';
+    final priceText = NumberFormat.currency(symbol: '₪').format(booking.price);
     final statusColor = booking.status == 'confirmed'
-        ? Colors.green
+        ? Colors.green[700]!
         : booking.status == 'cancelled'
-        ? Colors.red
-        : Colors.orange;
+            ? Colors.red[700]!
+            : Colors.orange[700]!;
 
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(hotelName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Text('Check-In: ${booking.formattedCheckIn}'),
-            Text('Check-Out: ${booking.formattedCheckOut}'),
-            Text('$nights night${nights > 1 ? 's' : ''} stay'),
-            const SizedBox(height: 8),
-            Text('Total Price: $priceText'),
-            const SizedBox(height: 8),
-            Text('Status: ${booking.status}'),
-            Text('Booked on: ${booking.formattedCreatedAt}'),
-          ],
-        ),
+    return Container(
+      width: width,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          Stack(
+            children: [
+              Container(
+                height: 120,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  color: Colors.orange[100],
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.hotel,
+                    size: 60,
+                    color: Colors.orange[300],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 12,
+                right: 12,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    booking.status.toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  hotelName,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                
+
+                Row(
+                  children: [
+                    Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${booking.formattedCheckIn} - ${booking.formattedCheckOut}',
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '$nights night${nights > 1 ? 's' : ''}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 16),
+                
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Total Price',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          priceText,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => HotelDetailsPage(
+                              hotel: hotelDetails,
+                              hotelId: booking.hotelId,
+                            ),
+                          ),
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.orange[50],
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'View Details',
+                        style: TextStyle(
+                          color: Colors.orange[700],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildEventCard(EventTicketModel ticket, String eventName) {
-    final priceText = '${ticket.totalPrice.toStringAsFixed(2)} ₪';
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(eventName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Text('Quantity: ${ticket.quantity}'),
-            Text('Total Paid: $priceText'),
-            Text('Purchased on: ${ticket.formattedPurchaseDate}'),
-            Text('Reference: ${ticket.bookingReference}'),
-          ],
-        ),
+  Widget _buildEventCard(EventTicketModel ticket, String eventName, double width, Map<String, dynamic> eventDetails) {
+    final priceText = NumberFormat.currency(symbol: '₪').format(ticket.totalPrice);
+
+    return Container(
+      width: width,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 120,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  color: Colors.orange[100],
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.event,
+                    size: 60,
+                    color: Colors.orange[300],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  eventName,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                
+                Row(
+                  children: [
+                    Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                    const SizedBox(width: 8),
+                    Text(
+                      ticket.formattedPurchaseDate,
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${ticket.quantity} ticket${ticket.quantity > 1 ? 's' : ''}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 16),
+                
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Total Price',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 12,
+                          ),
+                        ),
+                        Text(
+                          priceText,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EventDetailsPage(
+                              event: eventDetails,
+                              eventId: ticket.eventId,
+                            ),
+                          ),
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.orange[50],
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'View Details',
+                        style: TextStyle(
+                          color: Colors.orange[700],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

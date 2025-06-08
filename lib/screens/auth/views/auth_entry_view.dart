@@ -25,9 +25,8 @@ class AuthEntryView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/images/staypal_logo.png',
+                      'assets/icon/flutter_app_logo_base.png',
                       height: 400,
-                      color: Colors.black,
                     ),
                     const SizedBox(height: 0),
                     const Text(
