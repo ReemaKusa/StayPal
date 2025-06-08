@@ -25,22 +25,24 @@ class ListingCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Colors.grey.shade300),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              _buildImage(),
-              const SizedBox(width: 12),
-              _buildContent(),
-            ],
-          ),
-        ),
-      ),
+  color: Colors.white,
+  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(12),
+    side: BorderSide(color: Colors.grey.shade300),
+  ),
+  child: Padding(
+    padding: const EdgeInsets.all(12),
+    child: Row(
+      children: [
+        _buildImage(),
+        const SizedBox(width: 12),
+        _buildContent(),
+      ],
+    ),
+  ),
+),
+
     );
   }
 
