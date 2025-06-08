@@ -14,90 +14,115 @@ class EditEventView extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => EditEventViewModel()..initialize(event),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: const Text(
+          backgroundColor: AppColors.white,
+
+          iconTheme: const IconThemeData(color: AppColors.black),
+          title: Text(
             'Edit Event',
             style: TextStyle(
-              color: Colors.black,
               fontSize: AppFontSizes.title,
               fontWeight: FontWeight.bold,
+              color: AppColors.black,
             ),
           ),
-          iconTheme: const IconThemeData(color: Colors.black),
         ),
+
         body: Consumer<EditEventViewModel>(
           builder: (_, viewModel, __) {
             if (viewModel.isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator());
             }
 
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppPadding.formHorizontal,
+                vertical: AppPadding.formVertical,
+              ),
               child: Form(
                 key: viewModel.formKey,
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(vertical: 24),
-                  children: [
-                    const Text(
-                      'Edit Event Details',
-                      style: TextStyle(
-                        fontSize: AppFontSizes.subtitle,
-                        fontWeight: FontWeight.bold,
-                      ),
+                child: Center(
+                  child: Container(
+                                width: AppDimensions.formWidth,
+                  
+                    padding:EdgeInsets.all( AppPadding.containerPadding),
+                    decoration: BoxDecoration(
+                                        color: AppColors.white,
+                  
+                     boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: AppShadows.cardBlur,
+                  ),
+                                ],
+                                borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                                
                     ),
-                    const SizedBox(height: AppSpacing.medium),
-                    ...viewModel.buildFormFields(context),
-                    const SizedBox(height: AppSpacing.large),
-                    Row(
+                    child: ListView(
+                    
                       children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.white,
-                              padding: const EdgeInsets.all(
-                                AppPadding.containerPadding,
-                              ),
-
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppBorderRadius.card,
-                                ),
-                              ),
-                            ),
-                            onPressed: () => viewModel.updateEvent(context),
-                            child: const Text(
-                              'Update Event',
-                              style: TextStyle(color: AppColors.primary),
-                            ),
+                        const Text(
+                          'Edit Event Details',
+                          style: TextStyle(
+                            fontSize: AppFontSizes.title,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.betweenButtons),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: AppPadding.buttonVertical,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppBorderRadius.card,
+                         SizedBox(height: AppSpacing.large),
+                        ...viewModel.buildFormFields(context),
+                        const SizedBox(height: AppSpacing.large),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.white,
+                                  side: const BorderSide(color: AppColors.white),
+                                  padding:  EdgeInsets.symmetric(
+                                    vertical: AppPadding.buttonVertical,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      AppBorderRadius.card,
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () => viewModel.updateEvent(context),
+                                child: Text(
+                                  'Update Event',
+                                  style: TextStyle(fontWeight: FontWeight.bold,color: AppColors.primary),
                                 ),
                               ),
                             ),
-                            onPressed: () => viewModel.deleteEvent(context),
-                            child: const Text(
-                              'Delete',
-                              style: TextStyle(color: Colors.white),
+                             SizedBox(width: AppSpacing.small),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  foregroundColor: AppColors.white,
+                                  padding:  EdgeInsets.symmetric(
+                                    vertical: AppPadding.buttonVertical,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      AppBorderRadius.card,
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () => viewModel.deleteEvent(context),
+                                child: const Text(
+                                  'Delete',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             );
