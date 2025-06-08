@@ -3,8 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:staypal/screens/admin/viewmodels/hotel_manager_viewmodel.dart';
 import 'package:staypal/screens/admin/views/event_organizer_view.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
-import 'package:staypal/screens/auth/views/email_verification_view.dart';
-import 'package:staypal/screens/booking/views/book_hotel_view.dart';
 // import 'package:staypal/screens/profile/booking_complete.dart';
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
 import 'package:staypal/DB/firebase_options.dart';
@@ -51,15 +49,14 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
-    //  home:  MyProfile(),
+      //  home:  MyProfile(),
       //home:MainScreen(),
       //home:AuthEntryScreen(),
-  //home: AdminDashboard(),
+      //home: AdminDashboard(),
       // home: SplashScreen(),
       // home: HotelManagerView(),
       //home: EventOrganizerView(),
-  
-    home:RoleLandingView(),
+      home: RoleLandingView(),
       //home:EmailVerificationView(),
       routes: {
         '/wishlist': (context) => WishListPage(),

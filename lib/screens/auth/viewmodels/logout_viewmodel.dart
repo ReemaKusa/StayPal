@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:staypal/screens/auth/views/auth_entry_view.dart';
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
 import 'package:staypal/screens/homePage/views/home_page.dart';
 

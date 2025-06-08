@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/models/user_model.dart';
 import 'package:staypal/screens/admin/views/edit_user_view.dart';
 
@@ -42,9 +44,9 @@ class _UserDetailsViewState extends State<UserDetailsView> {
       userRole = newRole;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('✅ Role updated to "$newRole"')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('✅ Role updated to "$newRole"')));
   }
 
   @override
@@ -52,37 +54,47 @@ class _UserDetailsViewState extends State<UserDetailsView> {
     final user = widget.user;
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('User Details')),
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        title: Text(
+          'User Details',
+          style: TextStyle(
+            fontSize: AppFontSizes.title,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: AppColors.white,
+      ),
+
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(AppPadding.screenPadding),
         child: Center(
           child: Stack(
             children: [
               Container(
-                constraints: const BoxConstraints(maxWidth: 600),
-                padding: const EdgeInsets.all(24),
+                constraints: BoxConstraints(maxWidth: 600),
+                padding: const EdgeInsets.all(AppPadding.containerPadding),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 12)],
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                  boxShadow: [
+                    BoxShadow(color: AppColors.greyTransparent, blurRadius: 12),
+                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.medium),
                     Center(
                       child: CircleAvatar(
-                        radius: 48,
-                        backgroundImage: user.imageUrl.isNotEmpty
-                            ? NetworkImage(user.imageUrl)
-                            : null,
-                        child: user.imageUrl.isEmpty
-                            ? Text(
-                                user.fullName.isNotEmpty ? user.fullName[0] : '?',
-                                style: const TextStyle(fontSize: 32),
-                              )
-                            : null,
+                        backgroundColor: AppColors.primary,
+                        radius: AppSizes.avatarRadius,
+                        backgroundImage:
+                            user.imageUrl.isNotEmpty
+                                ? NetworkImage(user.imageUrl)
+                                : const NetworkImage(
+                                  AppConstants.defaultProfileImage,
+                                ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -98,37 +110,45 @@ class _UserDetailsViewState extends State<UserDetailsView> {
                     _buildRow('Zip Code', user.zipCode),
                     const Divider(height: 32),
                     if (user.createdAt != null)
-                      _buildRow('Created At', user.createdAt!.toLocal().toString().split(" ")[0]),
+                      _buildRow(
+                        'Created At',
+                        user.createdAt!.toLocal().toString().split(" ")[0],
+                      ),
                     const Divider(height: 32),
                     SwitchListTile(
-                      title: const Text('User is Active'),
-                      value: isActive,
-                      onChanged: _toggleUserActive,
-                    ),
-                    const Divider(height: 32),
-                    Text('Current Role: $userRole',
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: _toggleUserRole,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            userRole == 'admin' ? Colors.redAccent : Colors.green,
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                      title: const Text(
+                        'User is Active',
+                        style: TextStyle(fontWeight: FontWeight.bold,fontSize: AppFontSizes.bottonfont),
                       ),
-                      child: Text(userRole == 'admin' ? 'Remove Admin' : 'Make Admin'),
+                      value: isActive,
+                      onChanged: (val) {
+                        setState(() {
+                          isActive = val;
+                        });
+                      },
+                      activeColor: AppColors.primary,
+                      inactiveTrackColor: AppColors.greyTransparent,
+                    ),
+                    const Divider(height: 50),
+                    Text(
+                      'Current Role: $userRole',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
               ),
               Positioned(
-                top: 8,
-                right: 8,
+                top: 10,
+                right: 10,
                 child: CircleAvatar(
                   backgroundColor: Colors.white,
-                  radius: 20,
+                  radius: 30,
                   child: IconButton(
-                    icon: const Icon(Icons.edit_outlined, size: 18, color: Colors.black),
+                    icon: Icon(
+                      Icons.edit_outlined,
+                      size: AppIconSizes.tileIcon,
+                      color: AppColors.primary,
+                    ),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -149,7 +169,7 @@ class _UserDetailsViewState extends State<UserDetailsView> {
 
   Widget _buildRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -157,10 +177,19 @@ class _UserDetailsViewState extends State<UserDetailsView> {
             width: 120,
             child: Text(
               '$label:',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: AppFontSizes.bottonfont,
+              ),
             ),
           ),
-          Expanded(child: Text(value)),
+          Expanded(child: Text(value?.isNotEmpty == true ? value! : '-',
+            style: const TextStyle(
+              fontSize: AppFontSizes.bottonfont,
+                              fontWeight: FontWeight.bold,
+
+              color: Colors.black45
+            ),)),
         ],
       ),
     );

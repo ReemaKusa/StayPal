@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/models/user_model.dart';
 
 class EditUserView extends StatefulWidget {
@@ -19,9 +21,14 @@ class _EditUserViewState extends State<EditUserView> {
   late TextEditingController _countryCtrl;
 
   final List<String> _genders = ['Male', 'Female'];
-  final List<String> _roles = ['user', 'admin', 'hotel_manager', 'event_organizer'];
+  final List<String> _roles = [
+    'user',
+    'admin',
+    'hotel_manager',
+    'event_organizer',
+  ];
 
-  String? _selectedGender;
+  String? selectedGender;
   String? _selectedRole;
 
   @override
@@ -32,8 +39,8 @@ class _EditUserViewState extends State<EditUserView> {
     _cityCtrl = TextEditingController(text: widget.user.city);
     _zipCtrl = TextEditingController(text: widget.user.zipCode);
     _countryCtrl = TextEditingController(text: widget.user.country);
-    _selectedGender = widget.user.gender;
-    _selectedRole = widget.user.role; // Load current role
+    selectedGender = widget.user.gender;
+    _selectedRole = widget.user.role;
   }
 
   @override
@@ -52,10 +59,10 @@ class _EditUserViewState extends State<EditUserView> {
         'fullName': _nameCtrl.text,
         'phone': _phoneCtrl.text,
         'city': _cityCtrl.text,
-        'gender': _selectedGender ?? '',
+        'gender': selectedGender ?? '',
         'zipCode': _zipCtrl.text,
         'country': _countryCtrl.text,
-        'role': _selectedRole ?? 'user', 
+        'role': _selectedRole ?? 'user',
         'updatedAt': DateTime.now(),
       };
 
@@ -76,31 +83,43 @@ class _EditUserViewState extends State<EditUserView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Edit User')),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              _buildField(_nameCtrl, 'Full Name'),
-              _buildField(_phoneCtrl, 'Phone'),
-              _buildField(_cityCtrl, 'City'),
-              _buildGenderDropdown(),
-              _buildField(_zipCtrl, 'Zip Code'),
-              _buildField(_countryCtrl, 'Country'),
-              _buildRoleDropdown(), 
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _updateUser,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text('Save Changes'),
-              ),
-            ],
+      appBar: AppBar(
+        title: const Text(
+          'Edit User',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: AppFontSizes.title,
           ),
+        ),
+        backgroundColor: AppColors.white,
+      ),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(AppPadding.formVertical),
+          children: [
+            _buildField(_nameCtrl, 'Full Name'),
+            _buildField(_phoneCtrl, 'Phone'),
+            _buildField(_cityCtrl, 'City'),
+            _buildGenderDropdown(),
+            _buildField(_zipCtrl, 'Zip Code'),
+            _buildField(_countryCtrl, 'Country'),
+            _buildRoleDropdown(),
+            const SizedBox(height: AppSpacing.large),
+            ElevatedButton(
+              onPressed: _updateUser,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.white,
+                foregroundColor: AppColors.primary,
+                side: const BorderSide(color: AppColors.greyTransparent),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                ),
+              ),
+              child: const Text('Save Changes'),
+            ),
+          ],
         ),
       ),
     );
@@ -113,27 +132,58 @@ class _EditUserViewState extends State<EditUserView> {
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          border: const OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppBorderRadius.card),
+            borderSide: const BorderSide(color: AppColors.greyTransparent),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppBorderRadius.card),
+            borderSide: const BorderSide(color: AppColors.greyTransparent),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppBorderRadius.card),
+            borderSide: const BorderSide(color: AppColors.primary),
+          ),
         ),
-        validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+        validator:
+            (value) => value == null || value.isEmpty ? 'Required' : null,
       ),
     );
   }
 
   Widget _buildGenderDropdown() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: DropdownButtonFormField<String>(
-        value: _genders.contains(_selectedGender) ? _selectedGender : null,
-        decoration: const InputDecoration(
-          labelText: 'Gender',
-          border: OutlineInputBorder(),
+      padding: const EdgeInsets.only(bottom: AppSpacing.medium),
+      child: GestureDetector(
+        onTap: () {
+          selectGender(context, () {
+            setState(() {});
+          });
+        },
+        child: AbsorbPointer(
+          child: TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Gender',
+              hintText: selectedGender ?? 'Select Gender',
+              labelStyle: const TextStyle(color: AppColors.black),
+              hintStyle: const TextStyle(color: AppColors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                borderSide: const BorderSide(color: AppColors.greyTransparent),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                borderSide: const BorderSide(color: AppColors.greyTransparent),
+              ),
+            ),
+            controller: TextEditingController(text: selectedGender),
+            validator:
+                (value) =>
+                    (selectedGender == null || selectedGender!.isEmpty)
+                        ? 'Required'
+                        : null,
+          ),
         ),
-        items: _genders.map((gender) {
-          return DropdownMenuItem(value: gender, child: Text(gender));
-        }).toList(),
-        onChanged: (value) => setState(() => _selectedGender = value),
-        validator: (value) => value == null || value.isEmpty ? 'Required' : null,
       ),
     );
   }
@@ -143,16 +193,119 @@ class _EditUserViewState extends State<EditUserView> {
       padding: const EdgeInsets.only(bottom: 16),
       child: DropdownButtonFormField<String>(
         value: _roles.contains(_selectedRole) ? _selectedRole : _roles.first,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           labelText: 'Role',
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppBorderRadius.card),
+            borderSide: BorderSide(color: AppColors.greyTransparent),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppBorderRadius.card),
+            borderSide: const BorderSide(color: AppColors.greyTransparent),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppBorderRadius.card),
+            borderSide: const BorderSide(color: AppColors.primary),
+          ),
         ),
-        items: _roles.map((role) {
-          return DropdownMenuItem(value: role, child: Text(role));
-        }).toList(),
+        items:
+            _roles.map((role) {
+              return DropdownMenuItem(
+                value: role,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 8,
+                  ),
+                  child: Text(
+                    role,
+                    style: const TextStyle(fontSize: AppFontSizes.subtitle),
+                  ),
+                ),
+              );
+            }).toList(),
         onChanged: (value) => setState(() => _selectedRole = value),
-        validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+        validator:
+            (value) => value == null || value.isEmpty ? 'Required' : null,
       ),
+    );
+  }
+
+  void selectGender(BuildContext context, VoidCallback onUpdate) {
+    showModalBottomSheet(
+      backgroundColor: AppColors.white,
+      context: context,
+      builder: (_) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SizedBox(
+              height: AppSizes.sizedbox,
+              child: Column(
+                children: [
+                  RadioListTile<String>(
+                    activeColor: AppColors.primary,
+                    title: const Text(
+                      "Male",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppFontSizes.subtitle,
+                      ),
+                    ),
+                    value: 'Male',
+                    groupValue: selectedGender,
+                    onChanged:
+                        (value) => setModalState(() => selectedGender = value),
+                  ),
+                  RadioListTile<String>(
+                    activeColor: AppColors.primary,
+                    title: const Text(
+                      "Female",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppFontSizes.subtitle,
+                      ),
+                    ),
+                    value: 'Female',
+                    groupValue: selectedGender,
+                    onChanged:
+                        (value) => setModalState(() => selectedGender = value),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(AppPadding.formHorizontal),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                        backgroundColor: AppColors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            AppBorderRadius.card,
+                          ),
+                        ),
+                        side: const BorderSide(
+                          color: AppColors.greyTransparent,
+                        ),
+                      ),
+                      onPressed: () async {
+                        if (selectedGender != null) {
+                          onUpdate();
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: AppFontSizes.subtitle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

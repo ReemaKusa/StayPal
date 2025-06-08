@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:staypal/constants/app_constants.dart';
-import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/screens/admin/services/event_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,7 +29,6 @@ class _AddEventViewState extends State<AddEventView> {
 
   static const double kPadding = 16.0;
   static const double kCardRadius = 12.0;
-  static const double kCardElevation = 12.0;
 
   final List<String> _cities = [
     'Jerusalem', 'Ramallah', 'Nablus', 'Hebron', 'Bethlehem',
