@@ -1,140 +1,11 @@
-// import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:staypal/models/event_model.dart';
-// import 'package:staypal/models/event_ticket_model.dart';
-//
-// class PurchaseEventTicketView extends StatefulWidget {
-//   final EventModel event;
-//   final int ticketCount;
-//
-//   const PurchaseEventTicketView({
-//     super.key,
-//     required this.event,
-//     required this.ticketCount,
-//   });
-//
-//   @override
-//   State<PurchaseEventTicketView> createState() => _PurchaseEventTicketViewState();
-// }
-//
-// class _PurchaseEventTicketViewState extends State<PurchaseEventTicketView> {
-//   late int quantity;
-//   bool isProcessing = false;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     quantity = widget.ticketCount;
-//   }
-//
-//   Future<void> _simulatePurchase() async {
-//     final user = FirebaseAuth.instance.currentUser;
-//     if (user == null) return;
-//
-//     final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-//     final cardSnapshot = await FirebaseFirestore.instance
-//         .collection('users')
-//         .doc(user.uid)
-//         .collection('cards')
-//         .limit(1)
-//         .get();
-//
-//     final hasCard = cardSnapshot.docs.isNotEmpty;
-//
-//     if (!hasCard) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text('You need to add a credit card to purchase.')),
-//       );
-//       return;
-//     }
-//
-//     final total = widget.event.price * quantity;
-//     setState(() => isProcessing = true);
-//
-//     await FirebaseFirestore.instance.collection('eventTickets').add(
-//       EventTicketModel(
-//         ticketId: '',
-//         userId: user.uid,
-//         eventId: widget.event.eventId,
-//         purchaseDate: DateTime.now(),
-//         quantity: quantity,
-//         totalPrice: total,
-//       ).toMap(),
-//     );
-//
-//     await FirebaseFirestore.instance.collection('event').doc(widget.event.eventId).update({
-//       'ticketsSold': widget.event.ticketsSold + quantity,
-//     });
-//
-//     setState(() => isProcessing = false);
-//     if (mounted) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text('Ticket purchased!')),
-//       );
-//       Navigator.pop(context);
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final event = widget.event;
-//     final available = event.availableTickets;
-//
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Buy Ticket')),
-//       body: Padding(
-//         padding: const EdgeInsets.all(24.0),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Text(event.name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-//             const SizedBox(height: 8),
-//             Text(event.location),
-//             const SizedBox(height: 8),
-//             Text('₪${event.price.toStringAsFixed(2)} per ticket'),
-//             const SizedBox(height: 8),
-//             Text('Available tickets: $available'),
-//             const SizedBox(height: 24),
-//             Row(
-//               children: [
-//                 const Text('Quantity:', style: TextStyle(fontSize: 16)),
-//                 const SizedBox(width: 16),
-//                 DropdownButton<int>(
-//                   value: quantity,
-//                   onChanged: (val) => setState(() => quantity = val!),
-//                   items: List.generate(
-//                     available.clamp(1, 10),
-//                         (index) => DropdownMenuItem(value: index + 1, child: Text('${index + 1}')),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             const Spacer(),
-//             SizedBox(
-//               width: double.infinity,
-//               child: ElevatedButton(
-//                 onPressed: isProcessing ? null : _simulatePurchase,
-//                 style: ElevatedButton.styleFrom(
-//                   padding: const EdgeInsets.symmetric(vertical: 16),
-//                   backgroundColor: Colors.deepOrange,
-//                 ),
-//                 child: isProcessing
-//                     ? const CircularProgressIndicator(color: Colors.white)
-//                     : Text('Pay ₪${(event.price * quantity).toStringAsFixed(2)}'),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import 'package:staypal/models/event_model.dart';
-import 'package:staypal/models/event_ticket_model.dart';
+import 'package:staypal/constants/color_constants.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/widgets/visa_card.dart';
+import 'package:staypal/screens/booking/viewmodels/purchase_event_ticket_viewmodel.dart';
 
 class PurchaseEventTicketView extends StatefulWidget {
   final EventModel event;
@@ -151,185 +22,334 @@ class PurchaseEventTicketView extends StatefulWidget {
 }
 
 class _PurchaseEventTicketViewState extends State<PurchaseEventTicketView> {
-  late int quantity;
-  bool isProcessing = false;
-  int remainingUserLimit = 5;
+  late PurchaseEventTicketViewModel viewModel;
 
   @override
   void initState() {
     super.initState();
-    quantity = widget.ticketCount;
-    _loadUserLimit();
-  }
+    viewModel = PurchaseEventTicketViewModel(
+      event: widget.event,
+      initialTicketCount: widget.ticketCount,
+    );
 
-  Future<void> _loadUserLimit() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-
-    final pastPurchases = await FirebaseFirestore.instance
-        .collection('eventTickets')
-        .where('userId', isEqualTo: user.uid)
-        .where('eventId', isEqualTo: widget.event.eventId)
-        .get();
-
-    int bought = 0;
-    for (var doc in pastPurchases.docs) {
-      final data = doc.data();
-      if (data['quantity'] is int) {
-        bought += data['quantity'] as int;
-      }
-    }
-
-    setState(() {
-      remainingUserLimit = (5 - bought).clamp(0, 5);
-      if (quantity > remainingUserLimit) {
-        quantity = remainingUserLimit;
-      }
+    // Initialize viewModel and preload images
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.initialize();
+      precacheImage(const AssetImage('assets/images/visa.png'), context);
+      precacheImage(const AssetImage('assets/images/success.svg'), context);
     });
   }
 
-  Future<void> _simulatePurchase(int available) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+  @override
+  void dispose() {
+    viewModel.dispose();
+    super.dispose();
+  }
 
-    final cardSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('cards')
-        .limit(1)
-        .get();
+  void _handlePurchase(int available) async {
+    final result = await viewModel.purchaseTickets(available);
 
-    final hasCard = cardSnapshot.docs.isNotEmpty;
-    if (!hasCard) {
+    if (!mounted) return;
+
+    if (result == null) return; // Purchase conditions not met
+
+    if (result.startsWith('REF-')) {
+      // Success - show success modal
+      _showSuccessModal(result);
+    } else {
+      // Error - show snackbar
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You need to add a credit card to purchase.')),
+        SnackBar(content: Text(result)),
       );
-      return;
-    }
-
-    if (quantity > remainingUserLimit) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('You can only buy $remainingUserLimit more ticket(s) for this event.')),
-      );
-      return;
-    }
-
-    if (quantity > available) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Not enough tickets available.')),
-      );
-      return;
-    }
-
-    final total = widget.event.price * quantity;
-    setState(() => isProcessing = true);
-
-    try {
-      final ticketRef = FirebaseFirestore.instance.collection('eventTickets').doc();
-      final bookingRef = 'REF-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
-      final bookingReference = 'REF-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
-
-      final ticket = EventTicketModel(
-          ticketId: ticketRef.id,
-          userId: user.uid,
-          eventId: widget.event.eventId,
-          purchaseDate: DateTime.now(),
-          quantity: quantity,
-          totalPrice: total,
-          bookingReference: bookingReference,
-      );// ✅ Correct name
-
-      await ticketRef.set(ticket.toMap());
-
-      await FirebaseFirestore.instance
-          .collection('event')
-          .doc(widget.event.eventId)
-          .update({
-        'ticketsSold': FieldValue.increment(quantity),
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ticket purchased successfully!')),
-        );
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Purchase failed: $e')),
-      );
-    } finally {
-      setState(() => isProcessing = false);
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final event = widget.event;
+  void _showSuccessModal(String bookingReference) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/images/success.png', height: 120),
+            const SizedBox(height: 20),
+            const Text(
+              'Thank you for your purchase!',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Your booking reference: $bookingReference',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                minimumSize: const Size.fromHeight(48),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.popUntil(context, (route) => route.isFirst);
+              },
+              child: const Text('Done', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Buy Ticket')),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('event')
-            .doc(widget.event.eventId)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final data = snapshot.data!.data() as Map<String, dynamic>;
-          final available = (data['limite'] ?? 0) - (data['ticketsSold'] ?? 0);
-          final maxSelectable = [available, remainingUserLimit, 10].reduce((a, b) => a < b ? a : b);
-
-          return Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildCardInfo() {
+    return Consumer<PurchaseEventTicketViewModel>(
+      builder: (context, vm, child) {
+        if (!vm.hasCard || vm.userCards.isEmpty || vm.selectedCard == null) {
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.red[50],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
               children: [
-                Text(event.name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Text(event.location),
-                const SizedBox(height: 8),
-                Text('₪${event.price.toStringAsFixed(2)} per ticket'),
-                const SizedBox(height: 8),
-                Text('Available tickets: $available'),
-                const SizedBox(height: 8),
-                Text('Your limit left: $remainingUserLimit'),
-                const SizedBox(height: 24),
+                const Icon(Icons.credit_card_off, color: Colors.red),
+                const SizedBox(width: 8),
+                Text('No payment method added', style: TextStyle(color: Colors.red[800])),
+              ],
+            ),
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DropdownButton<Map<String, dynamic>>(
+              value: vm.selectedCard,
+              isExpanded: true,
+              underline: const SizedBox(),
+              onChanged: vm.selectCard,
+              items: vm.userCards.map((card) {
+                final masked = vm.getMaskedCardNumber(card);
+                return DropdownMenuItem<Map<String, dynamic>>(
+                  value: card,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.credit_card, color: AppColors.primary),
+                      const SizedBox(width: 8),
+                      Text(masked),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            if (vm.showCardDetails && vm.selectedCard != null)
+              PaymentCardWidget(
+                cardNumber: vm.selectedCard!['number'] ?? '',
+                cardHolder: vm.selectedCard!['cardholder'] ?? '',
+                expiryDate: vm.selectedCard!['expiry'] ?? '',
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildQuantityCard(int available, int maxSelectable) {
+    final theme = Theme.of(context);
+
+    return Consumer<PurchaseEventTicketViewModel>(
+      builder: (context, vm, child) {
+        return Card(
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Quantity:', style: TextStyle(fontSize: 16)),
-                    const SizedBox(width: 16),
+                    Text('Price per ticket', style: theme.textTheme.bodyMedium),
+                    Text('₪${vm.event.price.toStringAsFixed(2)}', style: theme.textTheme.bodyMedium),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Quantity', style: theme.textTheme.bodyMedium),
                     DropdownButton<int>(
-                      value: quantity,
-                      onChanged: (val) => setState(() => quantity = val!),
-                      items: List.generate(
+                      value: vm.quantity,
+                      onChanged: vm.isEventExpired || vm.limitExceeded
+                          ? null
+                          : (val) => val != null ? vm.updateQuantity(val) : null,
+                      items: maxSelectable > 0
+                          ? List.generate(
                         maxSelectable,
-                            (index) => DropdownMenuItem(value: index + 1, child: Text('${index + 1}')),
+                            (index) => DropdownMenuItem(
+                          value: index + 1,
+                          child: Text('${index + 1}'),
+                        ),
+                      )
+                          : [],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Available', style: theme.textTheme.bodySmall),
+                    Text('$available', style: theme.textTheme.bodySmall),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Your limit', style: theme.textTheme.bodySmall),
+                    Text(
+                      '${vm.remainingUserLimit}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: vm.limitExceeded ? Colors.red : null,
+                        fontWeight: vm.limitExceeded ? FontWeight.bold : null,
                       ),
                     ),
                   ],
                 ),
-                const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: isProcessing ? null : () => _simulatePurchase(available),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Colors.deepOrange,
+                if (vm.limitExceeded) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    'You have reached your ticket limit for this event',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: Colors.red,
                     ),
-                    child: isProcessing
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : Text('Pay ₪${(event.price * quantity).toStringAsFixed(2)}'),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTotalCard() {
+    final theme = Theme.of(context);
+
+    return Consumer<PurchaseEventTicketViewModel>(
+      builder: (context, vm, child) {
+        return Card(
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('TOTAL', style: theme.textTheme.titleMedium),
+                Text(
+                  '₪${vm.totalPrice.toStringAsFixed(2)}',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepOrange,
                   ),
                 ),
               ],
             ),
-          );
-        },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPurchaseButton(int available) {
+    final theme = Theme.of(context);
+
+    return Consumer<PurchaseEventTicketViewModel>(
+      builder: (context, vm, child) {
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: vm.canPurchase ? () => _handlePurchase(available) : null,
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              backgroundColor: vm.canPurchase ? AppColors.primary : Colors.grey,
+            ),
+            child: vm.isProcessing
+                ? const CircularProgressIndicator(color: Colors.white)
+                : Text(
+              vm.buttonText,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return ChangeNotifierProvider.value(
+      value: viewModel,
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Checkout'), centerTitle: true),
+        body: FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance
+              .collection('event')
+              .doc(widget.event.eventId)
+              .get(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final data = snapshot.data!.data() as Map<String, dynamic>;
+            final ticketsSold = (data['ticketsSold'] as int?) ?? 0;
+            final limit = (data['limite'] as int?) ?? 0;
+            final available = (limit - ticketsSold).clamp(0, limit);
+
+            return Consumer<PurchaseEventTicketViewModel>(
+              builder: (context, vm, child) {
+                final maxSelectable = vm.calculateMaxSelectable(available);
+
+                // Ensure quantity doesn't exceed max selectable
+                if (vm.quantity > maxSelectable && maxSelectable > 0) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    vm.updateQuantity(maxSelectable);
+                  });
+                }
+
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('PAYMENT METHOD', style: theme.textTheme.labelLarge),
+                      const SizedBox(height: 8),
+                      _buildCardInfo(),
+                      const SizedBox(height: 20),
+                      Text('TICKET QUANTITY', style: theme.textTheme.labelLarge),
+                      const SizedBox(height: 8),
+                      _buildQuantityCard(available, maxSelectable),
+                      const SizedBox(height: 20),
+                      _buildTotalCard(),
+                      const SizedBox(height: 20),
+                      _buildPurchaseButton(available),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

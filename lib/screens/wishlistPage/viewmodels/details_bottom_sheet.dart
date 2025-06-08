@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../search_result/hotel/views/hotel_details_view.dart';
-import '../../search_result/event/views/event_details_view.dart';
+import '../../detailsPage/hotel/views/hotel_details_view.dart';
+import '../../detailsPage/event/views/event_details_view.dart';
 import '../../wishlistPage/viewmodels/wishlist_view_model.dart';
 import'./bottomSheetComponents/bottom_sheet_handel.dart';
 import'./bottomSheetComponents/item_image.dart';

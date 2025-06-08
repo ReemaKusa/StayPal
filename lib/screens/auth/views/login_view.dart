@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'; // 👈 For kIsWeb
+import 'package:flutter/foundation.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:staypal/screens/auth/viewmodels/login_viewmodel.dart';
 import 'package:staypal/screens/auth/views/signup_view.dart';
 import 'package:staypal/screens/auth/views/forgot_password_view.dart';
@@ -88,7 +89,7 @@ class _LoginViewState extends State<LoginView> {
                         },
                         child: const Text(
                           'Forgot Password?',
-                          style: TextStyle(color: Color.fromRGBO(255, 87, 34, 1)),
+                          style: TextStyle(color: Colors.deepOrange),
                         ),
                       ),
                     ),
@@ -96,7 +97,7 @@ class _LoginViewState extends State<LoginView> {
                     ElevatedButton(
                       onPressed: () => viewModel.loginWithEmail(context),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(255, 87, 34, 1),
+                        backgroundColor: Colors.deepOrange,
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -132,24 +133,20 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       child: Stack(
                         alignment: Alignment.center,
-                        children: [
+                        children: const [
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 12.0),
-                              child: Image.asset(
-                                'assets/images/google_28.png',
-                                height: 28,
-                                width: 28,
-                              ),
+                              padding: EdgeInsets.only(left: 16.0),
+                              child: FaIcon(FontAwesomeIcons.google, color: Color.from(alpha: 1, red: 0, green: 0, blue: 0)),
                             ),
                           ),
-                          const Text(
+                          Text(
                             'Continue with Google',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                              color: Color.from(alpha: 1, red: 0, green: 0, blue: 0),
                             ),
                           ),
                         ],
@@ -184,8 +181,6 @@ class _LoginViewState extends State<LoginView> {
                         ],
                       ),
                     ),
-
-                    //  Web only button
                     if (kIsWeb) ...[
                       const SizedBox(height: 16),
                       TextButton(
@@ -195,14 +190,13 @@ class _LoginViewState extends State<LoginView> {
                         child: const Text(
                           'Return to Home Page',
                           style: TextStyle(
-                            color: Color.fromRGBO(255, 87, 34, 1),
+                            color: Colors.deepOrange,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ],
-
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -218,7 +212,7 @@ class _LoginViewState extends State<LoginView> {
                           child: const Text(
                             'Sign Up',
                             style: TextStyle(
-                              color: Color.fromRGBO(255, 87, 34, 1),
+                              color: Colors.deepOrange,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

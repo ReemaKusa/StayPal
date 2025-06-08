@@ -9,7 +9,7 @@ class HomeHeaderImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: isWeb ? 30 : 20),
-      height: isWeb ? 280 : 200,
+      height: isWeb ? 320 : 260,
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),

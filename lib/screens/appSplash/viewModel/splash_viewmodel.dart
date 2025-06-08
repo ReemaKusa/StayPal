@@ -23,7 +23,7 @@ class SplashViewModel with ChangeNotifier {
   void initAnimations(TickerProvider vsync) {
     _controllerManager.initController(
       vsync,
-      const Duration(milliseconds: 5800),
+      const Duration(milliseconds: 2600),
     );
 
     _logoAnimations.initAnimations(_controllerManager.controller);
@@ -39,7 +39,7 @@ class SplashViewModel with ChangeNotifier {
       notifyListeners();
       // Trigger navigation callback
       onAnimationComplete?.call();
-    } else if (_controllerManager.controller.value >= 0.8) {
+    } else if (_controllerManager.controller.value >= 0.6) {
       _model = _model.copyWith(showLoader: true);
       notifyListeners();
     }

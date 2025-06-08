@@ -80,7 +80,7 @@ class _WishListPageState extends State<WishListPage> {
           const Positioned(
             right: 10,
             top: 10,
-            child: CircleAvatar(radius: 4, backgroundColor: Colors.red),
+            child: CircleAvatar(radius: 4, backgroundColor: Color.fromARGB(255, 244, 111, 54)),
           ),
         ],
       ),

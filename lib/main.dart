@@ -63,10 +63,11 @@ class MyApp extends StatelessWidget {
 
       //home: MyBookingsScreen(),
 //home: EventOrganizerBookingsView(),
+      // home: RoleLandingView(),
+
       //home:EmailVerificationView(),
       home: SplashScreen(), 
       routes: {
-        //'/': (context) => RoleLandingView(),
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),
         '/home': (context) => HomePage(),
