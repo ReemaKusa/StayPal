@@ -2,48 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
+import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/widgets/drawer.dart';
-import 'hotel_manager_view.dart';
-import 'my_bookings_manager_view.dart';
+import 'event_organizer_view.dart';
+import 'event_organizer_bookings_view.dart';
 
-class MyRatingsManagerView extends StatefulWidget {
-  const MyRatingsManagerView({super.key});
+class EventOrganizerRatingView extends StatefulWidget {
+  const EventOrganizerRatingView({super.key});
 
   @override
-  State<MyRatingsManagerView> createState() => _MyRatingsManagerViewState();
+  State<EventOrganizerRatingView> createState() => _EventOrganizerRatingViewState();
 }
 
-class _MyRatingsManagerViewState extends State<MyRatingsManagerView> {
+class _EventOrganizerRatingViewState extends State<EventOrganizerRatingView> {
   late Future<List<Map<String, dynamic>>> _reviewsFuture;
 
   @override
   void initState() {
     super.initState();
-    _reviewsFuture = _fetchReviewsForMyHotels();
+    _reviewsFuture = _fetchReviewsForMyEvents();
   }
 
-  Future<List<Map<String, dynamic>>> _fetchReviewsForMyHotels() async {
+  Future<List<Map<String, dynamic>>> _fetchReviewsForMyEvents() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) throw Exception("User not logged in");
 
-    final hotelSnap = await FirebaseFirestore.instance
-        .collection('hotel')
-        .where('managerId', isEqualTo: user.uid)
+    final eventSnap = await FirebaseFirestore.instance
+        .collection('event')
+        .where('organizerId', isEqualTo: user.uid)
         .get();
 
-    final hotelIds = hotelSnap.docs.map((doc) => doc.id).toList();
-    if (hotelIds.isEmpty) return [];
+    final eventIds = eventSnap.docs.map((e) => e.id).toList();
+    if (eventIds.isEmpty) return [];
 
     final reviewSnap = await FirebaseFirestore.instance
         .collection('service_reviews')
-        .where('serviceId', whereIn: hotelIds)
-        .orderBy('createdAt', descending: true)
+        .where('serviceId', whereIn: eventIds)
         .get();
 
-    final hotelMap = {
-      for (var doc in hotelSnap.docs) doc.id: doc.data()['name'] ?? 'Unnamed Hotel'
+    final eventsMap = {
+      for (var doc in eventSnap.docs) doc.id: doc.data()['name'] ?? 'Unnamed Event'
     };
 
     return reviewSnap.docs.map((doc) {
@@ -53,7 +52,7 @@ class _MyRatingsManagerViewState extends State<MyRatingsManagerView> {
         'comment': data['comment'] ?? '',
         'rating': data['rating'] ?? 0,
         'createdAt': (data['createdAt'] as Timestamp).toDate(),
-        'hotelName': hotelMap[data['serviceId']] ?? 'Unknown Hotel',
+        'eventName': eventsMap[data['serviceId']] ?? 'Unknown Event',
       };
     }).toList();
   }
@@ -62,29 +61,29 @@ class _MyRatingsManagerViewState extends State<MyRatingsManagerView> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: CustomRoleDrawer(
-        roleTitle: 'Hotel Manager',
-        optionTitle: 'My Hotels',
-        optionIcon: Icons.hotel,
+        roleTitle: 'Event Organizer',
+        optionTitle: 'My Events',
+        optionIcon: Icons.event,
         onManageTap: () {
           Navigator.pop(context);
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const HotelManagerView()),
+            MaterialPageRoute(builder: (_) => const EventOrganizerView()),
           );
         },
         onBookingsTap: () {
           Navigator.pop(context);
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const MyBookingsManagerView()),
+            MaterialPageRoute(builder: (_) => const EventOrganizerBookingsView()),
           );
         },
         onReviewsTap: () {
-          Navigator.pop(context); // Already on this page
+          Navigator.pop(context); // Stays on current screen
         },
       ),
       appBar: AppBar(
-        title: const Text('My Hotel Reviews', style: TextStyle(color: AppColors.black)),
+        title: const Text('My Event Reviews', style: TextStyle(color: AppColors.black)),
         backgroundColor: AppColors.white,
         iconTheme: const IconThemeData(color: AppColors.primary),
         elevation: 0.5,
@@ -99,10 +98,9 @@ class _MyRatingsManagerViewState extends State<MyRatingsManagerView> {
           if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
           }
-
           final reviews = snapshot.data ?? [];
           if (reviews.isEmpty) {
-            return const Center(child: Text("No one has reviewed your hotels yet."));
+            return const Center(child: Text("No one has reviewed your events yet."));
           }
 
           return ListView.separated(
@@ -119,7 +117,7 @@ class _MyRatingsManagerViewState extends State<MyRatingsManagerView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(r['hotelName'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(r['eventName'], style: const TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
                       Text('⭐ ${r['rating']}  —  ${r['userName']}'),
                       const SizedBox(height: 4),

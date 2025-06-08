@@ -4,10 +4,11 @@ import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/screens/admin/viewmodels/hotel_manager_viewmodel.dart';
 import 'package:staypal/screens/admin/views/add_hotel_view.dart';
+import 'package:staypal/screens/admin/views/my_bookings_manager_view.dart';
+import 'package:staypal/screens/admin/views/my_ratings_manager_view.dart';
 import 'package:staypal/widgets/add_button.dart';
 import 'package:staypal/widgets/drawer.dart';
 import 'package:staypal/widgets/hotel_card.dart';
-import 'package:staypal/screens/admin/views/my_bookings_manager_view.dart';
 
 class HotelManagerView extends StatelessWidget {
   const HotelManagerView({super.key});
@@ -22,11 +23,25 @@ class HotelManagerView extends StatelessWidget {
           roleTitle: 'Hotel Manager',
           optionTitle: 'My Hotels',
           optionIcon: Icons.hotel,
-          optionOnTap: () {
+          onManageTap: () {
             Navigator.pop(context);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => const HotelManagerView()),
+            );
+          },
+          onBookingsTap: () {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const MyBookingsManagerView()),
+            );
+          },
+          onReviewsTap: () {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const MyBookingsManagerView()),
             );
           },
         ),
@@ -40,18 +55,6 @@ class HotelManagerView extends StatelessWidget {
               color: AppColors.black,
             ),
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.receipt_long, color: AppColors.black),
-              tooltip: 'View Bookings',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const MyBookingsManagerView()),
-                );
-              },
-            ),
-          ],
         ),
         floatingActionButton: AddButton(
           targetView: const AddHotelView(assignToCurrentManager: true),
@@ -77,19 +80,10 @@ class HotelManagerView extends StatelessWidget {
                   ),
                 );
               }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: ListView.separated(
-                      itemCount: viewModel.myHotels.length,
-                      separatorBuilder: (_, __) => const SizedBox(
-                        height: AppSpacing.cardVerticalMargin,
-                      ),
-                      itemBuilder: (_, index) => HotelCard(hotel: viewModel.myHotels[index]),
-                    ),
-                  ),
-                ],
+              return ListView.separated(
+                itemCount: viewModel.myHotels.length,
+                separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.cardVerticalMargin),
+                itemBuilder: (_, index) => HotelCard(hotel: viewModel.myHotels[index]),
               );
             },
           ),

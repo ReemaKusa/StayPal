@@ -60,6 +60,10 @@ class EventService {
   Future<void> updateEvent(String id, EventModel event) async {
     await eventRef.doc(id).update(event.toMap());
   }
+  Future<String> getEventNameById(String eventId) async {
+    final doc = await FirebaseFirestore.instance.collection('events').doc(eventId).get();
+    return doc.exists ? (doc.data()?['name'] ?? 'Unnamed Event') : 'Unknown Event';
+  }
 
   /// 🔸 Deletes an event
   Future<void> deleteEvent(String id) async {

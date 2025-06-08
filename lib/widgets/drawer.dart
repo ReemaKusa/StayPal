@@ -2,21 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/utils/dialogs_logout.dart';
-import 'package:staypal/screens/admin/views/my_bookings_manager_view.dart';
-import 'package:staypal/screens/admin/views/my_ratings_manager_view.dart';
 
 class CustomRoleDrawer extends StatelessWidget {
   final String roleTitle;
   final String optionTitle;
   final IconData optionIcon;
-  final VoidCallback optionOnTap;
+
+  final VoidCallback onManageTap;
+  final VoidCallback onReviewsTap;
+  final VoidCallback onBookingsTap;
 
   const CustomRoleDrawer({
     super.key,
     required this.roleTitle,
     required this.optionTitle,
     required this.optionIcon,
-    required this.optionOnTap,
+    required this.onManageTap,
+    required this.onReviewsTap,
+    required this.onBookingsTap,
   });
 
   Widget _buildSectionTitle(String title) {
@@ -100,19 +103,19 @@ class CustomRoleDrawer extends StatelessWidget {
           _buildOptionTile(
             icon: optionIcon,
             title: optionTitle,
-            onTap: optionOnTap,
+            onTap: onManageTap,
           ),
 
           _buildSectionTitle('Activity'),
           _buildOptionTile(
             icon: Icons.reviews,
             title: 'My Reviews',
-            onTap: optionOnTap,
+            onTap: onReviewsTap,
           ),
           _buildOptionTile(
             icon: Icons.book_online,
             title: 'My Bookings',
-            onTap: optionOnTap,
+            onTap: onBookingsTap,
           ),
 
           _buildSectionTitle('Account'),
