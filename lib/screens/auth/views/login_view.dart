@@ -138,7 +138,7 @@ class _LoginViewState extends State<LoginView> {
                             alignment: Alignment.centerLeft,
                             child: Padding(
                               padding: EdgeInsets.only(left: 16.0),
-                              child: FaIcon(FontAwesomeIcons.google, color: Colors.red, size: 22),
+                              child: FaIcon(FontAwesomeIcons.google, color: Color.from(alpha: 1, red: 0, green: 0, blue: 0)),
                             ),
                           ),
                           Text(
@@ -146,7 +146,7 @@ class _LoginViewState extends State<LoginView> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                              color: Color.from(alpha: 1, red: 0, green: 0, blue: 0),
                             ),
                           ),
                         ],
