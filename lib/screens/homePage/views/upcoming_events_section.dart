@@ -55,13 +55,9 @@ class UpcomingEventsSection extends StatelessWidget {
         const SizedBox(height: 12),
         Column(
           children: viewModel.upcomingEvents.map((event) {
-            return Column(
-              children: [
-                EventCard(
-                  event: event,
-                ),
-                const SizedBox(height: 16),
-              ],
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: EventCard(event: event),
             );
           }).toList(),
         ),
