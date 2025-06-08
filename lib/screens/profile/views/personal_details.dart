@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/screens/profile/edit_address_screen.dart';
 import 'package:staypal/screens/profile/edit_name_screen.dart';
 import 'package:staypal/screens/profile/edit_phone_screen.dart';
@@ -23,25 +25,28 @@ class _PersonalDetailsState extends State<PersonalDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
+        backgroundColor: AppColors.white,
+        title: Text(
           'Personal Details',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: AppFontSizes.title,
+          ),
         ),
       ),
       body:
           viewModel.loading
-              ? const Center(child: CircularProgressIndicator())
+              ? Center(child: CircularProgressIndicator())
               : ListView(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(AppPadding.formHorizontal),
                 children: [
                   const Text(
                     "We'll remember this info to make it faster when you book.",
-                    style: TextStyle(color: Colors.black54),
+                    style: TextStyle(color: AppColors.grey),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: AppSpacing.large),
                   _buildTile("Name", viewModel.userData['fullName'] ?? '', () {
                     Navigator.push(
                       context,
@@ -62,16 +67,19 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                       viewModel.pickDateOfBirth(context, () => setState(() {}));
                     },
                   ),
-                  const SizedBox(height: 25),
+                  SizedBox(height: AppSpacing.large),
                   const Text(
                     'Contact details',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppFontSizes.subtitle,
+                    ),
                   ),
-                  const SizedBox(height: 5),
-                  const Text(
+                  SizedBox(height: AppSpacing.small),
+                  Text(
                     "Properties or providers you book with will use this info if they need to contact you.",
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: AppSpacing.medium),
                   _buildTile(
                     "Email",
                     viewModel.userData['email'] ?? 'N/A',
@@ -100,7 +108,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const EditAddressScreen(),
+                          builder: (_) =>  EditAddressScreen(),
                         ),
                       ).then(
                         (_) => viewModel.fetchUserData().then(
@@ -118,15 +126,17 @@ class _PersonalDetailsState extends State<PersonalDetails> {
     return ListTile(
       title: Text(
         label,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        style: TextStyle(
+          fontSize: AppFontSizes.subtitle,
+        ),
       ),
       subtitle: Text(value != null ? value.toString() : ''),
       trailing:
           onTap != null
               ? const Icon(
                 Icons.arrow_forward_ios,
-                size: 16,
-                color: Colors.black,
+                size: AppIconSizes.smallIcon,
+                color: AppColors.primary,
               )
               : null,
       onTap: onTap,

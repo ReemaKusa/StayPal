@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../homePage/widgets/custom_nav_bar.dart';
+import '../../../widgets/custom_nav_bar.dart';
 import '../viewmodels/search_result_view_model.dart';
 import './search_app_bar.dart';
 import './tab_buttons.dart';

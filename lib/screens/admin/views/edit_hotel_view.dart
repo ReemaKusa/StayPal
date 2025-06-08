@@ -1,462 +1,6 @@
-// // import 'package:flutter/material.dart';
-// // import 'package:staypal/screens/admin/services/hotel_service.dart';
-// // import 'package:staypal/screens/admin/models/hotel_model.dart';
-//
-// // class EditHotelView extends StatefulWidget {
-// //   final HotelModel hotel;
-// //   const EditHotelView({super.key, required this.hotel});
-//
-// //   @override
-// //   State<EditHotelView> createState() => _EditHotelViewState();
-// // }
-//
-// // class _EditHotelViewState extends State<EditHotelView> {
-// //   final _formKey = GlobalKey<FormState>();
-// //   final _nameCtrl = TextEditingController();
-// //   final _priceCtrl = TextEditingController();
-// //   final _descriptionCtrl = TextEditingController();
-// //   final _detailsCtrl = TextEditingController();
-// //   final _imagesCtrl = TextEditingController();
-//
-// //   final _cities = [
-// //     'Jerusalem', 'Ramallah', 'Nablus', 'Hebron', 'Bethlehem',
-// //     'Jenin', 'Tulkarm', 'Qalqilya', 'Salfit', 'Tubas', 'Jericho', 'Gaza',
-// //   ];
-//
-// //   final _facilityOptions = [
-// //     '🧖‍♀️Spa', '💪 Gym', ' 🛜 Free WiFi', '🍽 Restaurant',
-// //   ];
-//
-// //   String? _selectedLocation;
-// //   List<String> _selectedFacilities = [];
-// //   bool _isFavorite = false;
-// //   final _hotelService = HotelService();
-//
-// //   @override
-// //   void initState() {
-// //     super.initState();
-// //     _nameCtrl.text = widget.hotel.name;
-// //     _priceCtrl.text = widget.hotel.price.toString();
-// //     _descriptionCtrl.text = widget.hotel.description;
-// //     _detailsCtrl.text = widget.hotel.details;
-// //     _imagesCtrl.text = widget.hotel.images.isNotEmpty ? widget.hotel.images.first : '';
-// //     _selectedLocation = widget.hotel.location;
-// //     _selectedFacilities = List<String>.from(widget.hotel.hotel['facilities'] ?? []);
-// //     _isFavorite = widget.hotel.hotel['isFavorite'] ?? false;
-// //   }
-//
-// //   @override
-// //   void dispose() {
-// //     _nameCtrl.dispose();
-// //     _priceCtrl.dispose();
-// //     _descriptionCtrl.dispose();
-// //     _detailsCtrl.dispose();
-// //     _imagesCtrl.dispose();
-// //     super.dispose();
-// //   }
-//
-// //   Future<void> _updateHotel() async {
-// //     if (_formKey.currentState!.validate()) {
-// //       final updatedData = {
-// //         'name': _nameCtrl.text,
-// //         'location': _selectedLocation ?? '',
-// //         'price': double.tryParse(_priceCtrl.text) ?? 0.0,
-// //         'description': _descriptionCtrl.text,
-// //         'details': _detailsCtrl.text,
-// //         'images': _imagesCtrl.text.isNotEmpty ? [_imagesCtrl.text] : [],
-// //         'facilities': _selectedFacilities,
-// //         'isFavorite': _isFavorite,
-// //         'updatedAt': DateTime.now(),
-// //       };
-//
-// //       await _hotelService.updateHotel(widget.hotel.hotelId, updatedData);
-// //       ScaffoldMessenger.of(context).showSnackBar(
-// //         const SnackBar(content: Text('Hotel updated successfully')),
-// //       );
-// //       Navigator.pop(context);
-// //     }
-// //   }
-//
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return Scaffold(
-// //       backgroundColor: const Color(0xFFF5F5F5),
-// //       appBar: AppBar(title: const Text('Edit Hotel')),
-// //       body: Center(
-// //         child: Container(
-// //           width: 600,
-// //           padding: const EdgeInsets.all(24),
-// //           margin: const EdgeInsets.symmetric(vertical: 32),
-// //           decoration: BoxDecoration(
-// //             color: Colors.white,
-// //             borderRadius: BorderRadius.circular(12),
-// //             boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 12)],
-// //           ),
-// //           child: Form(
-// //             key: _formKey,
-// //             child: Column(
-// //               crossAxisAlignment: CrossAxisAlignment.start,
-// //               children: [
-// //                 const Text('Edit Hotel Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-// //                 const SizedBox(height: 20),
-// //                 TextFormField(
-// //                   controller: _nameCtrl,
-// //                   decoration: const InputDecoration(
-// //                     labelText: 'Hotel Name',
-// //                     border: OutlineInputBorder(),
-// //                   ),
-// //                   validator: (value) => value!.isEmpty ? 'Enter hotel name' : null,
-// //                 ),
-// //                 const SizedBox(height: 16),
-// //                 DropdownButtonFormField<String>(
-// //                   value: _selectedLocation,
-// //                   items: _cities.map((city) {
-// //                     return DropdownMenuItem(
-// //                       value: city,
-// //                       child: Text(city),
-// //                     );
-// //                   }).toList(),
-// //                   onChanged: (value) => setState(() => _selectedLocation = value!),
-// //                   decoration: const InputDecoration(
-// //                     labelText: 'City',
-// //                     border: OutlineInputBorder(),
-// //                   ),
-// //                   validator: (value) => value == null || value.isEmpty ? 'Select a city' : null,
-// //                 ),
-// //                 const SizedBox(height: 16),
-// //                 TextFormField(
-// //                   controller: _priceCtrl,
-// //                   keyboardType: TextInputType.number,
-// //                   decoration: const InputDecoration(
-// //                     labelText: 'Price',
-// //                     border: OutlineInputBorder(),
-// //                   ),
-// //                   validator: (value) => value!.isEmpty ? 'Enter price' : null,
-// //                 ),
-// //                 const SizedBox(height: 16),
-// //                 TextFormField(
-// //                   controller: _descriptionCtrl,
-// //                   decoration: const InputDecoration(
-// //                     labelText: 'Short Description',
-// //                     border: OutlineInputBorder(),
-// //                   ),
-// //                   maxLines: 2,
-// //                 ),
-// //                 const SizedBox(height: 16),
-// //                 TextFormField(
-// //                   controller: _detailsCtrl,
-// //                   decoration: const InputDecoration(
-// //                     labelText: 'Detailed Info',
-// //                     border: OutlineInputBorder(),
-// //                   ),
-// //                   maxLines: 3,
-// //                 ),
-// //                 const SizedBox(height: 16),
-// //                 TextFormField(
-// //                   controller: _imagesCtrl,
-// //                   decoration: const InputDecoration(
-// //                     labelText: 'Cover Image URL',
-// //                     border: OutlineInputBorder(),
-// //                   ),
-// //                 ),
-// //                 const SizedBox(height: 16),
-// //                 const Text('Facilities', style: TextStyle(fontWeight: FontWeight.bold)),
-// //                 Wrap(
-// //                   spacing: 8.0,
-// //                   runSpacing: 8.0,
-// //                   children: _facilityOptions.map((facility) {
-// //                     final isSelected = _selectedFacilities.contains(facility);
-// //                     return FilterChip(
-// //                       label: Text(facility),
-// //                       selected: isSelected,
-// //                       onSelected: (selected) {
-// //                         setState(() {
-// //                           isSelected
-// //                               ? _selectedFacilities.remove(facility)
-// //                               : _selectedFacilities.add(facility);
-// //                         });
-// //                       },
-// //                     );
-// //                   }).toList(),
-// //                 ),
-// //                 const SizedBox(height: 16),
-// //                 SwitchListTile(
-// //                   title: const Text('Is Favorite?'),
-// //                   value: _isFavorite,
-// //                   onChanged: (val) => setState(() => _isFavorite = val),
-// //                 ),
-// //                 const SizedBox(height: 20),
-// //                 Center(
-// //                   child: ElevatedButton(
-// //                     style: ElevatedButton.styleFrom(
-// //                       backgroundColor: Colors.deepPurple,
-// //                       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-// //                     ),
-// //                     onPressed: _updateHotel,
-// //                     child: const Text('Update Hotel'),
-// //                   ),
-// //                 ),
-// //               ],
-// //             ),
-// //           ),
-// //         ),
-// //       ),
-// //     );
-// //   }
-// // }
-//
-// import 'package:flutter/material.dart';
-// import 'package:staypal/screens/admin/services/hotel_service.dart';
-// import 'package:staypal/models/hotel_model.dart';
-//
-// class EditHotelView extends StatefulWidget {
-//   final HotelModel hotel;
-//   const EditHotelView({super.key, required this.hotel});
-//
-//   @override
-//   State<EditHotelView> createState() => _EditHotelViewState();
-// }
-//
-// class _EditHotelViewState extends State<EditHotelView> {
-//   final _formKey = GlobalKey<FormState>();
-//   final _nameCtrl = TextEditingController();
-//   final _priceCtrl = TextEditingController();
-//   final _descriptionCtrl = TextEditingController();
-//   final _detailsCtrl = TextEditingController();
-//   final _imagesCtrl = TextEditingController();
-//
-//   final _cities = [
-//     'Jerusalem', 'Ramallah', 'Nablus', 'Hebron', 'Bethlehem',
-//     'Jenin', 'Tulkarm', 'Qalqilya', 'Salfit', 'Tubas', 'Jericho', 'Gaza',
-//   ];
-//
-//   final _facilityOptions = [
-//     '🧖‍♀️Spa', '💪 Gym', ' 🛜 Free WiFi', '🍽 Restaurant',
-//   ];
-//
-//   String? _selectedLocation;
-//   List<String> _selectedFacilities = [];
-//   bool _isFavorite = false;
-//   final _hotelService = HotelService();
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _nameCtrl.text = widget.hotel.name;
-//     _priceCtrl.text = widget.hotel.price.toString();
-//     _descriptionCtrl.text = widget.hotel.description;
-//     _detailsCtrl.text = widget.hotel.details;
-//     _imagesCtrl.text = widget.hotel.images.isNotEmpty ? widget.hotel.images.first : '';
-//     _selectedLocation = widget.hotel.location;
-//     _selectedFacilities = List<String>.from(widget.hotel.hotel['facilities'] ?? []);
-//     _isFavorite = widget.hotel.hotel['isFavorite'] ?? false;
-//   }
-//
-//   @override
-//   void dispose() {
-//     _nameCtrl.dispose();
-//     _priceCtrl.dispose();
-//     _descriptionCtrl.dispose();
-//     _detailsCtrl.dispose();
-//     _imagesCtrl.dispose();
-//     super.dispose();
-//   }
-//
-//   Future<void> _updateHotel() async {
-//     if (_formKey.currentState!.validate()) {
-//       final updatedData = {
-//         'name': _nameCtrl.text,
-//         'location': _selectedLocation ?? '',
-//         'price': double.tryParse(_priceCtrl.text) ?? 0.0,
-//         'description': _descriptionCtrl.text,
-//         'details': _detailsCtrl.text,
-//         'images': _imagesCtrl.text.isNotEmpty ? [_imagesCtrl.text] : [],
-//         'facilities': _selectedFacilities,
-//         'isFavorite': _isFavorite,
-//         'updatedAt': DateTime.now(),
-//       };
-//
-//       await _hotelService.updateHotel(widget.hotel.hotelId, updatedData);
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text('Hotel updated successfully')),
-//       );
-//       Navigator.pop(context);
-//     }
-//   }
-//
-//   Future<void> _deleteHotel() async {
-//     final confirmed = await showDialog<bool>(
-//       context: context,
-//       builder: (context) => AlertDialog(
-//         title: const Text('Confirm Delete'),
-//         content: const Text('Are you sure you want to delete this hotel? This cannot be undone.'),
-//         actions: [
-//           TextButton(
-//             onPressed: () => Navigator.pop(context, false),
-//             child: const Text('Cancel'),
-//           ),
-//           TextButton(
-//             onPressed: () => Navigator.pop(context, true),
-//             child: const Text('Delete'),
-//           ),
-//         ],
-//       ),
-//     );
-//
-//     if (confirmed == true) {
-//       await _hotelService.deleteHotel(widget.hotel.hotelId);
-//       if (mounted) {
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           const SnackBar(content: Text('Hotel deleted successfully')),
-//         );
-//         Navigator.pop(context);
-//       }
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: const Color(0xFFF5F5F5),
-//       appBar: AppBar(title: const Text('Edit Hotel')),
-//       body: Center(
-//         child: SingleChildScrollView(
-//           padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
-//           child: Container(
-//             width: 600,
-//             padding: const EdgeInsets.all(24),
-//             decoration: BoxDecoration(
-//               color: Colors.white,
-//               borderRadius: BorderRadius.circular(12),
-//               boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 12)],
-//             ),
-//             child: Form(
-//               key: _formKey,
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   const Text('Edit Hotel Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-//                   const SizedBox(height: 20),
-//                   TextFormField(
-//                     controller: _nameCtrl,
-//                     decoration: const InputDecoration(
-//                       labelText: 'Hotel Name',
-//                       border: OutlineInputBorder(),
-//                     ),
-//                     validator: (value) => value!.isEmpty ? 'Enter hotel name' : null,
-//                   ),
-//                   const SizedBox(height: 16),
-//                   DropdownButtonFormField<String>(
-//                     value: _selectedLocation,
-//                     items: _cities.map((city) {
-//                       return DropdownMenuItem(
-//                         value: city,
-//                         child: Text(city),
-//                       );
-//                     }).toList(),
-//                     onChanged: (value) => setState(() => _selectedLocation = value!),
-//                     decoration: const InputDecoration(
-//                       labelText: 'City',
-//                       border: OutlineInputBorder(),
-//                     ),
-//                     validator: (value) => value == null || value.isEmpty ? 'Select a city' : null,
-//                   ),
-//                   const SizedBox(height: 16),
-//                   TextFormField(
-//                     controller: _priceCtrl,
-//                     keyboardType: TextInputType.number,
-//                     decoration: const InputDecoration(
-//                       labelText: 'Price',
-//                       border: OutlineInputBorder(),
-//                     ),
-//                     validator: (value) => value!.isEmpty ? 'Enter price' : null,
-//                   ),
-//                   const SizedBox(height: 16),
-//                   TextFormField(
-//                     controller: _descriptionCtrl,
-//                     decoration: const InputDecoration(
-//                       labelText: 'Short Description',
-//                       border: OutlineInputBorder(),
-//                     ),
-//                     maxLines: 2,
-//                   ),
-//                   const SizedBox(height: 16),
-//                   TextFormField(
-//                     controller: _detailsCtrl,
-//                     decoration: const InputDecoration(
-//                       labelText: 'Detailed Info',
-//                       border: OutlineInputBorder(),
-//                     ),
-//                     maxLines: 3,
-//                   ),
-//                   const SizedBox(height: 16),
-//                   TextFormField(
-//                     controller: _imagesCtrl,
-//                     decoration: const InputDecoration(
-//                       labelText: 'Cover Image URL',
-//                       border: OutlineInputBorder(),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 16),
-//                   const Text('Facilities', style: TextStyle(fontWeight: FontWeight.bold)),
-//                   Wrap(
-//                     spacing: 8.0,
-//                     runSpacing: 8.0,
-//                     children: _facilityOptions.map((facility) {
-//                       final isSelected = _selectedFacilities.contains(facility);
-//                       return FilterChip(
-//                         label: Text(facility),
-//                         selected: isSelected,
-//                         onSelected: (selected) {
-//                           setState(() {
-//                             isSelected
-//                                 ? _selectedFacilities.remove(facility)
-//                                 : _selectedFacilities.add(facility);
-//                           });
-//                         },
-//                       );
-//                     }).toList(),
-//                   ),
-//                   const SizedBox(height: 16),
-//                   SwitchListTile(
-//                     title: const Text('Is Favorite?'),
-//                     value: _isFavorite,
-//                     onChanged: (val) => setState(() => _isFavorite = val),
-//                   ),
-//                   const SizedBox(height: 20),
-//                   Center(
-//                     child: ElevatedButton(
-//                       style: ElevatedButton.styleFrom(
-//                         backgroundColor: Colors.deepPurple,
-//                         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-//                       ),
-//                       onPressed: _updateHotel,
-//                       child: const Text('Update Hotel'),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 20),
-//                   Center(
-//                     child: ElevatedButton.icon(
-//                       style: ElevatedButton.styleFrom(
-//                         backgroundColor: Colors.redAccent,
-//                         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-//                       ),
-//                       icon: const Icon(Icons.delete_forever),
-//                       label: const Text('Delete Hotel'),
-//                       onPressed: _deleteHotel,
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/screens/admin/services/hotel_service.dart';
 import 'package:staypal/models/hotel_model.dart';
 
@@ -477,12 +21,25 @@ class _EditHotelViewState extends State<EditHotelView> {
   final _imagesCtrl = TextEditingController();
 
   final _cities = [
-    'Jerusalem', 'Ramallah', 'Nablus', 'Hebron', 'Bethlehem',
-    'Jenin', 'Tulkarm', 'Qalqilya', 'Salfit', 'Tubas', 'Jericho', 'Gaza',
+    'Jerusalem',
+    'Ramallah',
+    'Nablus',
+    'Hebron',
+    'Bethlehem',
+    'Jenin',
+    'Tulkarm',
+    'Qalqilya',
+    'Salfit',
+    'Tubas',
+    'Jericho',
+    'Gaza',
   ];
 
   final _facilityOptions = [
-    '🧖‍♀️Spa', '💪 Gym', ' 🛜 Free WiFi', '🍽 Restaurant',
+    {'label': 'Spa', 'icon': Icons.spa},
+    {'label': 'Gym', 'icon': Icons.fitness_center},
+    {'label': 'Free WiFi', 'icon': Icons.wifi},
+    {'label': 'Restaurant', 'icon': Icons.restaurant},
   ];
 
   String? _selectedLocation;
@@ -497,7 +54,7 @@ class _EditHotelViewState extends State<EditHotelView> {
     _priceCtrl.text = widget.hotel.price.toString();
     _descriptionCtrl.text = widget.hotel.description;
     _detailsCtrl.text = widget.hotel.details;
-    _imagesCtrl.text = widget.hotel.images.isNotEmpty ? widget.hotel.images.first : '';
+    _imagesCtrl.text = widget.hotel.images.join(', ');
     _selectedLocation = widget.hotel.location;
     _selectedFacilities = List<String>.from(widget.hotel.facilities);
     _isFavorite = widget.hotel.isFavorite;
@@ -521,181 +78,344 @@ class _EditHotelViewState extends State<EditHotelView> {
         'price': double.tryParse(_priceCtrl.text) ?? 0.0,
         'description': _descriptionCtrl.text,
         'details': _detailsCtrl.text,
-        'images': _imagesCtrl.text.isNotEmpty ? [_imagesCtrl.text] : [],
-        'facilities': _selectedFacilities,
+        'images': _imagesCtrl.text
+            .split(',')
+            .map((url) => url.trim())
+            .where((url) => url.isNotEmpty)
+            .toList(),        'facilities': _selectedFacilities,
         'isFavorite': _isFavorite,
         'updatedAt': DateTime.now(),
       };
 
       await _hotelService.updateHotel(widget.hotel.hotelId, updatedData);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hotel updated successfully')),
-      );
-      Navigator.pop(context);
-    }
-  }
 
-  Future<void> _deleteHotel() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this hotel? This cannot be undone.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      await _hotelService.deleteHotel(widget.hotel.hotelId);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Hotel deleted successfully')),
+          const SnackBar(
+            content: Text('Hotel updated successfully'),
+            backgroundColor: AppColors.primary,
+          ),
         );
         Navigator.pop(context);
       }
     }
   }
 
+  Future<void> _deleteHotel() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppBorderRadius.card),
+            ),
+            backgroundColor: AppColors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(AppPadding.containerPadding),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Confirm Delete',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.title,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.medium),
+                  const Text(
+                    'Are you sure you want to delete this hotel?\nThis cannot be undone.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.body,
+                      color: AppColors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.large),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.white,
+                            foregroundColor: AppColors.primary,
+                            side: const BorderSide(color: AppColors.primary),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppBorderRadius.card,
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppPadding.buttonVertical,
+                            ),
+                          ),
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.small),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: AppColors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppBorderRadius.card,
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppPadding.buttonVertical,
+                            ),
+                          ),
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text(
+                            'Delete',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
+
+    if (confirmed == true) {
+      await _hotelService.deleteHotel(widget.hotel.hotelId);
+      if (mounted) Navigator.pop(context);
+    }
+  }
+
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label, {
+    TextInputType? keyboardType,
+    int maxLines = 1,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      validator: (value) => value!.isEmpty ? 'Enter $label' : null,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(title: const Text('Edit Hotel')),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        title: const Text(
+          'Edit Hotel',
+          style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold),
+        ),
+        iconTheme: const IconThemeData(color: AppColors.black),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppPadding.formVertical,
+          horizontal: AppPadding.formHorizontal,
+        ),
+        child: Center(
           child: Container(
-            width: 600,
-            padding: const EdgeInsets.all(24),
+            width: AppDimensions.formWidth,
+            padding: const EdgeInsets.all(AppPadding.containerPadding),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 12)],
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(AppBorderRadius.card),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: AppShadows.cardBlur,
+                ),
+              ],
             ),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Edit Hotel Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _nameCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Hotel Name',
-                      border: OutlineInputBorder(),
+                  const Text(
+                    'Edit Hotel Details',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.title,
+                      fontWeight: FontWeight.bold,
                     ),
-                    validator: (value) => value!.isEmpty ? 'Enter hotel name' : null,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.large),
+                  _buildTextField(_nameCtrl, 'Hotel Name'),
+                  const SizedBox(height: AppSpacing.medium),
                   DropdownButtonFormField<String>(
                     value: _selectedLocation,
-                    items: _cities.map((city) {
-                      return DropdownMenuItem(
-                        value: city,
-                        child: Text(city),
-                      );
-                    }).toList(),
-                    onChanged: (value) => setState(() => _selectedLocation = value!),
                     decoration: const InputDecoration(
                       labelText: 'City',
                       border: OutlineInputBorder(),
                     ),
-                    validator: (value) => value == null || value.isEmpty ? 'Select a city' : null,
+                    items:
+                        _cities
+                            .map(
+                              (city) => DropdownMenuItem(
+                                value: city,
+                                child: Text(city),
+                              ),
+                            )
+                            .toList(),
+                    onChanged:
+                        (value) => setState(() => _selectedLocation = value),
+                    validator:
+                        (value) =>
+                            value == null || value.isEmpty
+                                ? 'Select a city'
+                                : null,
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _priceCtrl,
+                  const SizedBox(height: AppSpacing.medium),
+                  _buildTextField(
+                    _priceCtrl,
+                    'Price',
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Price',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) => value!.isEmpty ? 'Enter price' : null,
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _descriptionCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Short Description',
-                      border: OutlineInputBorder(),
-                    ),
+                  const SizedBox(height: AppSpacing.medium),
+                  _buildTextField(
+                    _descriptionCtrl,
+                    'Short Description',
                     maxLines: 2,
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _detailsCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Detailed Info',
-                      border: OutlineInputBorder(),
-                    ),
-                    maxLines: 3,
+                  const SizedBox(height: AppSpacing.medium),
+                  _buildTextField(_detailsCtrl, 'Detailed Info', maxLines: 3),
+                  const SizedBox(height: AppSpacing.medium),
+                  _buildTextField(_imagesCtrl, 'Cover Image URL'),
+                  const SizedBox(height: AppSpacing.medium),
+                  const Text(
+                    'Facilities',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _imagesCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Cover Image URL',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text('Facilities', style: TextStyle(fontWeight: FontWeight.bold)),
                   Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: _facilityOptions.map((facility) {
-                      final isSelected = _selectedFacilities.contains(facility);
-                      return FilterChip(
-                        label: Text(facility),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          setState(() {
-                            isSelected
-                                ? _selectedFacilities.remove(facility)
-                                : _selectedFacilities.add(facility);
-                          });
-                        },
-                      );
-                    }).toList(),
+                    spacing: AppSpacing.small,
+                    runSpacing: AppSpacing.small,
+                    children:
+                        _facilityOptions.map((facility) {
+                          final label = facility['label'] as String;
+                          final icon = facility['icon'] as IconData;
+                          final isSelected = _selectedFacilities.contains(
+                            label,
+                          );
+                          return FilterChip(
+                            label: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  icon,
+                                  size: AppIconSizes.smallIcon,
+                                  color:
+                                      isSelected
+                                          ? Colors.white
+                                          : AppColors.primary,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  label,
+                                  style: TextStyle(
+                                    color:
+                                        isSelected
+                                            ? Colors.white
+                                            : AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              setState(() {
+                                if (selected) {
+                                  _selectedFacilities.add(label);
+                                } else {
+                                  _selectedFacilities.remove(label);
+                                }
+                              });
+                            },
+                            backgroundColor: AppColors.white,
+                            selectedColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppBorderRadius.card,
+                              ),
+                              side: BorderSide(color: AppColors.primary),
+                            ),
+                          );
+                        }).toList(),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.medium),
                   SwitchListTile(
                     title: const Text('Is Favorite?'),
                     value: _isFavorite,
                     onChanged: (val) => setState(() => _isFavorite = val),
                   ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  const SizedBox(height: AppSpacing.section),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _updateHotel,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.white,
+                            foregroundColor: AppColors.white,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppPadding.buttonVertical,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppBorderRadius.card,
+                              ),
+                            ),
+                          ),
+                          child: const Text(
+                            'Update Hotel',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
                       ),
-                      onPressed: _updateHotel,
-                      child: const Text('Update Hotel'),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      const SizedBox(width: AppSpacing.small),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _deleteHotel,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: AppColors.primary,
+                            side: const BorderSide(color: AppColors.primary),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppPadding.buttonVertical,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppBorderRadius.card,
+                              ),
+                            ),
+                          ),
+                          child: const Text(
+                            'Delete Hotel',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.white,
+                            ),
+                          ),
+                        ),
                       ),
-                      icon: const Icon(Icons.delete_forever),
-                      label: const Text('Delete Hotel'),
-                      onPressed: _deleteHotel,
-                    ),
+                    ],
                   ),
                 ],
               ),

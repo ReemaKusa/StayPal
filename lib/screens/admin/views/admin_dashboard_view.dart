@@ -346,58 +346,58 @@ class _AdminDashboardState extends State<AdminDashboard> {
         return const ListBookingsView();
       case 'dashboard':
       default:
-        return FutureBuilder(
-          future: Future.wait([
-            HotelService().fetchHotels(),
-            EventService().fetchEvents(),
-            UserService().fetchUsers(),
-            BookingService().fetchBookingCount(),
-          ]),
-          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: \${snapshot.error}'));
-            }
+      return FutureBuilder(
+        future: Future.wait([
+          HotelService().fetchHotels(),
+          EventService().fetchEvents(),
+          UserService().fetchUsers(),
+          BookingService().fetchBookingCount(),
+        ]),
+        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}')); // ✅ fixed here
+          }
 
-            final hotels = snapshot.data![0];
-            final events = snapshot.data![1];
-            final users = snapshot.data![2];
-            final bookingCount = snapshot.data![3];
+          final hotels = snapshot.data![0];
+          final events = snapshot.data![1];
+          final users = snapshot.data![2];
+          final bookingCount = snapshot.data![3];
 
-            return Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Dashboard Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      _buildStatCard('Total Hotels', hotels.length.toString(), Icons.hotel, Colors.blue),
-                      const SizedBox(width: 16),
-                      _buildStatCard('Total Events', events.length.toString(), Icons.event, Colors.deepOrange),
-                      const SizedBox(width: 16),
-                      _buildStatCard('Total Users', users.length.toString(), Icons.person, Colors.green),
-                      const SizedBox(width: 16),
-                      _buildStatCard('Total Bookings', bookingCount.toString(), Icons.book_online, Colors.purple),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                  const Text('Upcoming Events', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 12),
-                  ...events.take(3).map<Widget>((event) {
-                    return ListTile(
-                      leading: const Icon(Icons.calendar_today),
-                      title: Text(event.name),
-                      subtitle: Text(event.date?.toLocal().toString().split(" ")[0] ?? 'No Date'),
-                    );
-                  }).toList(),
-                ],
-              ),
-            );
-          },
-        );
+          return Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Dashboard Overview', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    _buildStatCard('Total Hotels', hotels.length.toString(), Icons.hotel, Colors.blue),
+                    const SizedBox(width: 16),
+                    _buildStatCard('Total Events', events.length.toString(), Icons.event, Colors.deepOrange),
+                    const SizedBox(width: 16),
+                    _buildStatCard('Total Users', users.length.toString(), Icons.person, Colors.green),
+                    const SizedBox(width: 16),
+                    _buildStatCard('Total Bookings', bookingCount.toString(), Icons.book_online, Colors.purple),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                const Text('Upcoming Events', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 12),
+                ...events.take(3).map<Widget>((event) {
+                  return ListTile(
+                    leading: const Icon(Icons.calendar_today),
+                    title: Text(event.name),
+                    subtitle: Text(event.date?.toLocal().toString().split(" ")[0] ?? 'No Date'),
+                  );
+                }).toList(),
+              ],
+            ),
+          );
+        },
+      );
     }
   }
 

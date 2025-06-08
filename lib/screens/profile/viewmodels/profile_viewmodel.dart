@@ -43,14 +43,18 @@ class ProfileViewModel extends ChangeNotifier {
     }
 
     try {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .get();
       if (doc.exists) {
         _userData = doc.data();
       } else {
         _userData = {};
       }
     } catch (e) {
-      print('❌ Error loading user data: $e');
+      print('Error loading user data: $e');
       _userData = {};
     }
 
@@ -78,7 +82,8 @@ class ProfileViewModel extends ChangeNotifier {
   ImageProvider get profileImage {
     if (_image != null) {
       return MemoryImage(_image!);
-    } else if (_userData?['imageUrl'] != null && _userData!['imageUrl'].toString().isNotEmpty) {
+    } else if (_userData?['imageUrl'] != null &&
+        _userData!['imageUrl'].toString().isNotEmpty) {
       return NetworkImage(_userData!['imageUrl']);
     } else {
       return const NetworkImage(AppConstants.defaultProfileImage);
@@ -101,17 +106,17 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   void navigateToPersonal(BuildContext context) =>
-      _navigateTo(context, const PersonalDetails());
+      _navigateTo(context, PersonalDetails());
 
   void navigateToPayment(BuildContext context) =>
-      _navigateTo(context, const PaymentMethods());
+      _navigateTo(context, PaymentMethods());
 
   void navigateToSecurity(BuildContext context) =>
-      _navigateTo(context, const SecuritySetting());
+      _navigateTo(context, SecuritySetting());
 
   void navigateToBookings(BuildContext context) =>
-      _navigateTo(context, const MyBookingsScreen());
+      _navigateTo(context, MyBookingsScreen());
 
   void navigateToWishlist(BuildContext context) =>
-      _navigateTo(context, const WishListPage());
+      _navigateTo(context, WishListPage());
 }

@@ -466,10 +466,11 @@
 //     );
 //   }
 // }
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:staypal/constants/color_constants.dart';
+import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/screens/admin/services/hotel_service.dart';
 
 class AddHotelView extends StatefulWidget {
@@ -497,14 +498,16 @@ class _AddHotelViewState extends State<AddHotelView> {
     'Jenin', 'Tulkarm', 'Qalqilya', 'Salfit', 'Tubas', 'Jericho', 'Gaza',
   ];
 
-  final List<String> _facilityOptions = [
-    '🧖‍♀️Spa', '💪 Gym', ' 🛜 Free WiFi', '🍽 Restaurant',
+  final List<Map<String, dynamic>> _facilityOptions = [
+    {'label': 'Spa', 'icon': Icons.spa},
+    {'label': 'Gym', 'icon': Icons.fitness_center},
+    {'label': 'Free WiFi', 'icon': Icons.wifi},
+    {'label': 'Restaurant', 'icon': Icons.restaurant},
   ];
 
   String? _selectedLocation;
   bool _isFavorite = false;
   List<String> _selectedFacilities = [];
-
   List<Map<String, dynamic>> _hotelManagers = [];
   String? _selectedManagerId;
 
@@ -543,8 +546,11 @@ class _AddHotelViewState extends State<AddHotelView> {
         'description': _descriptionCtrl.text,
         'details': _detailsCtrl.text,
         'price': double.tryParse(_priceCtrl.text) ?? 0.0,
-        'images': _imagesCtrl.text.isNotEmpty ? [_imagesCtrl.text] : [],
-        'facilities': _selectedFacilities,
+        'images': _imagesCtrl.text
+            .split(',')
+            .map((url) => url.trim())
+            .where((url) => url.isNotEmpty)
+            .toList(),        'facilities': _selectedFacilities,
         'isFavorite': _isFavorite,
         'createdAt': DateTime.now(),
         'managerId': managerId,
@@ -553,7 +559,7 @@ class _AddHotelViewState extends State<AddHotelView> {
       await _hotelService.addHotel(hotelData);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('✅ Hotel added successfully')),
+        const SnackBar(content: Text(' Hotel added successfully')),
       );
 
       _formKey.currentState!.reset();
@@ -585,47 +591,53 @@ class _AddHotelViewState extends State<AddHotelView> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final containerWidth = screenWidth < 700 ? screenWidth * 0.9 : 600.0;
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Add Hotel')),
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        title: const Text('Add Hotel', style: TextStyle(color: AppColors.black,fontWeight: FontWeight.bold)),
+        iconTheme: const IconThemeData(color: AppColors.black),
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 32),
+        padding: const EdgeInsets.symmetric(
+          vertical: AppPadding.formVertical,
+          horizontal: AppPadding.formHorizontal,
+        ),
         child: Center(
           child: Container(
-            width: containerWidth,
-            padding: const EdgeInsets.all(24),
+            width: AppDimensions.formWidth,
+            padding: const EdgeInsets.all(AppPadding.containerPadding),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 12)],
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(AppBorderRadius.card),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: AppShadows.cardBlur,
+                ),
+              ],
             ),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Add Hotel Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _nameCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Hotel Name',
-                      border: OutlineInputBorder(),
+                  const Text(
+                    'Add Hotel Details',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.title,
+                      fontWeight: FontWeight.bold,
                     ),
-                    validator: (value) => value!.isEmpty ? 'Enter hotel name' : null,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.large),
+                  _buildTextField(_nameCtrl, 'Hotel Name'),
+                  const SizedBox(height: AppSpacing.medium),
                   DropdownButtonFormField<String>(
                     value: _selectedLocation,
-                    items: _cities.map((city) {
-                      return DropdownMenuItem(
-                        value: city,
-                        child: Text(city),
-                      );
-                    }).toList(),
+                    items: _cities
+                        .map((city) => DropdownMenuItem(value: city, child: Text(city)))
+                        .toList(),
                     onChanged: (value) => setState(() => _selectedLocation = value),
                     decoration: const InputDecoration(
                       labelText: 'City',
@@ -633,94 +645,97 @@ class _AddHotelViewState extends State<AddHotelView> {
                     ),
                     validator: (value) => value == null || value.isEmpty ? 'Select a city' : null,
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _priceCtrl,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Price',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) => value!.isEmpty ? 'Enter price' : null,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _descriptionCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Short Description',
-                      border: OutlineInputBorder(),
-                    ),
-                    maxLines: 2,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _detailsCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Detailed Info',
-                      border: OutlineInputBorder(),
-                    ),
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _imagesCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Cover Image URL',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.medium),
+                  _buildTextField(_priceCtrl, 'Price', keyboardType: TextInputType.number),
+                  const SizedBox(height: AppSpacing.medium),
+                  _buildTextField(_descriptionCtrl, 'Short Description', maxLines: 2),
+                  const SizedBox(height: AppSpacing.medium),
+                  _buildTextField(_detailsCtrl, 'Detailed Info', maxLines: 3),
+                  const SizedBox(height: AppSpacing.medium),
+                  _buildTextField(_imagesCtrl, 'Cover Image URL'),
+                  const SizedBox(height: AppSpacing.medium),
                   const Text('Facilities', style: TextStyle(fontWeight: FontWeight.bold)),
                   Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
+                    spacing: AppSpacing.small,
+                    runSpacing: AppSpacing.small,
                     children: _facilityOptions.map((facility) {
-                      final isSelected = _selectedFacilities.contains(facility);
+                      final isSelected = _selectedFacilities.contains(facility['label']);
                       return FilterChip(
-                        label: Text(facility),
+                        label: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(facility['icon'], size: 18, color: AppColors.black),
+                            const SizedBox(width: 6),
+                            Text(facility['label']),
+                          ],
+                        ),
                         selected: isSelected,
                         onSelected: (selected) {
                           setState(() {
                             isSelected
-                                ? _selectedFacilities.remove(facility)
-                                : _selectedFacilities.add(facility);
+                                ? _selectedFacilities.remove(facility['label'])
+                                : _selectedFacilities.add(facility['label']);
                           });
                         },
+                        backgroundColor: AppColors.white,
+                        selectedColor: AppColors.primary,
+                        side: BorderSide(color: AppColors.primary),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                        ),
                       );
                     }).toList(),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.medium),
                   SwitchListTile(
                     title: const Text('Is Favorite?'),
                     value: _isFavorite,
                     onChanged: (val) => setState(() => _isFavorite = val),
                   ),
-                  const SizedBox(height: 16),
                   if (!widget.assignToCurrentManager)
-                    DropdownButtonFormField<String>(
-                      value: _selectedManagerId,
-                      decoration: const InputDecoration(
-                        labelText: 'Assign Hotel Manager',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: _hotelManagers.map((manager) {
-                        return DropdownMenuItem<String>(
-                          value: manager['uid'],
-                          child: Text(manager['name'] ?? 'Unnamed'),
-                        );
-                      }).toList(),
-                      onChanged: (value) => setState(() => _selectedManagerId = value),
-                      validator: (value) => value == null || value.isEmpty ? 'Please select a manager' : null,
+                    Column(
+                      children: [
+                        const SizedBox(height: AppSpacing.medium),
+                        DropdownButtonFormField<String>(
+                          value: _selectedManagerId,
+                          decoration: const InputDecoration(
+                            labelText: 'Assign Hotel Manager',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: _hotelManagers
+                              .map((manager) => DropdownMenuItem<String>(
+                                    value: manager['uid'],
+                                    child: Text(manager['name'] ?? 'Unnamed'),
+                                  ))
+                              .toList(),
+                          onChanged: (value) => setState(() => _selectedManagerId = value),
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Please select a manager'
+                              : null,
+                        ),
+                      ],
                     ),
-                  const SizedBox(height: 24),
-                  Center(
+                  const SizedBox(height: AppSpacing.section),
+                  SizedBox(
+                    width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppPadding.buttonVertical,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                        ),
                       ),
                       onPressed: _submitHotel,
-                      child: const Text('Add Hotel'),
+                      child: const Text(
+                        'Add Hotel',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -731,4 +746,19 @@ class _AddHotelViewState extends State<AddHotelView> {
       ),
     );
   }
+
+  Widget _buildTextField(TextEditingController controller, String label,
+      {TextInputType? keyboardType, int maxLines = 1}) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      validator: (value) => value!.isEmpty ? 'Enter $label' : null,
+    );
+  }
 }
+

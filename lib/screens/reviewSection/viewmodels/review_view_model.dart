@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../model/review_model.dart' as review_model;
+import '../../../models/review_model.dart' as review_model;
 import './feedback_state.dart';
 import './rating_stats_manager.dart';
 import './user_review_checker.dart';

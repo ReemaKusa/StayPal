@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:staypal/screens/profile/add_card_screen.dart';
+import 'package:staypal/constants/color_constants.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/screens/profile/views/add_visa.dart';
+import 'package:staypal/widgets/visa_card.dart';
 
 class PaymentMethods extends StatefulWidget {
   const PaymentMethods({super.key});
@@ -24,14 +27,21 @@ class _PaymentMethodsState extends State<PaymentMethods> {
         .collection('cards');
   }
 
+  Widget _buildCardWidget(Map<String, dynamic> data) {
+    return PaymentCardWidget(
+      cardNumber: data['number'] ?? '',
+      cardHolder: data['cardholder'] ?? '',
+      expiryDate: data['expiry'] ?? '',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
+        backgroundColor: AppColors.white,
+
         title: const Text(
           'Payment details',
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -50,76 +60,123 @@ class _PaymentMethodsState extends State<PaymentMethods> {
 
               if (cards.isEmpty) {
                 return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Text(
-                        'Payment details',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Payment details',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'Securely add or remove payment methods to\nmake it easier when you book.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.black54, fontSize: 14),
-                      ),
-                    ],
+                        Text(
+                          'Securely add or remove payment methods to\nmake it easier when you book.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.grey,
+                            fontSize: AppFontSizes.body,
+                          ),
+                        ),
+                        SizedBox(height: 100),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.white,
+                                padding: const EdgeInsets.symmetric(
+                                              vertical: AppPadding.buttonVertical,
+                                            ),
+                                side: BorderSide(
+                                  color: AppColors.greyTransparent,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const AddCardView(),
+                                  ),
+                                ).then((_) => setState(() {}));
+                              },
+                              child: const Text(
+                                'Add Card',
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.bottonfont,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                                      letterSpacing: 1,
+                              
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }
 
-              return ListView.builder(
-                padding: EdgeInsets.fromLTRB(16, 20, 16, 80),
-                itemCount: cards.length,
-                itemBuilder: (context, index) {
-                  final doc = cards[index];
-                  final data = doc.data() as Map<String, dynamic>;
+              final data = cards.first.data() as Map<String, dynamic>;
+              final docRef = cards.first.reference;
 
-                  final cardholder = data['cardholder'] ?? 'No Name';
-                  final number = data['number'] ?? '**** **** **** ****';
+              return Stack(
+  children: [
+    ListView(
+      
+  padding: EdgeInsets.all(10),
+      children: [
+        _buildCardWidget(data),
+      ],
+    ),
 
-                  return Card(
-                    color: Colors.white,
-                    margin: EdgeInsets.symmetric(vertical: 8),
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(13),
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        cardholder,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        number.toString().length >= 4
-                            ? "**** **** **** ${number.toString().substring(number.toString().length - 4)}"
-                            : 'Invalid number',
-                      ),
-
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Colors.deepOrange),
-                        onPressed: () async {
-                          await doc.reference.delete();
-                        },
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+    Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Row(
+          children: [
+            Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
+                  backgroundColor: AppColors.white,
                   minimumSize: const Size.fromHeight(50),
+                  side: const BorderSide(color: AppColors.greyTransparent),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () async {
+                  await docRef.delete();
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(
+                    fontSize: AppFontSizes.bottonfont,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.white,
+                  minimumSize: const Size.fromHeight(50),
+                  side: const BorderSide(color: AppColors.greyTransparent),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -127,19 +184,27 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const AddCardScreen()),
-                  ).then((_) => setState(() {})); // refresh on return
+                    MaterialPageRoute(builder: (_) => const AddCardView()),
+                  ).then((_) => setState(() {}));
                 },
                 child: const Text(
-                  'Add card',
+                  'Update',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: AppFontSizes.bottonfont,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.deepOrange,
                   ),
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    ),
+  ],
+);
+
+            },
           ),
         ],
       ),

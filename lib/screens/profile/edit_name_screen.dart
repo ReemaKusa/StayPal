@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/constants/color_constants.dart';
 
 class EditNameScreen extends StatefulWidget {
   const EditNameScreen({super.key});
@@ -10,13 +12,24 @@ class EditNameScreen extends StatefulWidget {
 }
 
 class _EditNameScreenState extends State<EditNameScreen> {
-  final TextEditingController _firstNameCtrl = TextEditingController();
-  final TextEditingController _lastNameCtrl = TextEditingController();
+  final _firstNameCtrl = TextEditingController();
+  final _lastNameCtrl = TextEditingController();
+  final _firstNameFocus = FocusNode();
+  final _lastNameFocus = FocusNode();
 
   @override
   void initState() {
     super.initState();
     loadCurrentName();
+    _firstNameFocus.addListener(() => setState(() {}));
+    _lastNameFocus.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _firstNameFocus.dispose();
+    _lastNameFocus.dispose();
+    super.dispose();
   }
 
   Future<void> loadCurrentName() async {
@@ -48,46 +61,82 @@ class _EditNameScreenState extends State<EditNameScreen> {
     Navigator.pop(context);
   }
 
+  OutlineInputBorder _inputBorder(FocusNode focusNode) => OutlineInputBorder(
+    borderSide: BorderSide(
+      color: focusNode.hasFocus ? AppColors.primary : AppColors.greyTransparent,
+    ),
+    borderRadius: BorderRadius.circular(AppBorderRadius.card),
+  );
+
+  InputDecoration _buildInputDecoration(String label, FocusNode focusNode) =>
+      InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: AppColors.grey),
+        filled: true,
+        fillColor: AppColors.white,
+        border: _inputBorder(focusNode),
+        focusedBorder: _inputBorder(focusNode),
+        enabledBorder: _inputBorder(focusNode),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          "Edit Name",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        backgroundColor: AppColors.white,
+        title: Text(
+          'Edit Name',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: AppFontSizes.title,
+          ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.only(
+          left: AppPadding.formHorizontal,
+          right: AppPadding.formHorizontal,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          top: 20,
+        ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: _firstNameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'First Name *',
-                border: OutlineInputBorder(),
+              focusNode: _firstNameFocus,
+              decoration: _buildInputDecoration(
+                'First Name *',
+                _firstNameFocus,
               ),
             ),
-            const SizedBox(height: 18),
+            SizedBox(height: AppSpacing.medium),
             TextField(
               controller: _lastNameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Last Name *',
-                border: OutlineInputBorder(),
-              ),
+              focusNode: _lastNameFocus,
+              decoration: _buildInputDecoration('Last Name *', _lastNameFocus),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 40), // بدل Spacer
             ElevatedButton(
               onPressed: saveName,
               style: ElevatedButton.styleFrom(
-                minimumSize: Size.fromHeight(50),
-                backgroundColor: Colors.orange[700],
+                backgroundColor: AppColors.white,
+                elevation: 3,
+                minimumSize: Size.fromHeight(AppPadding.buttonVertical * 3),
+                side: BorderSide(color: AppColors.greyTransparent),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                ),
               ),
               child: Text(
                 'Save',
-                style: TextStyle(color: Colors.white, fontSize: 16),
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: AppFontSizes.bottonfont,
+                ),
               ),
             ),
           ],

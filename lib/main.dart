@@ -3,12 +3,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:staypal/screens/admin/viewmodels/hotel_manager_viewmodel.dart';
 import 'package:staypal/screens/admin/views/event_organizer_view.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
+import 'package:staypal/screens/auth/views/email_verification_view.dart';
+import 'package:staypal/screens/booking/views/book_hotel_view.dart';
+import 'package:staypal/screens/profile/booking_details_payment.dart';
 // import 'package:staypal/screens/profile/booking_complete.dart';
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
-
-import 'package:staypal/DB/firebase_options.dart'; 
-
-// import 'package:staypal/screens/auth/test_firestore_screen.dart'; 
+import 'package:staypal/DB/firebase_options.dart';
+// import 'package:staypal/screens/auth/test_firestore_screen.dart';
 import 'package:staypal/screens/profile/views/my_profile.dart';
 import 'package:provider/provider.dart';
 import 'package:staypal/screens/wishlistPage/views/wishlist_view.dart';
@@ -17,8 +18,7 @@ import 'package:staypal/screens/homePage/views/home_page.dart';
 import 'package:staypal/screens/admin/views/admin_dashboard_view.dart';
 import 'package:staypal/screens/admin/views/hotel_manager_view.dart';
 // import 'package:staypal/screens/admin/views/event_organizer_view.dart';
-// import 'package:staypal/screens/admin/views/event_organizer_view.dart';
-import 'package:staypal/screens/first_screen/splash_view.dart';
+import 'package:staypal/screens/admin/viewmodels/EventOrganizerViewModel.dart';
 import 'package:staypal/widgets/role_landing_view.dart';
 
 void main() async {
@@ -29,11 +29,10 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-        create: (_) => ProfileViewModel(),
-  ),
+        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
 
         ChangeNotifierProvider(create: (_) => HotelManagerViewModel()),
+        ChangeNotifierProvider(create: (_) => EventOrganizerViewModel()),
       ],
       child: const MyApp(),
     ),
@@ -52,29 +51,27 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      //home:  MyProfile(),
-      //home: HomePage(),
+
+      // home:  MyProfile(),
       //home:MainScreen(),
-      //home: MyProfile(),
       //home:AuthEntryScreen(),
       //home: AdminDashboard(),
-      //home: HotelManagerView(),
+      // home: SplashScreen(),
+      // home: HotelManagerView(),
       //home: EventOrganizerView(),
-      home:SearchResultPage (),
-
+      home:RoleLandingView(),
+      //home:EmailVerificationView(),
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),
         '/home': (context) => HomePage(),
         '/profile': (context) => MyProfile(),
-        '/auth': (context) => AuthEntryView(),
-        '/login': (context) => AuthEntryView(),
-        '/adminDashboard': (context) => AdminDashboard(),
-        '/hotelManagerHome': (context) => HotelManagerView(),
-        '/eventOrganizerHome': (context) => EventOrganizerView(),
+        '/auth': (context) => const AuthEntryView(),
+        '/login': (context) => const AuthEntryView(),
+        '/adminDashboard': (context) => const AdminDashboard(),
+        '/hotelManagerHome': (context) => const HotelManagerView(),
+        '/eventOrganizerHome': (context) => const EventOrganizerView(),
         '/userHome': (context) => HomePage(),
-
-
       },
     );
   }

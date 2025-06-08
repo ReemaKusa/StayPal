@@ -26,15 +26,19 @@ class ProfileOptionTile extends StatelessWidget {
             color: AppColors.greyTransparent,
             blurRadius: 4,
             offset: const Offset(0, 2),
-          )
+          ),
         ],
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppPadding.cardPadding,
-          vertical: AppPadding.iconPadding,
+         horizontal: AppPadding. horizontalPaddingTitle,
+         vertical: AppPadding.cardPadding
         ),
-        leading: Icon(icon, color: AppColors.black, size: AppIconSizes.tileIcon),
+        leading: Icon(
+          icon,
+          color: AppColors.black,
+          size: AppIconSizes.tileIcon,
+        ),
         title: Text(
           label,
           style: const TextStyle(
@@ -42,19 +46,13 @@ class ProfileOptionTile extends StatelessWidget {
             color: AppColors.black,
           ),
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: AppIconSizes.smallIcon, color: AppColors.black),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          size: AppIconSizes.smallIcon,
+          color: AppColors.primary,
+        ),
         onTap: onTap,
       ),
     );
   }
 }
-
- 
-
-
-
-   
-         
-          
-
-               

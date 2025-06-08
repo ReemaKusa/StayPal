@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
+import 'package:staypal/screens/homePage/views/home_page.dart';
 
 class DialogsUtil {
   static void showLogoutDialog(BuildContext context) {
@@ -55,13 +56,13 @@ class DialogsUtil {
                         listen: false,
                       );
                       profileVM.reset();
-                    
+
                       await FirebaseAuth.instance.signOut();
 
-                      Navigator.pushNamedAndRemoveUntil(
+                      Navigator.pushAndRemoveUntil(
                         context,
-                        '/login',
-                        (route) => false,
+                        MaterialPageRoute(builder: (_) =>  HomePage()),
+                            (route) => false,
                       );
                     },
                     child: const Text(

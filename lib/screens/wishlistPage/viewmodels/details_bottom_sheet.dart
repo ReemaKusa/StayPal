@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../view_details/hotel/views/hotel_details_view.dart';
-import '../../view_details/event/views/event_details_view.dart';
+import '../../search_result/hotel/views/hotel_details_view.dart';
+import '../../search_result/event/views/event_details_view.dart';
 import '../../wishlistPage/viewmodels/wishlist_view_model.dart';
 import'./bottomSheetComponents/bottom_sheet_handel.dart';
 import'./bottomSheetComponents/item_image.dart';
@@ -9,7 +9,6 @@ import'bottomSheetComponents/item_price.dart';
 import'./bottomSheetComponents/item_title.dart';
 import'./bottomSheetComponents/more_details_botton.dart';
 import'./bottomSheetComponents/item_description.dart';
-
 
 class DetailsBottomSheet extends StatelessWidget {
   final Map<String, dynamic> item;
