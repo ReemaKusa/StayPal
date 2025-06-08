@@ -45,7 +45,7 @@ class AuthEntryView extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () => viewModel.goToSignUp(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(255, 87, 34, 1),
+                          backgroundColor:  Colors.deepOrange,
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -67,7 +67,7 @@ class AuthEntryView extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () => viewModel.goToLogin(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(255, 87, 34, 1),
+                          backgroundColor: Colors.deepOrange,
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -94,7 +94,7 @@ class AuthEntryView extends StatelessWidget {
                         child: const Text(
                           'Return to Home Page',
                           style: TextStyle(
-                            color: Color.fromRGBO(255, 87, 34, 1),
+                            color: Colors.deepOrange,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
