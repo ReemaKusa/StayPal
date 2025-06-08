@@ -5,6 +5,7 @@ import 'package:staypal/constants/app_constants.dart';
 final ThemeData appTheme = ThemeData(
   primaryColor: AppColors.primary,
   scaffoldBackgroundColor: AppColors.white,
+
   fontFamily: 'Roboto',
   colorScheme: ColorScheme.fromSwatch(
     primarySwatch: Colors.deepOrange,
