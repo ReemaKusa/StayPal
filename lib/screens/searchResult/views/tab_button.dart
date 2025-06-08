@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:staypal/constants/color_constants.dart';
 
 class TabButton extends StatelessWidget {
 
@@ -20,7 +21,7 @@ class TabButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: active
-            ? const Color.fromARGB(255, 255, 94, 0)
+            ? AppColors.primary
             : Colors.orange.shade200,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(

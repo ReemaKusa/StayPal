@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:staypal/constants/color_constants.dart';
 import '../viewmodels/review_view_model.dart';
 import './rating_summary_widget.dart';
 import './review_item_widget.dart';
@@ -56,8 +57,8 @@ class _FeedbackScreenState extends State<FeedbackScreen>
                 backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
                 bottom: TabBar(
                   controller: _tabController,
-                  indicatorColor: Colors.deepOrange,
-                  labelColor: Colors.deepOrange,
+                  indicatorColor: AppColors.primary,
+                  labelColor: AppColors.primary,
                   unselectedLabelColor:
                       Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.6),
                   tabs: const [
@@ -104,7 +105,7 @@ class _FeedbackScreenState extends State<FeedbackScreen>
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
                           'Error loading reviews: ${snapshot.error}',
-                          style: const TextStyle(color: Colors.red),
+                          style: const TextStyle(color: Color.fromARGB(255, 244, 133, 54)),
                         ),
                       ),
                     ),

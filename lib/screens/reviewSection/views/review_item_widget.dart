@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:staypal/constants/color_constants.dart';
 import '../../../models/review_model.dart';
 
 class ReviewItemWidget extends StatelessWidget {
@@ -51,7 +52,7 @@ class ReviewItemWidget extends StatelessWidget {
               ? Text(
                   review.userName[0].toUpperCase(),
                   style: TextStyle(
-                    color: Colors.deepOrange.shade800,
+                    color: AppColors.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 )
@@ -87,7 +88,7 @@ class ReviewItemWidget extends StatelessWidget {
     return RatingBarIndicator(
       rating: review.rating,
       itemBuilder: (context, _) =>
-          const Icon(Icons.star, color: Colors.deepOrange),
+          const Icon(Icons.star, color: AppColors.primary),
       itemCount: 5,
       itemSize: 20,
     );

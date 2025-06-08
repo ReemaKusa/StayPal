@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:staypal/constants/color_constants.dart';
 import '../viewModel/splash_viewmodel.dart';  
 
 class SplashText extends StatelessWidget {
@@ -19,7 +20,7 @@ class SplashText extends StatelessWidget {
               style: TextStyle(
                 fontSize: 42,
                 fontWeight: FontWeight.w800,
-                color: Colors.deepOrange.shade800,
+                color: AppColors.primary,
                 letterSpacing: 1.5,
               ),
             ),

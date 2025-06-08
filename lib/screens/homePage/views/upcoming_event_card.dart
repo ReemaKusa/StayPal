@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:staypal/constants/color_constants.dart';
 import '../../detailsPage/event/views/event_details_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../models/upcoming_events_model.dart';
@@ -110,7 +111,7 @@ class EventCard extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () => _navigateToEventDetails(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(255, 87, 34, 1),
+                          backgroundColor: AppColors.primary,
                           minimumSize: Size(
                             isWeb ? 120 : (isSmallPhone ? 80 : 90),
                             isWeb ? 40 : (isSmallPhone ? 32 : 36),

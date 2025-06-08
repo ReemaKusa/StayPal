@@ -37,10 +37,6 @@ class HomeHeader extends StatelessWidget {
                 child: Container(
                   width: 10,
                   height: 10,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
                 ),
               ),
             ],

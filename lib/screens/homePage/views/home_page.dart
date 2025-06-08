@@ -9,6 +9,7 @@ import './recommended_section.dart';
 import '../../../widgets/custom_nav_bar.dart';
 import '../../../widgets/webNavBar/web_nav_bar.dart';
 import './home_header_image.dart';
+import 'package:staypal/constants/color_constants.dart';
 
 class HomePage extends StatelessWidget {
   final GlobalKey searchKey = GlobalKey();
@@ -40,7 +41,7 @@ class HomePage extends StatelessWidget {
     return ElevatedButton(
       onPressed: () => _performSearch(context),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         minimumSize: const Size(double.infinity, 48),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
