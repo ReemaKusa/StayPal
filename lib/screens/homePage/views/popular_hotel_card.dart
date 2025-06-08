@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:staypal/constants/color_constants.dart';
 import '../../detailsPage/hotel/views/hotel_details_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../models/popular_hotels_model.dart';
@@ -82,7 +83,7 @@ class HotelCard extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () => _navigateToHotelDetails(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrange,
+                          backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           minimumSize: const Size(double.infinity, 40),
                           shape: RoundedRectangleBorder(

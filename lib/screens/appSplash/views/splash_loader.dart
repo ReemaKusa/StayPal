@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:staypal/constants/color_constants.dart';
 import '../viewModel/splash_viewmodel.dart';  
 
 class SplashLoader extends StatelessWidget {
@@ -23,7 +24,7 @@ class SplashLoader extends StatelessWidget {
             LinearProgressIndicator(
               backgroundColor: Colors.grey.shade200,
               valueColor: AlwaysStoppedAnimation<Color>(
-                Colors.deepOrange.shade600,
+                AppColors.primary,
               ),
               minHeight: 4,
               borderRadius: BorderRadius.circular(10),

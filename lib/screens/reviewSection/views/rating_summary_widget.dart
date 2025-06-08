@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:staypal/constants/color_constants.dart';
 import '../viewmodels/rating_stats.dart';
 
 class RatingSummaryWidget extends StatelessWidget {
@@ -50,7 +51,7 @@ class RatingSummaryWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 48,
                 fontWeight: FontWeight.bold,
-                color: Colors.deepOrange,
+                color: AppColors.primary,
               ),
             ),
             Text(
