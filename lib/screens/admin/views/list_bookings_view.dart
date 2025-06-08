@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/screens/admin/viewmodels/list_booking_viewmodel.dart';
 
@@ -29,7 +30,7 @@ class _ListAllBookingsBody extends StatelessWidget {
         children: [
           const Text(
             'All Bookings',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize:AppFontSizes.title, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Row(

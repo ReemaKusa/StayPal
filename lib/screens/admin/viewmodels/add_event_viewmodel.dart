@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:staypal/models/event_model.dart';
 import 'package:staypal/screens/admin/services/event_service.dart';
 
 class AddEventViewModel extends ChangeNotifier {
   final formKey = GlobalKey<FormState>();
+
   final nameCtrl = TextEditingController();
   final descriptionCtrl = TextEditingController();
   final detailsCtrl = TextEditingController();
@@ -24,84 +25,75 @@ class AddEventViewModel extends ChangeNotifier {
   ];
 
   String? selectedLocation;
-  String? selectedOrganizerId;
   bool isFavorite = false;
+
+  List<Map<String, String>> organizers = [];
+  String? selectedOrganizerId;
   bool isAdmin = false;
 
-  List<Map<String, dynamic>> organizers = [];
-
-  Future<void> initRoleAndOrganizers() async {
+  Future<void> loadRoleAndOrganizers() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
     final role = doc.data()?['role'];
+
     if (role == 'admin') {
       isAdmin = true;
       final snapshot = await FirebaseFirestore.instance
           .collection('users')
           .where('role', isEqualTo: 'event_organizer')
           .get();
+
       organizers = snapshot.docs.map((doc) {
         final data = doc.data();
         return {
           'uid': doc.id,
-          'name': data['fullName'] ?? 'Unnamed',
+          'name': data['fullName']?.toString() ?? 'Unnamed',
         };
       }).toList();
-      notifyListeners();
     }
-  }
 
-  void setFavorite(bool value) {
-    isFavorite = value;
-    notifyListeners();
-  }
-
-  void setLocation(String? value) {
-    selectedLocation = value;
-    notifyListeners();
-  }
-
-  void setOrganizer(String? value) {
-    selectedOrganizerId = value;
     notifyListeners();
   }
 
   Future<void> submitEvent(BuildContext context) async {
-    if (!formKey.currentState!.validate()) return;
+    if (formKey.currentState!.validate()) {
+      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+      final newEvent = EventModel(
+        eventId: '',
+        name: nameCtrl.text,
+        location: selectedLocation ?? '',
+        description: descriptionCtrl.text,
+        details: detailsCtrl.text,
+        price: double.tryParse(priceCtrl.text) ?? 0.0,
+        images: imageCtrl.text
+            .split(',')
+            .map((url) => url.trim())
+            .where((url) => url.isNotEmpty)
+            .toList(),
+        date: DateTime.tryParse(dateCtrl.text.trim()) ?? DateTime.now(),
+        time: timeCtrl.text.trim(),
+        highlights: highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),
+        isFavorite: isFavorite,
+        createdAt: DateTime.now(),
+        rating: 0.0,
+        ticketsSold: 0,
+        limite: int.tryParse(limiteCtrl.text) ?? 0,
+        organizerId: isAdmin ? selectedOrganizerId ?? '' : currentUserId,
+      );
 
-    final newEvent = EventModel(
-      eventId: '',
-      name: nameCtrl.text,
-      location: selectedLocation ?? '',
-      description: descriptionCtrl.text,
-      details: detailsCtrl.text,
-      price: double.tryParse(priceCtrl.text) ?? 0.0,
-      images: imageCtrl.text
-          .split(',')
-          .map((url) => url.trim())
-          .where((url) => url.isNotEmpty)
-          .toList(),
-      date: DateTime.tryParse(dateCtrl.text.trim()) ?? DateTime.now(),
-      time: timeCtrl.text.trim(),
-      highlights: highlightsCtrl.text.split(',').map((e) => e.trim()).toList(),
-      isFavorite: isFavorite,
-      createdAt: DateTime.now(),
-      rating: 0.0,
-      ticketsSold: 0,
-      limite: int.tryParse(limiteCtrl.text) ?? 0,
-      organizerId: isAdmin ? selectedOrganizerId ?? '' : currentUserId,
-    );
+      await eventService.addEvent(newEvent);
 
-    await eventService.addEvent(newEvent);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Event added successfully')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Event added successfully')),
+      );
 
-    clearForm();
-    notifyListeners();
+      clearForm();
+    }
   }
 
   void clearForm() {
+    formKey.currentState?.reset();
     nameCtrl.clear();
     priceCtrl.clear();
     limiteCtrl.clear();
@@ -111,13 +103,15 @@ class AddEventViewModel extends ChangeNotifier {
     dateCtrl.clear();
     timeCtrl.clear();
     highlightsCtrl.clear();
+
     selectedLocation = null;
-    selectedOrganizerId = null;
     isFavorite = false;
+    selectedOrganizerId = null;
+
+    notifyListeners();
   }
 
-  @override
-  void dispose() {
+  void disposeControllers() {
     nameCtrl.dispose();
     descriptionCtrl.dispose();
     detailsCtrl.dispose();
@@ -127,6 +121,5 @@ class AddEventViewModel extends ChangeNotifier {
     dateCtrl.dispose();
     timeCtrl.dispose();
     highlightsCtrl.dispose();
-    super.dispose();
   }
 }

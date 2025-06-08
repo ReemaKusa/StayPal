@@ -63,10 +63,9 @@ class MyApp extends StatelessWidget {
 
       //home: MyBookingsScreen(),
 //home: EventOrganizerBookingsView(),
-      // home: RoleLandingView(),
+       home: RoleLandingView(),
 
       //home:EmailVerificationView(),
-      home: SplashScreen(), 
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),

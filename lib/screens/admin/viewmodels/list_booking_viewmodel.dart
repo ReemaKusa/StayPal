@@ -57,7 +57,9 @@ class ListAllBookingsViewModel extends ChangeNotifier {
     return enriched;
   }
 
-  List<Map<String, dynamic>> filterBookings(List<Map<String, dynamic>> allBookings) {
+  List<Map<String, dynamic>> filterBookings(
+    List<Map<String, dynamic>> allBookings,
+  ) {
     return allBookings.where((entry) {
       final booking = entry['booking'];
       if (selectedType == 'event') return booking is EventTicketModel;
@@ -74,11 +76,10 @@ class ListAllBookingsViewModel extends ChangeNotifier {
 
     if (booking is HotelBookingModel) {
       return Card(
+        color: AppColors.white,
         margin: const EdgeInsets.symmetric(vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: AppColors.greyTransparent)),
         child: ListTile(
           leading: const Icon(Icons.hotel, color: Colors.deepOrange),
           title: Text(itemName),
@@ -94,9 +95,7 @@ class ListAllBookingsViewModel extends ChangeNotifier {
     } else if (booking is EventTicketModel) {
       return Card(
         margin: const EdgeInsets.symmetric(vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 2,
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -109,7 +108,10 @@ class ListAllBookingsViewModel extends ChangeNotifier {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(itemName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      itemName,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     Text('User: $userName'),
                     Text('Email: $userEmail'),
                     Text('Tickets: ${booking.quantity}'),
@@ -141,7 +143,11 @@ class ListAllBookingsViewModel extends ChangeNotifier {
 
   Future<String> _fetchHotelName(String hotelId) async {
     try {
-      final doc = await FirebaseFirestore.instance.collection('hotel').doc(hotelId).get();
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('hotel')
+              .doc(hotelId)
+              .get();
       return doc.data()?['name'] ?? 'Unknown Hotel';
     } catch (_) {
       return 'Unknown Hotel';
@@ -150,7 +156,11 @@ class ListAllBookingsViewModel extends ChangeNotifier {
 
   Future<String> _fetchEventName(String eventId) async {
     try {
-      final doc = await FirebaseFirestore.instance.collection('event').doc(eventId).get();
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('event')
+              .doc(eventId)
+              .get();
       return doc.data()?['name'] ?? 'Unknown Event';
     } catch (_) {
       return 'Unknown Event';

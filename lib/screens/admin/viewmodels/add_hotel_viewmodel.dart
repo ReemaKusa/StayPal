@@ -4,18 +4,44 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staypal/screens/admin/services/hotel_service.dart';
 
 class AddHotelViewModel extends ChangeNotifier {
+  final _hotelService = HotelService();
+
+  final nameController = TextEditingController();
+  final locationController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final detailsController = TextEditingController();
+  final priceController = TextEditingController();
+  final imagesController = TextEditingController();
+
   final formKey = GlobalKey<FormState>();
 
-  final nameCtrl = TextEditingController();
-  final locationCtrl = TextEditingController();
-  final descriptionCtrl = TextEditingController();
-  final detailsCtrl = TextEditingController();
-  final priceCtrl = TextEditingController();
-  final imagesCtrl = TextEditingController();
+  String? _selectedLocation;
+  bool _isFavorite = false;
+  List<String> _selectedFacilities = [];
+  List<Map<String, dynamic>> _hotelManagers = [];
+  String? _selectedManagerId;
+  bool _isLoading = false;
+
+  String? get selectedLocation => _selectedLocation;
+  bool get isFavorite => _isFavorite;
+  List<String> get selectedFacilities => _selectedFacilities;
+  List<Map<String, dynamic>> get hotelManagers => _hotelManagers;
+  String? get selectedManagerId => _selectedManagerId;
+  bool get isLoading => _isLoading;
 
   final List<String> cities = [
-    'Jerusalem', 'Ramallah', 'Nablus', 'Hebron', 'Bethlehem',
-    'Jenin', 'Tulkarm', 'Qalqilya', 'Salfit', 'Tubas', 'Jericho', 'Gaza',
+    'Jerusalem',
+    'Ramallah',
+    'Nablus',
+    'Hebron',
+    'Bethlehem',
+    'Jenin',
+    'Tulkarm',
+    'Qalqilya',
+    'Salfit',
+    'Tubas',
+    'Jericho',
+    'Gaza',
   ];
 
   final List<Map<String, dynamic>> facilityOptions = [
@@ -25,110 +51,147 @@ class AddHotelViewModel extends ChangeNotifier {
     {'label': 'Restaurant', 'icon': Icons.restaurant},
   ];
 
-  List<Map<String, dynamic>> hotelManagers = [];
-  List<String> selectedFacilities = [];
-  String? selectedLocation;
-  String? selectedManagerId;
-  bool isFavorite = false;
-
-  final HotelService hotelService = HotelService();
+  void initialize(bool assignToCurrentManager) {
+    if (!assignToCurrentManager) {
+      loadHotelManagers();
+    }
+  }
 
   Future<void> loadHotelManagers() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('role', isEqualTo: 'hotel_manager')
-        .get();
+    try {
+      _isLoading = true;
+      notifyListeners();
 
-    hotelManagers = snapshot.docs.map((doc) {
-      final data = doc.data();
-      return {
-        'uid': doc.id,
-        'name': data['fullName'] ?? 'Unnamed',
-      };
-    }).toList();
+      final snapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .where('role', isEqualTo: 'hotel_manager')
+              .get();
 
+      _hotelManagers =
+          snapshot.docs.map((doc) {
+            final data = doc.data();
+            return {
+              'uid': doc.id,
+              'name': (data['fullName'] ?? 'Unnamed').toString(),
+            };
+          }).toList();
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  void updateSelectedLocation(String? location) {
+    _selectedLocation = location;
     notifyListeners();
   }
 
-  void toggleFacility(String label) {
-    if (selectedFacilities.contains(label)) {
-      selectedFacilities.remove(label);
+  void updateSelectedManager(String? managerId) {
+    _selectedManagerId = managerId;
+    notifyListeners();
+  }
+
+  void toggleFacility(String facilityLabel) {
+    if (_selectedFacilities.contains(facilityLabel)) {
+      _selectedFacilities.remove(facilityLabel);
     } else {
-      selectedFacilities.add(label);
+      _selectedFacilities.add(facilityLabel);
     }
     notifyListeners();
   }
 
-  void setFavorite(bool value) {
-    isFavorite = value;
-    notifyListeners();
+  bool isFacilitySelected(String facilityLabel) {
+    return _selectedFacilities.contains(facilityLabel);
   }
 
-  void setLocation(String? value) {
-    selectedLocation = value;
-    notifyListeners();
-  }
+  Future<bool> submitHotel(bool assignToCurrentManager) async {
+    if (!formKey.currentState!.validate()) {
+      return false;
+    }
 
-  void setManager(String? value) {
-    selectedManagerId = value;
-    notifyListeners();
-  }
+    try {
+      _isLoading = true;
+      notifyListeners();
 
-  Future<void> submitHotel(bool assignToCurrentManager, BuildContext context) async {
-    if (formKey.currentState!.validate()) {
-      final managerId = assignToCurrentManager
-          ? FirebaseAuth.instance.currentUser!.uid
-          : selectedManagerId;
+      final managerId =
+          assignToCurrentManager
+              ? FirebaseAuth.instance.currentUser!.uid
+              : _selectedManagerId;
 
       final hotelData = {
-        'name': nameCtrl.text,
-        'location': selectedLocation ?? '',
-        'description': descriptionCtrl.text,
-        'details': detailsCtrl.text,
-        'price': double.tryParse(priceCtrl.text) ?? 0.0,
-        'images': imagesCtrl.text
-            .split(',')
-            .map((url) => url.trim())
-            .where((url) => url.isNotEmpty)
-            .toList(),
-        'facilities': selectedFacilities,
-        'isFavorite': isFavorite,
+        'name': nameController.text,
+        'location': _selectedLocation ?? '',
+        'description': descriptionController.text,
+        'details': detailsController.text,
+        'price': double.tryParse(priceController.text) ?? 0.0,
+        'images':
+            imagesController.text
+                .split(',')
+                .map((url) => url.trim())
+                .where((url) => url.isNotEmpty)
+                .toList(),
+        'facilities': _selectedFacilities,
+        'isFavorite': _isFavorite,
         'createdAt': DateTime.now(),
         'managerId': managerId,
       };
 
-      await hotelService.addHotel(hotelData);
+      await _hotelService.addHotel(hotelData);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hotel added successfully')),
-      );
+      resetForm();
 
-      clearForm();
+      _isLoading = false;
       notifyListeners();
+      return true;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
     }
   }
 
-  void clearForm() {
-    nameCtrl.clear();
-    locationCtrl.clear();
-    descriptionCtrl.clear();
-    detailsCtrl.clear();
-    priceCtrl.clear();
-    imagesCtrl.clear();
-    selectedFacilities = [];
-    isFavorite = false;
-    selectedLocation = null;
-    selectedManagerId = null;
+  void resetForm() {
+    formKey.currentState?.reset();
+    nameController.clear();
+    priceController.clear();
+    descriptionController.clear();
+    detailsController.clear();
+    imagesController.clear();
+
+    _selectedFacilities = [];
+    _isFavorite = false;
+    _selectedLocation = null;
+    _selectedManagerId = null;
+    notifyListeners();
+  }
+
+  String? validateField(String? value, String fieldName) {
+    if (value == null || value.isEmpty) {
+      return 'Enter $fieldName';
+    }
+    return null;
+  }
+
+  String? validateDropdown(String? value, String message) {
+    if (value == null || value.isEmpty) {
+      return message;
+    }
+    return null;
   }
 
   @override
   void dispose() {
-    nameCtrl.dispose();
-    locationCtrl.dispose();
-    descriptionCtrl.dispose();
-    detailsCtrl.dispose();
-    priceCtrl.dispose();
-    imagesCtrl.dispose();
+    nameController.dispose();
+    locationController.dispose();
+    descriptionController.dispose();
+    detailsController.dispose();
+    priceController.dispose();
+    imagesController.dispose();
     super.dispose();
   }
 }
