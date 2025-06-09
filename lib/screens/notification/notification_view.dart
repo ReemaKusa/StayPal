@@ -21,19 +21,28 @@ class NotificationScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('NOTIFICATIONS',
-            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.5)),
-        backgroundColor: Colors.deepOrange,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Notifications',
+            style: TextStyle(
+              fontSize: 16, // تصغير حجم الخط
+              fontWeight: FontWeight.normal, // إزالة التغبيق
+              letterSpacing: 1.0,
+              color: Colors.black, // تغيير لون الخط إلى الأسود
+            )),
+        backgroundColor: Colors.white, // تغيير لون الخلفية إلى الأبيض
+        elevation: 1, // إضافة ظل خفيف
+        iconTheme: const IconThemeData(color: Colors.black), // أيقونات سوداء
         actions: [
           IconButton(
-            icon: const FaIcon(FontAwesomeIcons.checkDouble, size: 20),
+            icon: const FaIcon(FontAwesomeIcons.checkDouble, 
+                size: 20, 
+                color: Colors.black), // أيقونة سوداء
             onPressed: () => viewModel.markAllAsRead(userId),
             tooltip: 'Mark all as read',
           ),
           IconButton(
-            icon: const FaIcon(FontAwesomeIcons.trashAlt, size: 20),
+            icon: const FaIcon(FontAwesomeIcons.trashAlt, 
+                size: 20, 
+                color: Colors.black), // أيقونة سوداء
             onPressed: () => viewModel.clearAll(userId),
             tooltip: 'Clear all',
           ),
@@ -62,11 +71,12 @@ class NotificationScreen extends StatelessWidget {
                   const FaIcon(FontAwesomeIcons.bellSlash,
                       size: 60, color: Colors.grey),
                   const SizedBox(height: 20),
-                  Text('NO NOTIFICATIONS YET',
+                  Text('No notifications yet',
                       style: TextStyle(
                           color: Colors.grey[400],
-                          fontSize: 18,
-                          letterSpacing: 1.2)),
+                          fontSize: 16, // تصغير حجم الخط
+                          fontWeight: FontWeight.normal, // إزالة التغبيق
+                          letterSpacing: 1.0)),
                 ],
               ),
             );
@@ -108,7 +118,7 @@ class _NotificationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: notification.isRead
             ? Colors.white
-            : const Color(0xFFE3F2FD), // Baby blue light
+            : const Color(0xFFE3F2FD),
         border: Border.all(
           color: Colors.grey[300]!,
           width: 1,
@@ -137,24 +147,24 @@ class _NotificationCard extends StatelessWidget {
                       child: Text(
                         notification.targetName,
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: 14, // تصغير حجم الخط
+                          fontWeight: FontWeight.normal, // إزالة التغبيق
                           color: Colors.black,
                         ),
                       ),
                     ),
                     if (notification.type == 'like')
                       const FaIcon(FontAwesomeIcons.solidHeart,
-                          size: 16, color: Colors.red),
+                          size: 16, color: Colors.black), // أيقونة سوداء
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  notification.title.toUpperCase(),
+                  notification.title,
                   style: const TextStyle(
                     color: Colors.blueAccent,
                     fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal, // إزالة التغبيق
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -163,7 +173,8 @@ class _NotificationCard extends StatelessWidget {
                   notification.message,
                   style: const TextStyle(
                     color: Colors.black87,
-                    fontSize: 14,
+                    fontSize: 13, // تصغير حجم الخط قليلاً
+                    fontWeight: FontWeight.normal, // إزالة التغبيق
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -171,7 +182,8 @@ class _NotificationCard extends StatelessWidget {
                   notification.formattedDate,
                   style: TextStyle(
                     color: Colors.grey[600],
-                    fontSize: 12,
+                    fontSize: 11, // تصغير حجم الخط
+                    fontWeight: FontWeight.normal, // إزالة التغبيق
                   ),
                 ),
               ],
@@ -189,7 +201,7 @@ class _NotificationCard extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: notification.isRead ? Colors.grey : Colors.blueAccent,
+          color: notification.isRead ? Colors.grey : Colors.black, // تغيير اللون إلى الأسود
           width: 2,
         ),
       ),

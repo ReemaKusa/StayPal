@@ -68,15 +68,15 @@ class HotelList extends StatelessWidget {
             return ListingCard(
               title: hotelName,
               subtitle: location,
-              description: description, // Changed from price to description
+              description: description,
               imageUrl: imageUrl,
               isLiked: isLiked,
               onLike: () async {
                 try {
                   await viewModel.toggleHotelLike(context, id, data);
-
+                  final notificationViewModel = NotificationViewModel();
+                  
                   if (!isLiked) {
-                    final notificationViewModel = NotificationViewModel();
                     await notificationViewModel.addNotification(
                       userId: currentUserId,
                       title: 'New Like',
@@ -89,6 +89,8 @@ class HotelList extends StatelessWidget {
                           ? List<String>.from(images)
                           : [],
                     );
+                  } else {
+                    await notificationViewModel.removeLikeNotification(currentUserId, id);
                   }
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
