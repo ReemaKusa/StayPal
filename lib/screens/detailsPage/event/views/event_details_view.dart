@@ -9,6 +9,8 @@ import '../models/event_details_model.dart';
 import '../../../reviewSection/views/review.dart';
 import '../../../../widgets/custom_nav_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class EventDetailsPage extends StatefulWidget {
   final Map<String, dynamic> event;
@@ -30,6 +32,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   late EventDetailsViewModel _viewModel;
   bool _isLoading = false;
   final PageController _pageController = PageController();
+  int _currentImageIndex = 0;
 
   @override
   void initState() {
@@ -56,6 +59,45 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     }
   }
 
+  void _openImageGallery(BuildContext context, int initialIndex) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+          body: PhotoViewGallery.builder(
+            itemCount: _viewModel.model.images.length,
+            builder: (context, index) {
+              return PhotoViewGalleryPageOptions(
+                imageProvider: NetworkImage(_viewModel.model.images[index]),
+                minScale: PhotoViewComputedScale.contained,
+                maxScale: PhotoViewComputedScale.covered * 2,
+              );
+            },
+            scrollPhysics: const BouncingScrollPhysics(),
+            backgroundDecoration: const BoxDecoration(color: Colors.black),
+            pageController: PageController(initialPage: initialIndex),
+            onPageChanged: (index) {
+              setState(() {
+                _currentImageIndex = index;
+              });
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<EventDetailsViewModel>.value(
@@ -72,7 +114,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   icon: const Icon(Icons.ios_share, color: Color.fromARGB(255, 12, 12, 12)),
                   onPressed: _shareEvent,
                 ),
-               
               ],
             ),
             body: _isLoading || viewModel.isBooking
@@ -112,7 +153,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 _buildDetailRow(Icons.calendar_today, viewModel.formatDate()),
                 _buildTimeRow(viewModel),
                 _buildPriceRow(viewModel),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
+                _buildRemainingTickets(viewModel), 
+                const SizedBox(height: 8),
                 _buildTicketCounter(viewModel),
                 const SizedBox(height: 20),
                 if (viewModel.model.highlights.isNotEmpty) _buildHighlights(viewModel),
@@ -159,30 +202,81 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     );
   }
 
+  // New widget to show remaining tickets
+  Widget _buildRemainingTickets(EventDetailsViewModel viewModel) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.deepOrange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.deepOrange.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.confirmation_number, color: Colors.deepOrange),
+          const SizedBox(width: 12),
+          Text(
+            'Tickets Available: ',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+            ),
+          ),
+          Text(
+            '${viewModel.remainingTickets}',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: viewModel.remainingTickets > 0 ? Colors.deepOrange : Colors.red,
+            ),
+          ),
+          const Spacer(),
+          if (viewModel.remainingTickets <= 5 && viewModel.remainingTickets > 0)
+            Text(
+              'Hurry! Only few left',
+              style: TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+                color: Colors.deepOrange,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildImageSlider(EventDetailsViewModel viewModel) {
     final images = viewModel.model.images;
     return SizedBox(
       height: 250,
       child: Stack(
         children: [
-          PageView.builder(
-            controller: _pageController,
-            itemCount: images.length,
-            itemBuilder: (context, index) {
-              return CachedNetworkImage(
-                imageUrl: images[index],
-                fit: BoxFit.cover,
-                width: double.infinity,
-                placeholder: (context, url) => Container(
-                  color: Colors.grey[200],
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: Colors.grey[200],
-                  child: const Icon(Icons.error_outline, color: Colors.red),
-                ),
-              );
-            },
+          GestureDetector(
+            onTap: () => _openImageGallery(context, _currentImageIndex),
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: images.length,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentImageIndex = index;
+                });
+              },
+              itemBuilder: (context, index) {
+                return CachedNetworkImage(
+                  imageUrl: images[index],
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[200],
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey[200],
+                    child: const Icon(Icons.error_outline, color: Colors.red),
+                  ),
+                );
+              },
+            ),
           ),
           if (images.length > 1)
             Positioned(
@@ -198,8 +292,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: _pageController.hasClients &&
-                              (_pageController.page?.round() ?? 0) == index
+                      color: _currentImageIndex == index
                           ? Colors.deepOrange
                           : Colors.white.withOpacity(0.5),
                     ),
@@ -207,6 +300,21 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 }),
               ),
             ),
+          Positioned(
+            top: 10,
+            right: 10,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '${_currentImageIndex + 1}/${images.length}',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
         ],
       ),
     );

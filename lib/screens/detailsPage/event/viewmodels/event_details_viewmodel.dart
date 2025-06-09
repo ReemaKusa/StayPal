@@ -26,6 +26,7 @@ class EventDetailsViewModel with ChangeNotifier {
     final eventDate = model.date?.toDate();
     return eventDate != null && eventDate.isBefore(DateTime.now());
   }
+  
 
   String formatDate() {
     if (model.date != null) {

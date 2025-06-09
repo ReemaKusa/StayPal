@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import './search_result_view_model.dart';
 import '../../detailspage/hotel/views/hotel_details_view.dart';
 import 'package:staypal/screens/notification/notification_viewmodel.dart';
+import '../views/listing_card.dart';
 
 class HotelList extends StatelessWidget {
   final SearchResultViewModel viewModel;
@@ -64,129 +65,49 @@ class HotelList extends StatelessWidget {
             final location = data['location'] ?? 'Unknown location';
             final description = data['description'] ?? '';
 
-            return Card(
-              elevation: 0,
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(
-                  color: Colors.grey[300]!,
-                  width: 1.0,
-                ),
-              ),
-              color: Colors.white,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => HotelDetailsPage(
-                        hotel: data,
-                        hotelId: id,
-                        isInitiallyLiked: isLiked,
-                      ),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          imageUrl,
-                          height: 100,
-                          width: 100,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            height: 100,
-                            width: 100,
-                            color: Colors.grey[100],
-                            child: const Icon(Icons.hotel, color: Colors.grey),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              hotelName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.location_on,
-                                  size: 16,
-                                  color: Colors.orange[800],
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  location,
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              description,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.grey[500],
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: isLiked ? Colors.red : Colors.grey[600],
-                        ),
-                        onPressed: () async {
-                          try {
-                            await viewModel.toggleHotelLike(context, id, data);
+            return ListingCard(
+              title: hotelName,
+              subtitle: location,
+              description: description, // Changed from price to description
+              imageUrl: imageUrl,
+              isLiked: isLiked,
+              onLike: () async {
+                try {
+                  await viewModel.toggleHotelLike(context, id, data);
 
-                            if (!isLiked) {
-                              final notificationViewModel = NotificationViewModel();
-                              await notificationViewModel.addNotification(
-                                userId: currentUserId,
-                                title: 'New Like',
-                                message: 'You liked $hotelName hotel',
-                                type: 'like',
-                                actionRoute: '/hotel/$id',
-                                targetName: hotelName,
-                                targetId: id,
-                                imageUrls: images.isNotEmpty
-                                    ? List<String>.from(images)
-                                    : [],
-                              );
-                            }
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Error: ${e.toString()}')),
-                            );
-                          }
-                        },
-                      ),
-                    ],
+                  if (!isLiked) {
+                    final notificationViewModel = NotificationViewModel();
+                    await notificationViewModel.addNotification(
+                      userId: currentUserId,
+                      title: 'New Like',
+                      message: 'You liked $hotelName hotel',
+                      type: 'like',
+                      actionRoute: '/hotel/$id',
+                      targetName: hotelName,
+                      targetId: id,
+                      imageUrls: images.isNotEmpty
+                          ? List<String>.from(images)
+                          : [],
+                    );
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: ${e.toString()}')),
+                  );
+                }
+              },
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => HotelDetailsPage(
+                      hotel: data,
+                      hotelId: id,
+                      isInitiallyLiked: isLiked,
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             );
           },
         );

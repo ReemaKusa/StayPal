@@ -16,7 +16,7 @@ class SearchResultPage extends StatefulWidget {
 
 class _SearchResultPageState extends State<SearchResultPage> {
   late SearchResultViewModel _viewModel;
-  final String currentUserId = 'user123'; // Replace with actual user ID
+  final String currentUserId = 'user123'; 
 
   @override
   void initState() {

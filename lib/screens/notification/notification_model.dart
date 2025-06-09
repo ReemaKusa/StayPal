@@ -8,7 +8,7 @@ class NotificationModel {
   final bool isRead;
   final List<String> imageUrls;
   final String? actionRoute;
-  final String type;
+  final String type; // 'event' or 'hotel'
   final String targetName;
   final String targetId;
   final DateTime timestamp;

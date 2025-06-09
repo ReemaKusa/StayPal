@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,8 +10,7 @@ import '../../../../widgets/custom_nav_bar.dart';
 import '../../../reviewSection/views/review.dart';
 import 'package:staypal/screens/booking/views/book_hotel_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:staypal/screens/notification/notification_viewmodel.dart'; 
-
+import 'package:staypal/screens/notification/notification_viewmodel.dart';
 
 class HotelDetailsPage extends StatefulWidget {
   final Map<String, dynamic> hotel;
@@ -42,7 +43,6 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
   String get _name => _hotel['name'] ?? 'No Name';
   String get _location => _hotel['location'] ?? 'Unknown Location';
   String get _price => '${_hotel['price'] ?? 'N/A'} ₪ per night';
-  String get _description => _hotel['description'] ?? 'No description available';
   String get _details => _hotel['details'] ?? 'No details available';
   double get _rating => (_hotel['rating'] ?? 0).toDouble();
   List<dynamic> get _images => _hotel['images'] ?? [];
@@ -93,12 +93,11 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
       ),
       backgroundColor: Colors.white,
       body: _isLoading
-
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: 250, child: _buildImageSlider()),
+                  SizedBox(height: 250, child: _buildPhotoViewGallery()),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
@@ -125,13 +124,10 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
                               ),
                             ),
                             const Spacer(),
-                           
                           ],
                         ),
                         const SizedBox(height: 20),
-                        _buildSectionTitle('Description'),
-                        _buildSectionContent(_description),
-                        const SizedBox(height: 20),
+                        // Removed Description
                         _buildSectionTitle('Details'),
                         _buildSectionContent(_details),
                         const SizedBox(height: 20),
@@ -157,7 +153,8 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
                               const SizedBox(height: 12),
                               ConstrainedBox(
                                 constraints: BoxConstraints(
-                                  maxHeight: MediaQuery.of(context).size.height * 0.8,
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height * 0.8,
                                 ),
                                 child: FeedbackScreen(
                                   serviceId: widget.hotelId,
@@ -182,33 +179,31 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
     );
   }
 
-  Widget _buildImageSlider() {
-    return SizedBox(
-      height: 250,
-      child: _images.isEmpty
-          ? Container(
-              color: Colors.grey[200],
-              child: const Center(
-                child: Icon(Icons.hotel, size: 60, color: Colors.grey),
-              ),
-            )
-          : PageView.builder(
-              itemCount: _images.length,
-              itemBuilder: (context, index) {
-                return CachedNetworkImage(
-                  imageUrl: _images[index].toString(),
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey[200],
-                    child: const Center(child: CircularProgressIndicator()),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.error_outline, color: Colors.red),
-                  ),
-                );
-              },
-            ),
+  Widget _buildPhotoViewGallery() {
+    if (_images.isEmpty) {
+      return Container(
+        color: Colors.grey[200],
+        child: const Center(
+          child: Icon(Icons.hotel, size: 60, color: Colors.grey),
+        ),
+      );
+    }
+
+    return PhotoViewGallery.builder(
+      itemCount: _images.length,
+      builder: (context, index) {
+        return PhotoViewGalleryPageOptions(
+          imageProvider: CachedNetworkImageProvider(_images[index]),
+          minScale: PhotoViewComputedScale.contained,
+          maxScale: PhotoViewComputedScale.covered * 2.5,
+          heroAttributes: PhotoViewHeroAttributes(tag: _images[index]),
+        );
+      },
+      scrollPhysics: const BouncingScrollPhysics(),
+      backgroundDecoration: const BoxDecoration(color: Colors.white),
+      loadingBuilder: (context, progress) => const Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 
@@ -251,7 +246,8 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
           runSpacing: 12,
           children: _facilities.map<Widget>((facility) {
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -284,7 +280,6 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
           ),
           onPressed: () {
             final user = FirebaseAuth.instance.currentUser;
-
             if (user == null) {
               showModalBottomSheet(
                 context: context,
@@ -296,11 +291,13 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.login, size: 32, color: Colors.deepOrange),
+                      const Icon(Icons.login,
+                          size: 32, color: Colors.deepOrange),
                       const SizedBox(height: 16),
                       const Text(
                         'You need to log in to continue',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 24),
                       Row(
@@ -325,7 +322,8 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.deepOrange,
                               ),
-                              child: const Text('Log In', style: TextStyle(color: Colors.white)),
+                              child: const Text('Log In',
+                                  style: TextStyle(color: Colors.white)),
                             ),
                           ),
                         ],
