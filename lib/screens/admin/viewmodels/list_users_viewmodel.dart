@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/models/user_model.dart';
-import 'package:staypal/screens/admin/services/user_service.dart';
+import 'package:staypal/services/user_service.dart';
 
 class ListUsersViewModel extends ChangeNotifier {
   final userService = UserService();

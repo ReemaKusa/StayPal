@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:staypal/constants/color_constants.dart';
+
 
 class LogoTitle extends StatelessWidget {
   final VoidCallback onTap;
@@ -15,7 +17,7 @@ class LogoTitle extends StatelessWidget {
         style: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: Colors.deepOrange,
+          color: AppColors.primary,
         ),
       ),
     );

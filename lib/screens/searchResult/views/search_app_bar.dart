@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+
 import 'package:staypal/screens/notification/notification_view.dart';
 import 'package:staypal/screens/notification/notification_viewmodel.dart';
 import 'package:staypal/screens/notification/notification_model.dart';
 
 import 'package:staypal/screens/share/share_service.dart';
 import '../viewmodels/search_result_view_model.dart';
+
+import 'package:staypal/screens/searchResult/viewmodels/search_result_view_model.dart';
+
 
 class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   final SearchResultViewModel viewModel;

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:staypal/constants/color_constants.dart';
 import '../viewmodels/review_view_model.dart';
 
 class LeaveReviewTab extends StatelessWidget {
@@ -99,7 +100,7 @@ class LeaveReviewTab extends StatelessWidget {
         itemCount: 5,
         itemPadding: const EdgeInsets.symmetric(horizontal: 6.0),
         itemBuilder: (context, _) =>
-            const Icon(Icons.star, color: Colors.deepOrange, size: 40),
+            const Icon(Icons.star, color: AppColors.primary, size: 40),
         onRatingUpdate: (rating) {
           viewModel.userRating = rating;
         },
@@ -174,7 +175,7 @@ class LeaveReviewTab extends StatelessWidget {
                 }
               },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.deepOrange,
+          backgroundColor: AppColors.primary,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

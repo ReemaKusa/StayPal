@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:staypal/constants/color_constants.dart';
+
 class NavItem extends StatelessWidget {
   final String label;
   final bool isActive;
@@ -27,7 +29,7 @@ class NavItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                color: isActive ? Colors.deepOrange : Colors.grey[600],
+                color: isActive ? AppColors.primary : Colors.grey[600],
               ),
             ),
             if (isActive)
@@ -35,7 +37,7 @@ class NavItem extends StatelessWidget {
                 height: 2,
                 width: 16,
                 margin: const EdgeInsets.only(top: 8),
-                color: Colors.deepOrange,
+                color: AppColors.primary
               ),
           ],
         ),

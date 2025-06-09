@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:staypal/screens/profile/views/my_bookings_screen.dart';
 import 'package:staypal/utils/uploud_image.dart';
 import 'package:staypal/screens/profile/views/personal_details.dart';
 import 'package:staypal/screens/profile/views/payment_methods.dart';
 import 'package:staypal/screens/profile/views/security_settings.dart';
-import 'package:staypal/screens/profile/my_bookings_screen.dart';
 import 'package:staypal/screens/wishlistPage/views/wishlist_view.dart';
 import 'package:staypal/constants/app_constants.dart';
 
@@ -43,11 +43,7 @@ class ProfileViewModel extends ChangeNotifier {
     }
 
     try {
-      final doc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(userId)
-              .get();
+      final doc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
       if (doc.exists) {
         _userData = doc.data();
       } else {
@@ -69,25 +65,28 @@ class ProfileViewModel extends ChangeNotifier {
       notifyListeners();
 
       final imageUrl = await uploadImageToFirebase(_image!);
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({'imageUrl': imageUrl});
 
-      _userData = null;
-      await loadUserData();
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      await FirebaseFirestore.instance.collection('users').doc(userId).set({
+        'imageUrl': imageUrl,
+      }, SetOptions(merge: true));
+
+      _userData?['imageUrl'] = imageUrl;
+      notifyListeners();
     }
   }
 
   ImageProvider get profileImage {
     if (_image != null) {
       return MemoryImage(_image!);
-    } else if (_userData?['imageUrl'] != null &&
-        _userData!['imageUrl'].toString().isNotEmpty) {
-      return NetworkImage(_userData!['imageUrl']);
-    } else {
-      return const NetworkImage(AppConstants.defaultProfileImage);
     }
+
+    final imageUrl = _userData?['imageUrl'];
+    if (imageUrl != null && imageUrl.toString().isNotEmpty) {
+      return NetworkImage(imageUrl);
+    }
+
+    return const NetworkImage(AppConstants.defaultProfileImage);
   }
 
   void onItemTapped(BuildContext context, int index) {

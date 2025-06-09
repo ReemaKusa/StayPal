@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:staypal/constants/color_constants.dart';
 import '../../detailsPage/event/views/event_details_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../models/upcoming_events_model.dart'; 
+import '../../../models/upcoming_events_model.dart';
 
 class EventCard extends StatelessWidget {
-  final UpcomingEventsModel event; 
+  final UpcomingEventsModel event;
   final bool isWeb;
 
   const EventCard({
@@ -15,11 +16,14 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallPhone = screenWidth < 375;
+
     return GestureDetector(
       onTap: () => _navigateToEventDetails(context),
       child: Container(
-        height: isWeb ? 200.0 : 160.0,
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: EdgeInsets.only(bottom: isWeb ? 20 : 16),
+        height: isWeb ? 200 : (isSmallPhone ? 140 : 160),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: Colors.white,
@@ -33,15 +37,22 @@ class EventCard extends StatelessWidget {
         ),
         child: Row(
           children: [
+
             ClipRRect(
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
-              child: AspectRatio(
-                aspectRatio: 1,
+                topLeft: Radius.circular(16),
+                bottomLeft: Radius.circular(16),
+              ),
+              child: Container(
+                width: isWeb ? 200 : (isSmallPhone ? 110 : 130),
+                height: isWeb ? 200 : (isSmallPhone ? 140 : 160),
                 child: Image.network(
                   event.imageUrl,
-
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const Center(child: CircularProgressIndicator());
+                  },
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: Colors.grey[100],
                     child: Icon(Icons.image, size: 40, color: Colors.grey[400]),
@@ -49,45 +60,49 @@ class EventCard extends StatelessWidget {
                 ),
               ),
             ),
+
             Expanded(
               child: Padding(
                 padding: EdgeInsets.all(isWeb ? 16.0 : 12.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          event.title, 
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: isWeb ? 18 : 16),
+                          event.title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: isWeb ? 18 : (isSmallPhone ? 14 : 16),
+                          ),
                         ),
-                        const SizedBox(height: 4),
-
+                        SizedBox(height: isWeb ? 6 : 4),
                         Text(
                           event.subtitle,
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: isWeb ? 14 : 12),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: isWeb ? 14 : (isSmallPhone ? 11 : 12),
+                          ),
                         ),
                       ],
                     ),
-                    Expanded(
+                    Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        padding: EdgeInsets.symmetric(vertical: isWeb ? 8.0 : 4.0),
                         child: Text(
                           event.description,
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: isWeb ? 14 : 12),
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: isWeb ? 14 : (isSmallPhone ? 11 : 12),
+                          ),
                         ),
                       ),
                     ),
@@ -96,17 +111,25 @@ class EventCard extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () => _navigateToEventDetails(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(255, 87, 34, 1),
-                          minimumSize: Size(isWeb ? 120 : 90, isWeb ? 40 : 36),
+                          backgroundColor: AppColors.primary,
+                          minimumSize: Size(
+                            isWeb ? 120 : (isSmallPhone ? 80 : 90),
+                            isWeb ? 40 : (isSmallPhone ? 32 : 36),
+                          ),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isWeb ? 12 : (isSmallPhone ? 8 : 12),
+                            vertical: isWeb ? 8 : 6,
+                          ),
                         ),
                         child: Text(
-                          "Join Event",
-                          style: TextStyle(fontSize: isWeb ? 14 : 12),
+                          isSmallPhone ? "Join" : "Join Event",
+                          style: TextStyle(
+                            fontSize: isWeb ? 14 : (isSmallPhone ? 12 : 13),
+                          ),
                         ),
                       ),
                     ),
@@ -129,7 +152,6 @@ class EventCard extends StatelessWidget {
       );
 
       final doc = await FirebaseFirestore.instance.collection('event').doc(event.id).get();
-
       Navigator.of(context).pop();
 
       if (doc.exists) {

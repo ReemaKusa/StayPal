@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:staypal/constants/color_constants.dart';
 
 import '../viewmodels/wishlist_view_model.dart';
 
@@ -116,7 +117,7 @@ class WishlistItemCard extends StatelessWidget {
         '${item['price']?.toString() ?? 'N/A'} ₪',
         style: const TextStyle(
           fontWeight: FontWeight.bold,
-          color: Colors.deepOrange,
+          color: AppColors.primary,
         ),
       ),
     );

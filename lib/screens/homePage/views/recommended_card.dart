@@ -158,7 +158,7 @@ class RecommendedCard extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red,
+        backgroundColor: const Color.fromARGB(255, 244, 105, 54),
         duration: const Duration(seconds: 3),
       ),
     );
