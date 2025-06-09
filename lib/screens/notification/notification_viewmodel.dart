@@ -37,23 +37,60 @@ class NotificationViewModel extends ChangeNotifier {
     required String targetName,
     required String targetId,
   }) async {
-    await _firestore
+    final existing = await _firestore
         .collection('users')
         .doc(userId)
         .collection('notifications')
-        .add({
-      'title': title,
-      'message': message,
-      'isRead': false,
-      'imageUrls': imageUrls,
-      'actionRoute': actionRoute,
-      'type': type,
-      'targetName': targetName,
-      'targetId': targetId,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
-    _unreadCount++;
-    notifyListeners();
+        .where('type', isEqualTo: type)
+        .where('targetId', isEqualTo: targetId)
+        .get();
+
+    if (existing.docs.isEmpty) {
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('notifications')
+          .add({
+        'title': title,
+        'message': message,
+        'isRead': false,
+        'imageUrls': imageUrls,
+        'actionRoute': actionRoute,
+        'type': type,
+        'targetName': targetName,
+        'targetId': targetId,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      _unreadCount++;
+      notifyListeners();
+    }
+  }
+
+  Future<void> removeLikeNotification(String userId, String targetId) async {
+    try {
+      final query = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('notifications')
+          .where('type', isEqualTo: 'like')
+          .where('targetId', isEqualTo: targetId)
+          .get();
+
+      final batch = _firestore.batch();
+      for (final doc in query.docs) {
+        batch.delete(doc.reference);
+        if (!(doc.data()['isRead'] ?? false)) {
+          _unreadCount--;
+        }
+      }
+      await batch.commit();
+      
+      _notifications.removeWhere((n) => n.type == 'like' && n.targetId == targetId);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error removing like notification: $e');
+      rethrow;
+    }
   }
 
   Future<void> markAsRead(String userId, String notificationId) async {
