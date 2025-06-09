@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 class ListingCard extends StatelessWidget {
   final String title;
   final String subtitle;
-  final String price;
+  final String description; 
   final String imageUrl;
   final bool isLiked;
   final VoidCallback onLike;
@@ -13,7 +13,7 @@ class ListingCard extends StatelessWidget {
   const ListingCard({
     required this.title,
     required this.subtitle,
-    required this.price,
+    required this.description,
     required this.imageUrl,
     required this.isLiked,
     required this.onLike,
@@ -25,6 +25,7 @@ class ListingCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
+        color: Colors.white,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -83,7 +84,17 @@ class ListingCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
               IconButton(
                 icon: Icon(
                   isLiked ? Icons.favorite : Icons.favorite_border,
@@ -94,13 +105,23 @@ class ListingCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 4),
-          Text(subtitle),
+          Text(
+            subtitle,
+            style: TextStyle(
+              color: const Color.fromARGB(255, 229, 8, 8),
+              fontSize: 14,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text('$price ₪', 
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.orange,
-              )),
+          Text(
+            description,
+            style: TextStyle(
+              color: Colors.grey[500], 
+              fontSize: 14,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );
