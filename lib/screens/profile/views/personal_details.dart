@@ -13,6 +13,7 @@ class PersonalDetails extends StatefulWidget {
   State<PersonalDetails> createState() => _PersonalDetailsState();
 }
 
+
 class _PersonalDetailsState extends State<PersonalDetails> {
   final viewModel = PersonalDetailsViewModel();
 

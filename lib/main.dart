@@ -132,7 +132,7 @@ import 'package:staypal/DB/firebase_options.dart';
 import 'package:staypal/screens/appSplash/views/splash_screen.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
 import 'package:staypal/screens/profile/views/my_profile.dart';
-import 'package:staypal/screens/profile/views/my_bookings_screenview.dart';
+//import 'package:staypal/screens/profile/views/my_bookings_screenview.dart';
 import 'package:staypal/screens/homePage/views/home_page.dart';
 import 'package:staypal/screens/searchResult/views/search_result_page.dart';
 import 'package:staypal/screens/wishlistPage/views/wishlist_view.dart';
