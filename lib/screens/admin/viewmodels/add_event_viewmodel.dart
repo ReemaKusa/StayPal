@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:staypal/models/event_model.dart';
-import 'package:staypal/screens/admin/services/event_service.dart';
+import 'package:staypal/services/event_service.dart';
 
 class AddEventViewModel extends ChangeNotifier {
   final formKey = GlobalKey<FormState>();

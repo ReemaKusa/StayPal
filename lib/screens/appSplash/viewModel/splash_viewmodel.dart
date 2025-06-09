@@ -37,7 +37,6 @@ class SplashViewModel with ChangeNotifier {
     if (status == AnimationStatus.completed) {
       _model = _model.copyWith(animationComplete: true);
       notifyListeners();
-      // Trigger navigation callback
       onAnimationComplete?.call();
     } else if (_controllerManager.controller.value >= 0.6) {
       _model = _model.copyWith(showLoader: true);
@@ -45,7 +44,6 @@ class SplashViewModel with ChangeNotifier {
     }
   }
 
-  // Getters for animations
   Animation<double> get logoScale => _logoAnimations.scale;
   Animation<double> get logoOpacity => _logoAnimations.opacity;
   Animation<Offset> get logoPosition => _logoAnimations.position;

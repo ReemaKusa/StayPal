@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/models/event_ticket_model.dart';
-import 'package:staypal/screens/admin/viewmodels/event_organizer_bookings_viewmodel.dart';
+import 'package:staypal/screens/event_organizer/viewmodels/event_organizer_bookings_viewmodel.dart';
 import 'package:staypal/widgets/drawer.dart';
-import 'event_organizer_view.dart';
-import 'event_organizer_rating_view.dart';
+import '../../event_organizer/views/event_organizer_view.dart';
+import '../../event_organizer/views/event_organizer_rating_view.dart';
 
 class EventOrganizerBookingsView extends StatelessWidget {
   const EventOrganizerBookingsView({super.key});

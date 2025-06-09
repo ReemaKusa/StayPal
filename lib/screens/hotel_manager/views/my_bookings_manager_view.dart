@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staypal/models/hotel_booking_model.dart';
 import 'package:staypal/constants/color_constants.dart';
-import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/widgets/drawer.dart';
 import 'my_ratings_manager_view.dart';
 import 'hotel_manager_view.dart';
@@ -70,7 +69,7 @@ class _MyBookingsManagerViewState extends State<MyBookingsManagerView> {
         SnackBar(content: Text('Booking $newStatus')),
       );
 
-      setState(() {}); // Refresh UI
+      setState(() {}); 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to update status: $e')),
@@ -149,8 +148,8 @@ class _MyBookingsManagerViewState extends State<MyBookingsManagerView> {
                         children: [
                           Text(hotelName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 6),
-                          Text('👤 $userName'),
-                          Text('📧 $userEmail'),
+                          Text(' $userName'),
+                          Text(' $userEmail'),
                           const Divider(),
                           Text('Check-In: ${booking.formattedCheckIn}'),
                           Text('Check-Out: ${booking.formattedCheckOut}'),

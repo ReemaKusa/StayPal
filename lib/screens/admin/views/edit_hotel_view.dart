@@ -49,13 +49,17 @@ class EditHotelView extends StatelessWidget {
                     _textField(viewModel.nameCtrl, 'Hotel Name'),
                     const SizedBox(height: AppSpacing.medium),
                     DropdownButtonFormField<String>(
-                      value: viewModel.selectedLocation,
+                      value:
+                          viewModel.cities.contains(viewModel.selectedLocation)
+                              ? viewModel.selectedLocation
+                              : null,
                       decoration: const InputDecoration(
                         labelText: 'City',
                         border: OutlineInputBorder(),
                       ),
                       items:
                           viewModel.cities
+                              .toSet() 
                               .map(
                                 (city) => DropdownMenuItem(
                                   value: city,
@@ -70,6 +74,7 @@ class EditHotelView extends StatelessWidget {
                                   ? 'Select a city'
                                   : null,
                     ),
+
                     const SizedBox(height: AppSpacing.medium),
                     _textField(
                       viewModel.priceCtrl,
