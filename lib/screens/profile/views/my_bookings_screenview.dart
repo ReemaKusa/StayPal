@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:staypal/models/hotel_booking_model.dart';
 import 'package:staypal/models/event_ticket_model.dart';
 import 'package:staypal/screens/profile/viewmodels/my_bookings_viewmodel.dart';
 
-class MyBookingsScreen extends StatelessWidget {
-  const MyBookingsScreen({super.key});
+class MyBookingsScreenA extends StatelessWidget {
+  const MyBookingsScreenA({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -167,4 +167,4 @@ class MyBookingsScreen extends StatelessWidget {
       ),
     );
   }
-}
+}*/

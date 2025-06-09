@@ -4,9 +4,11 @@ import 'package:staypal/screens/admin/viewmodels/event_organizer_viewmodel.dart'
 import 'package:staypal/screens/admin/viewmodels/hotel_manager_viewmodel.dart';
 import 'package:staypal/screens/admin/views/event_organizer_view.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
+import 'package:staypal/screens/profile/my_bookings_screen.dart';
 // import 'package:staypal/screens/profile/booking_complete.dart';
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
 import 'package:staypal/DB/firebase_options.dart';
+import 'package:staypal/screens/profile/views/my_bookings_screenview.dart';
 // import 'package:staypal/screens/auth/test_firestore_screen.dart';
 import 'package:staypal/screens/profile/views/my_profile.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +60,7 @@ class MyApp extends StatelessWidget {
       // home: HotelManagerView(),
       //home: EventOrganizerView(),
 
-      //home: RoleLandingView(),
+      //home: MyBookingsScreen(),
 
       //home:EmailVerificationView(),
       home: SplashScreen(),

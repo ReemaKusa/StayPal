@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:staypal/screens/profile/my_bookings_screen.dart';
 import 'package:staypal/utils/uploud_image.dart';
 import 'package:staypal/screens/profile/views/personal_details.dart';
 import 'package:staypal/screens/profile/views/payment_methods.dart';
 import 'package:staypal/screens/profile/views/security_settings.dart';
-import 'package:staypal/screens/profile/views/my_bookings_screen.dart';
 import 'package:staypal/screens/wishlistPage/views/wishlist_view.dart';
 import 'package:staypal/constants/app_constants.dart';
 

@@ -6,7 +6,6 @@ import 'package:staypal/models/event_ticket_model.dart';
 import 'package:intl/intl.dart';
 import 'package:staypal/screens/detailsPage/hotel/views/hotel_details_view.dart';
 import 'package:staypal/screens/detailsPage/event/views/event_details_view.dart';
-import 'package:staypal/constants/color_constants.dart';
 
 class MyBookingsScreen extends StatefulWidget {
   const MyBookingsScreen({super.key});
@@ -73,16 +72,16 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
         title: const Text(
           'My Bookings',
           style: TextStyle(
-            color: Color.fromARGB(255, 0, 0, 0),
+            color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 22,
             letterSpacing: 0.5,
           ),
         ),
         centerTitle: true,
-        backgroundColor: AppColors.primary,
+        backgroundColor: Colors.orange[700],
         elevation: 0,
-        toolbarHeight: 60,
+        toolbarHeight: 70,
       ),
       body: Column(
         children: [
@@ -102,9 +101,9 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                     onTap: () => setState(() => _selectedType = 'hotel'),
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
-                        color: _selectedType == 'hotel' ? AppColors.primary : Colors.transparent,
+                        color: _selectedType == 'hotel' ? Colors.orange[700] : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
@@ -113,7 +112,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: _selectedType == 'hotel' ? const Color.fromARGB(255, 0, 0, 0) : Colors.grey[700],
+                            color: _selectedType == 'hotel' ? Colors.white : Colors.grey[700],
                           ),
                         ),
                       ),
@@ -125,9 +124,9 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                     onTap: () => setState(() => _selectedType = 'event'),
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
-                        color: _selectedType == 'event' ? AppColors.primary : Colors.transparent,
+                        color: _selectedType == 'event' ? Colors.orange[700] : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
@@ -136,7 +135,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: _selectedType == 'event' ? const Color.fromARGB(255, 0, 0, 0) : Colors.grey[700],
+                            color: _selectedType == 'event' ? Colors.white : Colors.grey[700],
                           ),
                         ),
                       ),
@@ -170,7 +169,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary!),
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[700]!),
                 ),
                 const SizedBox(height: 20),
                 Text(
@@ -190,7 +189,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline, size: 48, color: AppColors.primary),
+                Icon(Icons.error_outline, size: 48, color: Colors.orange[700]),
                 const SizedBox(height: 16),
                 Text(
                   'Failed to load bookings',
@@ -270,13 +269,13 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary!),
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[700]!),
                 ),
                 const SizedBox(height: 20),
                 Text(
                   'Loading your tickets...',
                   style: TextStyle(
-                    color: const Color.fromARGB(255, 255, 183, 138),
+                    color: Colors.grey[600],
                     fontSize: 16,
                   ),
                 ),
@@ -290,7 +289,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline, size: 48, color: AppColors.primary),
+                Icon(Icons.error_outline, size: 48, color: Colors.orange[700]),
                 const SizedBox(height: 16),
                 Text(
                   'Failed to load tickets',
@@ -367,12 +366,12 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
         ? Colors.green[700]!
         : booking.status == 'cancelled'
             ? Colors.red[700]!
-            : AppColors.primary;
+            : Colors.orange[700]!;
 
     return Container(
       width: width,
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 222, 222, 222), 
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -386,19 +385,20 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           Stack(
             children: [
               Container(
                 height: 120,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  color: Colors.grey[200], // Changed to light gray
+                  color: Colors.orange[100],
                 ),
                 child: Center(
                   child: Icon(
                     Icons.hotel,
                     size: 60,
-                    color: Colors.grey[600], // Changed to darker gray icon
+                    color: Colors.orange[300],
                   ),
                 ),
               ),
@@ -424,6 +424,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
             ],
           ),
           
+          // Content
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -440,19 +441,20 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                 ),
                 const SizedBox(height: 8),
                 
+
                 Row(
                   children: [
-                    Icon(Icons.calendar_today, size: 16, color: Colors.grey[700]),
+                    Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
                     const SizedBox(width: 8),
                     Text(
                       '${booking.formattedCheckIn} - ${booking.formattedCheckOut}',
-                      style: TextStyle(color: Colors.grey[700]),
+                      style: TextStyle(color: Colors.grey[600]),
                     ),
                     const Spacer(),
                     Text(
                       '$nights night${nights > 1 ? 's' : ''}',
                       style: TextStyle(
-                        color: Colors.grey[700],
+                        color: Colors.grey[600],
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -469,7 +471,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                         Text(
                           'Total Price',
                           style: TextStyle(
-                            color: Colors.grey[700],
+                            color: Colors.grey[600],
                             fontSize: 12,
                           ),
                         ),
@@ -496,7 +498,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                         );
                       },
                       style: TextButton.styleFrom(
-                        backgroundColor: Colors.deepOrange[50], // Kept orange accent
+                        backgroundColor: Colors.orange[50],
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -505,7 +507,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                       child: Text(
                         'View Details',
                         style: TextStyle(
-                          color: AppColors.primary,
+                          color: Colors.orange[700],
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -526,7 +528,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     return Container(
       width: width,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 222, 222, 222), 
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -546,13 +548,13 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                 height: 120,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  color: Colors.grey[200], // Changed to light gray
+                  color: Colors.orange[100],
                 ),
                 child: Center(
                   child: Icon(
                     Icons.event,
                     size: 60,
-                    color: Colors.grey[600], // Changed to darker gray icon
+                    color: Colors.orange[300],
                   ),
                 ),
               ),
@@ -577,17 +579,17 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                 
                 Row(
                   children: [
-                    Icon(Icons.calendar_today, size: 16, color: Colors.grey[700]),
+                    Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
                     const SizedBox(width: 8),
                     Text(
                       ticket.formattedPurchaseDate,
-                      style: TextStyle(color: Colors.grey[700]),
+                      style: TextStyle(color: Colors.grey[600]),
                     ),
                     const Spacer(),
                     Text(
                       '${ticket.quantity} ticket${ticket.quantity > 1 ? 's' : ''}',
                       style: TextStyle(
-                        color: Colors.grey[700],
+                        color: Colors.grey[600],
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -604,7 +606,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                         Text(
                           'Total Price',
                           style: TextStyle(
-                            color: Colors.grey[700],
+                            color: Colors.grey[600],
                             fontSize: 12,
                           ),
                         ),
@@ -631,7 +633,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                         );
                       },
                       style: TextButton.styleFrom(
-                        backgroundColor: Colors.deepOrange[50], // Kept orange accent
+                        backgroundColor: Colors.orange[50],
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -640,7 +642,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                       child: Text(
                         'View Details',
                         style: TextStyle(
-                          color: AppColors.primary,
+                          color: Colors.orange[700],
                           fontWeight: FontWeight.w600,
                         ),
                       ),
