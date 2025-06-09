@@ -1,4 +1,3 @@
-// ViewModel (list_hotels_viewmodel.dart)
 import 'package:flutter/material.dart';
 import 'package:staypal/models/hotel_model.dart';
 import 'package:staypal/services/hotel_service.dart';

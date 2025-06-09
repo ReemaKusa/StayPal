@@ -145,6 +145,7 @@ import 'package:staypal/screens/event_organizer//views/event_organizer_view.dart
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
 import 'package:staypal/screens/hotel_manager/viewmodels/hotel_manager_viewmodel.dart';
 import 'package:staypal/screens/event_organizer/viewmodels/event_organizer_viewmodel.dart';
+import 'package:staypal/welcome.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -180,6 +181,7 @@ class MyApp extends StatelessWidget {
       // home: MyBookingsScreen(),
       // home: EmailVerificationView(),
       home: SplashScreen(),
+    // home:WelcomeScreen(),
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),
