@@ -392,13 +392,13 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                 height: 120,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  color: Colors.grey[200], // Changed to light gray
+                  color: Colors.grey[200],
                 ),
                 child: Center(
                   child: Icon(
                     Icons.hotel,
                     size: 60,
-                    color: Colors.grey[600], // Changed to darker gray icon
+                    color: Colors.grey[600],
                   ),
                 ),
               ),
@@ -496,7 +496,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                         );
                       },
                       style: TextButton.styleFrom(
-                        backgroundColor: Colors.deepOrange[50], // Kept orange accent
+                        backgroundColor: Colors.deepOrange[50],
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -546,13 +546,13 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                 height: 120,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  color: Colors.grey[200], // Changed to light gray
+                  color: Colors.grey[200],
                 ),
                 child: Center(
                   child: Icon(
                     Icons.event,
                     size: 60,
-                    color: Colors.grey[600], // Changed to darker gray icon
+                    color: Colors.grey[600], 
                   ),
                 ),
               ),
@@ -631,7 +631,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                         );
                       },
                       style: TextButton.styleFrom(
-                        backgroundColor: Colors.deepOrange[50], // Kept orange accent
+                        backgroundColor: Colors.deepOrange[50],
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

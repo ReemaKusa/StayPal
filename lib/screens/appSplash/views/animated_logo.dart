@@ -13,7 +13,7 @@ class AnimatedLogo extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Glow effect
+
         AnimatedBuilder(
           animation: viewModel.logoScale,
           builder: (context, child) {
@@ -31,7 +31,6 @@ class AnimatedLogo extends StatelessWidget {
           },
         ),
 
-        // Logo container
         SlideTransition(
           position: viewModel.logoPosition,
           child: FadeTransition(
@@ -58,7 +57,6 @@ class LogoWithEffects extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Metallic border effect
         Container(
           width: 130,
           height: 130,
@@ -90,7 +88,6 @@ class LogoWithEffects extends StatelessWidget {
           ),
         ),
 
-        // Inner container with embossed effect
         Container(
           width: 120,
           height: 120,

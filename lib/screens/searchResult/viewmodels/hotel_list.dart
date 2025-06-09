@@ -68,7 +68,7 @@ class HotelList extends StatelessWidget {
             return ListingCard(
               title: hotelName,
               subtitle: location,
-              description: description, // Changed from price to description
+              description: description,
               imageUrl: imageUrl,
               isLiked: isLiked,
               onLike: () async {
