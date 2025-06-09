@@ -18,7 +18,7 @@ class DialogsUtil {
       ),
       builder: (BuildContext context) {
         return Padding(
-          padding: const EdgeInsets.all(AppSizes.paddingMedium),
+          padding: const EdgeInsets.all(AppSizes.spacingLarge),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -30,7 +30,7 @@ class DialogsUtil {
               const SizedBox(height: AppSizes.paddingMedium),
               const Text(
                 'Are you sure you want to log out?',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: AppSizes.spacingLarge),
               Row(

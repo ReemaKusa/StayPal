@@ -107,7 +107,7 @@ class _BookHotelForm extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Check-in Date
+
                 Row(
                   children: [
                     const Icon(Icons.login, color: AppColors.primary),
@@ -122,27 +122,9 @@ class _BookHotelForm extends StatelessWidget {
                     onPressed: () async {
                       final picked = await showDatePicker(
                         context: context,
-                        initialDate: viewModel.checkInDate!.add(const Duration(days: 1)),
-                        firstDate: viewModel.checkInDate!.add(const Duration(days: 1)),
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
                         lastDate: DateTime(2100),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: ColorScheme.light(
-                                primary: AppColors.primary,
-                                onPrimary: Colors.white,
-                                onSurface: Colors.black,
-                              ),
-                              textButtonTheme: TextButtonThemeData(
-                                style: TextButton.styleFrom(
-                                  foregroundColor: AppColors.primary,
-                                ),
-                              ),
-                              dialogBackgroundColor: Colors.white,
-                            ),
-                            child: child!,
-                          );
-                        },
                       );
                       if (picked != null) viewModel.selectCheckInDate(picked);
                     },
@@ -169,7 +151,7 @@ class _BookHotelForm extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // Check-out Date
+
                 Row(
                   children: [
                     const Icon(Icons.logout, color: AppColors.primary),
@@ -213,7 +195,7 @@ class _BookHotelForm extends StatelessWidget {
                   ),
                 ),
 
-                // Stay Duration Info
+
                 if (viewModel.getTotalNights() > 0) ...[
                   const SizedBox(height: 16),
                   Container(
@@ -378,12 +360,12 @@ class _BookHotelForm extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Booking successfull!',
+              'Booking succesfull!',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
-              'Your hotel reservation has been done successfully confirmed.',
+              'Your hotel reservation has been successfully confirmed.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),

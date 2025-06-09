@@ -6,7 +6,7 @@ import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/models/hotel_model.dart';
 import 'package:staypal/screens/admin/views/edit_hotel_view.dart';
-import 'package:staypal/screens/admin/viewmodels/hotel_manager_viewmodel.dart';
+import 'package:staypal/screens/hotel_manager/viewmodels/hotel_manager_viewmodel.dart';
 
 class HotelCard extends StatelessWidget {
   final HotelModel hotel;

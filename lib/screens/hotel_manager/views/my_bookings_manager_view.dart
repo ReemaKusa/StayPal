@@ -164,15 +164,23 @@ class _MyBookingsManagerViewState extends State<MyBookingsManagerView> {
                               children: [
                                 ElevatedButton.icon(
                                   onPressed: () => _updateBookingStatus(booking.bookingId, 'confirmed'),
-                                  icon: const Icon(Icons.check),
-                                  label: const Text('Confirm'),
-                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                                  icon: const Icon(
+                                    Icons.check,
+                                    color: Colors.green,
+                                  ),
+                                  label: const Text(
+                                    'Confirm',
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
                                 ),
                                 ElevatedButton.icon(
                                   onPressed: () => _updateBookingStatus(booking.bookingId, 'cancelled'),
-                                  icon: const Icon(Icons.cancel),
-                                  label: const Text('Cancel'),
-                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                  icon: const Icon(Icons.cancel),label: const Text(
+                                  'Cancel',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
                                 ),
                               ],
                             ),

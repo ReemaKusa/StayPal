@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-
 class TabButton extends StatelessWidget {
   final String label;
   final bool active;
   final VoidCallback onPressed;
-
   const TabButton({
     Key? key,
     required this.label,
     required this.active,
     required this.onPressed,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -37,17 +34,14 @@ class TabButton extends StatelessWidget {
     );
   }
 }
-
 class TabButtons extends StatelessWidget {
   final bool showHotels;
   final VoidCallback onTabChanged;
-
   const TabButtons({
     Key? key,
     required this.showHotels,
     required this.onTabChanged,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
