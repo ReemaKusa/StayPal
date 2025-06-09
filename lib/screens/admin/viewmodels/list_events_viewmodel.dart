@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:staypal/models/event_model.dart';
-import 'package:staypal/screens/admin/services/event_service.dart';
+import 'package:staypal/services/event_service.dart';
 
 class ListEventsViewModel extends ChangeNotifier {
   final EventService _eventService = EventService();

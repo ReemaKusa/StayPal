@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:staypal/models/hotel_booking_model.dart';
 import 'package:staypal/models/event_ticket_model.dart';
-import 'package:staypal/screens/admin/services/hotel_booking_service.dart';
-import 'package:staypal/screens/admin/services/event_ticket_service.dart';
-import 'package:staypal/screens/admin/services/user_service.dart';
+import 'package:staypal/services/hotel_booking_service.dart';
+import 'package:staypal/services/event_ticket_service.dart';
+import 'package:staypal/services/user_service.dart';
 import 'package:staypal/constants/color_constants.dart';
 
 class ListAllBookingsViewModel extends ChangeNotifier {
