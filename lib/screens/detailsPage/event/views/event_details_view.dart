@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:staypal/screens/booking/views/purchase_event_ticket_view.dart';
-import 'package:intl/intl.dart';
 import '../viewmodels/event_details_viewmodel.dart';
 import '../models/event_details_model.dart';
 import '../../../reviewSection/views/review.dart';
@@ -11,6 +9,7 @@ import '../../../../widgets/custom_nav_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EventDetailsPage extends StatefulWidget {
   final Map<String, dynamic> event;
@@ -154,9 +153,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 _buildTimeRow(viewModel),
                 _buildPriceRow(viewModel),
                 const SizedBox(height: 8),
-                _buildRemainingTickets(viewModel), 
-                const SizedBox(height: 8),
-                _buildTicketCounter(viewModel),
+                _buildRemainingTickets(viewModel),
                 const SizedBox(height: 20),
                 if (viewModel.model.highlights.isNotEmpty) _buildHighlights(viewModel),
                 const SizedBox(height: 20),
@@ -202,7 +199,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     );
   }
 
-  // New widget to show remaining tickets
   Widget _buildRemainingTickets(EventDetailsViewModel viewModel) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -379,89 +375,23 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
   Widget _buildPriceRow(EventDetailsViewModel viewModel) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 5,),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.currency_pound, size: 24, color: Colors.deepOrange),
-          const SizedBox(width: 12),
-          Text(
-            '${viewModel.model.price.toStringAsFixed(2)} ₪ per ticket',
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.black87,
+          const Text(
+            '₪',
+            style: TextStyle(
+              fontSize: 21,
               fontWeight: FontWeight.bold,
+              color: Colors.deepOrange,
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTicketCounter(EventDetailsViewModel viewModel) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          const Text(
-            'Number of Tickets',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.remove_circle_outline, size: 32),
-                onPressed: viewModel.ticketCount > 1 ? viewModel.decreaseTicketCount : null,
-                color: Colors.deepOrange,
-              ),
-              const SizedBox(width: 20),
-              Container(
-                width: 60,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '${viewModel.ticketCount}',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 20),
-              IconButton(
-                icon: const Icon(Icons.add_circle_outline, size: 32),
-                onPressed: viewModel.ticketCount < 5 && viewModel.ticketCount < viewModel.remainingTickets
-                    ? viewModel.increaseTicketCount
-                    : null,
-                color: Colors.deepOrange,
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
+          const SizedBox(width: 12),
           Text(
-            'Total: ${viewModel.formattedTotalPrice}',
+            '${viewModel.model.price.toStringAsFixed(2)} ₪',
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.deepOrange,
             ),
@@ -532,17 +462,73 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ),
         onPressed: viewModel.remainingTickets > 0 && !viewModel.isEventExpired
             ? () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PurchaseEventTicketView(
-                      event: viewModel.model.toEventModel(),
-                      ticketCount: viewModel.ticketCount,
+          final user = FirebaseAuth.instance.currentUser;
+          if (user == null) {
+            showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              builder: (context) => Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.login,
+                        size: 32, color: Colors.deepOrange),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'You need to log in to continue',
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                );
-                await viewModel.reloadEventData();
-              }
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.black87,
+                              side: const BorderSide(color: Colors.grey),
+                            ),
+                            child: const Text('Cancel'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.pushNamed(context, '/login');
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepOrange,
+                            ),
+                            child: const Text('Log In',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+            return;
+          }
+
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => PurchaseEventTicketView(
+                event: viewModel.model.toEventModel(),
+                ticketCount: viewModel.ticketCount,
+              ),
+            ),
+          );
+          await viewModel.reloadEventData();
+        }
             : null,
         child: Text(
           viewModel.isEventExpired ? 'Event Ended' : 'Buy Ticket',
