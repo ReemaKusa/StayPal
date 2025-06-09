@@ -1,62 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/models/event_ticket_model.dart';
+import 'package:staypal/screens/admin/viewmodels/event_organizer_bookings_viewmodel.dart';
 import 'package:staypal/widgets/drawer.dart';
 import 'event_organizer_view.dart';
 import 'event_organizer_rating_view.dart';
 
-class EventOrganizerBookingsView extends StatefulWidget {
+class EventOrganizerBookingsView extends StatelessWidget {
   const EventOrganizerBookingsView({super.key});
 
   @override
-  State<EventOrganizerBookingsView> createState() => _EventOrganizerBookingsViewState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => EventOrganizerBookingsViewModel(),
+      child: const _EventOrganizerBookingsBody(),
+    );
+  }
 }
 
-class _EventOrganizerBookingsViewState extends State<EventOrganizerBookingsView> {
-  Future<List<EventTicketModel>> fetchTicketsByOrganizer() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) throw Exception('User not logged in');
-
-    final eventsSnap = await FirebaseFirestore.instance
-        .collection('event')
-        .where('organizerId', isEqualTo: user.uid)
-        .get();
-
-    final eventIds = eventsSnap.docs.map((e) => e.id).toList();
-    if (eventIds.isEmpty) return [];
-
-    final ticketsSnap = await FirebaseFirestore.instance
-        .collection('eventTickets')
-        .where('eventId', whereIn: eventIds)
-        .orderBy('purchaseDate', descending: true)
-        .get();
-
-    return ticketsSnap.docs.map((doc) => EventTicketModel.fromFirestore(doc)).toList();
-  }
-
-  Future<String> fetchEventName(String eventId) async {
-    try {
-      final doc = await FirebaseFirestore.instance.collection('event').doc(eventId).get();
-      return doc.data()?['name'] ?? 'Unknown Event';
-    } catch (_) {
-      return 'Unknown Event';
-    }
-  }
-
-  Future<Map<String, dynamic>> fetchUserData(String userId) async {
-    try {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-      return doc.data() ?? {};
-    } catch (_) {
-      return {};
-    }
-  }
+class _EventOrganizerBookingsBody extends StatelessWidget {
+  const _EventOrganizerBookingsBody();
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<EventOrganizerBookingsViewModel>(context, listen: false);
+
     return Scaffold(
       backgroundColor: AppColors.white,
       drawer: CustomRoleDrawer(
@@ -65,11 +35,17 @@ class _EventOrganizerBookingsViewState extends State<EventOrganizerBookingsView>
         optionIcon: Icons.event,
         onManageTap: () {
           Navigator.pop(context);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const EventOrganizerView()));
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const EventOrganizerView()),
+          );
         },
         onBookingsTap: () {
           Navigator.pop(context);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const EventOrganizerBookingsView()));
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const EventOrganizerBookingsView()),
+          );
         },
         onReviewsTap: () {
           Navigator.pop(context);
@@ -86,13 +62,19 @@ class _EventOrganizerBookingsViewState extends State<EventOrganizerBookingsView>
         elevation: 0.5,
       ),
       body: FutureBuilder<List<EventTicketModel>>(
-        future: fetchTicketsByOrganizer(),
+        future: viewModel.fetchTicketsByOrganizer(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
-          if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
 
           final tickets = snapshot.data ?? [];
-          if (tickets.isEmpty) return const Center(child: Text('No one has purchased tickets for your events yet'));
+          if (tickets.isEmpty) {
+            return const Center(child: Text('No one has purchased tickets for your events yet'));
+          }
 
           return ListView.builder(
             padding: const EdgeInsets.all(AppPadding.screenPadding),
@@ -101,8 +83,8 @@ class _EventOrganizerBookingsViewState extends State<EventOrganizerBookingsView>
               final ticket = tickets[index];
               return FutureBuilder(
                 future: Future.wait([
-                  fetchEventName(ticket.eventId),
-                  fetchUserData(ticket.userId),
+                  viewModel.fetchEventName(ticket.eventId),
+                  viewModel.fetchUserData(ticket.userId),
                 ]),
                 builder: (context, snap) {
                   if (!snap.hasData) return const SizedBox();
@@ -114,7 +96,9 @@ class _EventOrganizerBookingsViewState extends State<EventOrganizerBookingsView>
 
                   return Card(
                     margin: const EdgeInsets.only(bottom: AppSpacing.cardVerticalMargin),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppBorderRadius.card)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                    ),
                     elevation: 4,
                     child: Padding(
                       padding: const EdgeInsets.all(AppPadding.cardPadding),

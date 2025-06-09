@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:staypal/constants/app_constants.dart';
+import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/screens/booking/views/purchase_event_ticket_view.dart';
-import 'package:intl/intl.dart';
 import '../viewmodels/event_details_viewmodel.dart';
 import '../models/event_details_model.dart';
 import '../../../reviewSection/views/review.dart';
@@ -56,40 +56,61 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       child: Consumer<EventDetailsViewModel>(
         builder: (context, viewModel, _) {
           return Scaffold(
-            appBar: AppBar(
-              title: Text(viewModel.model.name),
-              backgroundColor: Colors.deepOrange,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.share, color: Colors.white),
-                  onPressed: _shareEvent,
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(
+                61,
+              ), 
+              child: AppBar(
+                title: Text(
+                  viewModel.model.name,
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: Icon(
-                    viewModel.isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: viewModel.isLiked ? Colors.red : Colors.white,
+                backgroundColor: AppColors.white,
+                actions: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.share,
+                      color: AppColors.black,
+                      size: AppIconSizes.tileIcon,
+                    ),
+                    onPressed: _shareEvent,
                   ),
-                  onPressed: () async {
-                    setState(() => _isLoading = true);
-                    try {
-                      await viewModel.toggleLike();
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to update favorite: ${e.toString()}')),
-                      );
-                    }
-                    setState(() => _isLoading = false);
-                  },
-                ),
-              ],
+                  IconButton(
+                    icon: Icon(
+                      viewModel.isLiked
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: viewModel.isLiked ? Colors.red : AppColors.black,
+                      size: AppIconSizes.tileIcon,
+                    ),
+                    onPressed: () async {
+                      setState(() => _isLoading = true);
+                      try {
+                        await viewModel.toggleLike();
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Failed to update favorite: ${e.toString()}',
+                            ),
+                          ),
+                        );
+                      }
+                      setState(() => _isLoading = false);
+                    },
+                  ),
+                ],
+              ),
             ),
-            body: _isLoading || viewModel.isBooking
-                ? const Center(child: CircularProgressIndicator())
-                : _buildBody(viewModel),
+            body:
+                _isLoading || viewModel.isBooking
+                    ? const Center(child: CircularProgressIndicator())
+                    : _buildBody(viewModel),
             bottomNavigationBar: CustomNavBar(
               currentIndex: 1,
               searchKey: GlobalKey(),
             ),
+            backgroundColor: Colors.white,
           );
         },
       ),
@@ -100,21 +121,27 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: 250, child: _buildImageSlider()),
+          SizedBox(height: 300, child: _buildImageSlider()),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(15.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (viewModel.isEventExpired) _buildExpiredWarning(),
                 Text(
                   viewModel.model.name,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: AppFontSizes.title,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 12),
-                _buildDetailRow(Icons.location_on, viewModel.model.location),
+                _buildDetailRow(Icons.location_on, viewModel.model.location,),
                 _buildDetailRow(Icons.calendar_today, viewModel.formatDate()),
-                _buildDetailRow(Icons.access_time, viewModel.model.formattedTime),
+                _buildDetailRow(
+                  Icons.access_time,
+                  viewModel.model.formattedTime,
+                ),
                 _buildRemainingTicketsCard(viewModel),
                 const SizedBox(height: 20),
                 _buildPriceSection(),
@@ -131,17 +158,18 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 const SizedBox(height: 30),
                 Container(
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.all(16),
+                 
+                
+                  padding: const EdgeInsets.all(15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
                         'Event Reviews',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       ConstrainedBox(
@@ -170,21 +198,31 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
       child: Card(
-        elevation: 2,
+        color: AppColors.red,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Colors.grey.shade300),
-        ),
+          borderRadius: BorderRadius.circular(1),
+          side: BorderSide(color: AppColors.greyTransparent),
+           ),
+        
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          
           child: Row(
+            mainAxisSize: MainAxisSize.min, 
             children: [
-              const Icon(Icons.confirmation_num, color: Colors.deepOrange, size: 28),
+              const Icon(
+                Icons.confirmation_num,
+                color: AppColors.white,
+                size: 20,
+              ),
               const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'Tickets left: ${viewModel.remainingTickets}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              Text(
+                'Tickets Left : ${viewModel.remainingTickets}',
+                style: const TextStyle(
+                  wordSpacing: 1,
+                  fontSize: AppFontSizes.subtitle,
+                  color: Colors.white,
+                  
                 ),
               ),
             ],
@@ -198,51 +236,68 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     final images = _viewModel.model.images;
     return SizedBox(
       height: 250,
-      child: images.isEmpty
-          ? Container(
-        color: Colors.grey[200],
-        child: const Center(child: Icon(Icons.event, size: 60, color: Colors.grey)),
-      )
-          : PageView.builder(
-        itemCount: images.length,
-        itemBuilder: (context, index) {
-          return CachedNetworkImage(
-            imageUrl: images[index],
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Container(
-              color: Colors.grey[200],
-              child: const Center(child: CircularProgressIndicator()),
-            ),
-            errorWidget: (context, url, error) => Container(
-              color: Colors.grey[200],
-              child: const Icon(Icons.error_outline, color: Colors.red),
-            ),
-          );
-        },
-      ),
+      child:
+          images.isEmpty
+              ? Container(
+                color: Colors.red,
+                child: const Center(
+                  child: Icon(Icons.event, size: 70, color: Colors.grey),
+                ),
+              )
+              : PageView.builder(
+                itemCount: images.length,
+                itemBuilder: (context, index) {
+                  return CachedNetworkImage(
+                    imageUrl: images[index],
+                    fit: BoxFit.cover,
+                    height: 1000,
+                    placeholder:
+                        (context, url) => Container(
+                          color: Colors.white,
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                    errorWidget:
+                        (context, url, error) => Container(
+                          color: Colors.grey[200],
+                          child: const Icon(
+                            Icons.error_outline,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                  );
+                },
+              ),
     );
   }
 
-  Widget _buildExpiredWarning() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.red[100],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.red),
-      ),
-      child: Row(
-        children: const [
-          Icon(Icons.warning_amber, color: Colors.red),
-          SizedBox(width: 10),
-          Expanded(
-            child: Text('This event has already ended', style: TextStyle(color: Colors.red)),
+Widget _buildExpiredWarning() {
+  return Container(
+    padding: const EdgeInsets.all(12),
+    margin: const EdgeInsets.only(bottom: 16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: Colors.red),
+    ),
+    child: Row(
+      children: const [
+        Icon(Icons.warning_amber, color: AppColors.red),
+        SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            'This event has already ended',
+            style: TextStyle(
+              color: AppColors.red,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _buildDetailRow(IconData icon, String text) {
     return Padding(
@@ -250,9 +305,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 24, color: Colors.deepOrange),
+          Icon(icon, size: AppIconSizes.tileIcon, color: Colors.black87),
           const SizedBox(width: 12),
-          Expanded(child: Text(text, style: const TextStyle(fontSize: 16))),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 16,
+          fontWeight: FontWeight.bold))),
         ],
       ),
     );
@@ -260,13 +316,15 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
   Widget _buildPriceSection() {
     return Card(
-      elevation: 2,
+      
+      color: Colors.white,
       shape: RoundedRectangleBorder(
+        
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade300),
+        side: BorderSide(color: AppColors.greyTransparent),
       ),
       child: SizedBox(
-        height: 150, // original size
+        height: 150, 
         width: double.infinity,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -293,6 +351,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       ),
     );
   }
+
   Widget _buildTicketCounter() {
     return Column(
       children: [
@@ -311,7 +370,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               child: Text(
                 '${_viewModel.ticketCount}',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(width: 20),
@@ -334,7 +396,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -349,14 +414,16 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         _buildSectionTitle('Highlights'),
         const SizedBox(height: 8),
         ..._viewModel.model.highlights.map(
-              (highlight) => Padding(
+          (highlight) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 6),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(Icons.check_circle, color: Colors.green, size: 20),
                 const SizedBox(width: 8),
-                Expanded(child: Text(highlight, style: const TextStyle(fontSize: 16))),
+                Expanded(
+                  child: Text(highlight, style: const TextStyle(fontSize: 16)),
+                ),
               ],
             ),
           ),
@@ -383,17 +450,22 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => PurchaseEventTicketView(
-                  event: _viewModel.model.toEventModel(),
-                  ticketCount: _viewModel.ticketCount,
-                ),
+                builder:
+                    (_) => PurchaseEventTicketView(
+                      event: _viewModel.model.toEventModel(),
+                      ticketCount: _viewModel.ticketCount,
+                    ),
               ),
             );
             await _viewModel.reloadEventData(); // update tickets left
           },
           child: const Text(
             'Buy Ticket',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
         ),
       ),
