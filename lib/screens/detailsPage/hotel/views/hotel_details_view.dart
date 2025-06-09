@@ -4,13 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../widgets/custom_nav_bar.dart';
 import '../../../reviewSection/views/review.dart';
 import 'package:staypal/screens/booking/views/book_hotel_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:staypal/screens/notification/notification_viewmodel.dart';
+
 
 class HotelDetailsPage extends StatefulWidget {
   final Map<String, dynamic> hotel;
@@ -126,8 +124,8 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
                             const Spacer(),
                           ],
                         ),
-                        const SizedBox(height: 20),
-                        // Removed Description
+                        const SizedBox(height: 26),
+
                         _buildSectionTitle('Details'),
                         _buildSectionContent(_details),
                         const SizedBox(height: 20),
