@@ -33,7 +33,6 @@ class RecommendedCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Image section
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
@@ -54,7 +53,6 @@ class RecommendedCard extends StatelessWidget {
 
             SizedBox(width: isWeb ? 20 : 12),
 
-            // Content section
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: isWeb ? 16 : 12),
@@ -86,7 +84,6 @@ class RecommendedCard extends StatelessWidget {
               ),
             ),
 
-            // Arrow icon
             Padding(
               padding: EdgeInsets.all(isWeb ? 20 : 12),
               child: Icon(
