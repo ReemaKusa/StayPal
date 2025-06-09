@@ -25,7 +25,7 @@ class PurchaseEventTicketViewModel extends ChangeNotifier {
   List<Map<String, dynamic>> _userCards = [];
   Map<String, dynamic>? _selectedCard;
 
-  // Getters
+
   int get quantity => _quantity;
   bool get isProcessing => _isProcessing;
   int get remainingUserLimit => _remainingUserLimit;
@@ -36,7 +36,6 @@ class PurchaseEventTicketViewModel extends ChangeNotifier {
   List<Map<String, dynamic>> get userCards => _userCards;
   Map<String, dynamic>? get selectedCard => _selectedCard;
 
-  // Computed properties
   double get totalPrice => event.price * _quantity;
   String get maskedSelectedCardNumber {
     if (_selectedCard == null) return '';
