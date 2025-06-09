@@ -1,31 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:staypal/constants/color_constants.dart';
-
 class TabButton extends StatelessWidget {
   final String label;
   final bool active;
   final VoidCallback onPressed;
-
   const TabButton({
     Key? key,
     required this.label,
     required this.active,
     required this.onPressed,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: active
-
-            ? const Color.fromARGB(255, 255, 94, 0) // Active color
-            : Colors.orange.shade200, // Inactive color
-
-            ? AppColors.primary
-            : Colors.orange.shade200,
-
+            ? const Color.fromARGB(255, 255, 94, 0)
+            : Colors.orange.shade200, 
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -43,17 +34,14 @@ class TabButton extends StatelessWidget {
     );
   }
 }
-
 class TabButtons extends StatelessWidget {
   final bool showHotels;
   final VoidCallback onTabChanged;
-
   const TabButtons({
     Key? key,
     required this.showHotels,
     required this.onTabChanged,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
