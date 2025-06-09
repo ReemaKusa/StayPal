@@ -70,10 +70,13 @@ class AddEventView extends StatelessWidget {
                           width: double.infinity,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
+                              
                               backgroundColor: Colors.deepOrange,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
+                                
                                 borderRadius: BorderRadius.circular(kCardRadius),
+                                
                               ),
                             ),
                             onPressed: () => viewModel.submitEvent(context),

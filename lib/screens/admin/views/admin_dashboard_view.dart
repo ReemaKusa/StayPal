@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/screens/admin/services/hotel_service.dart';
@@ -31,12 +32,16 @@ class _AdminDashboardState extends State<AdminDashboard>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 2),
       vsync: this,
-    )..forward();
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController!, curve: Curves.easeInOut),
+      duration: const Duration(seconds: 5),
     );
+
+    _animation = CurvedAnimation(
+      parent: _animationController!,
+      curve: Curves.easeOutExpo,
+    );
+
+    _animationController!.forward();
   }
 
   @override
@@ -76,7 +81,10 @@ class _AdminDashboardState extends State<AdminDashboard>
           DrawerHeader(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.primary, Color.fromARGB(255, 247, 113, 72)],
+                colors: [
+                  Color.fromARGB(255, 244, 152, 124),
+                  Color.fromARGB(255, 247, 113, 72),
+                ],
               ),
             ),
             child: Align(
@@ -192,8 +200,6 @@ class _AdminDashboardState extends State<AdminDashboard>
             final users = snapshot.data![2];
             final bookingCount = snapshot.data![3];
 
-            _animationController?.forward();
-
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -294,25 +300,20 @@ class _AdminDashboardState extends State<AdminDashboard>
       ChartData(
         'Users',
         users,
-        const Color.fromARGB(255, 255, 247, 11),
+        const Color.fromARGB(255, 255, 247, 98),
         users / total,
       ),
-      ChartData(
-        'Events',
-        events,
-        const Color.fromARGB(255, 250, 88, 228),
-        events / total,
-      ),
+      ChartData('Events', events, Color.fromARGB(255, 126, 231, 221), events / total),
       ChartData(
         'Hotels',
         hotels,
-        const Color.fromARGB(255, 25, 148, 225),
+        Color.fromARGB(255, 106, 194, 245),
         hotels / total,
       ),
       ChartData(
         'Bookings',
         bookings,
-        const Color.fromARGB(255, 249, 95, 19),
+        const Color.fromARGB(255, 252, 124, 60),
         bookings / total,
       ),
     ];
@@ -363,7 +364,7 @@ class _AdminDashboardState extends State<AdminDashboard>
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                               vertical: 8,
-                              horizontal: 16,
+                              horizontal: 23,
                             ),
                             child: Row(
                               children: [
@@ -380,7 +381,7 @@ class _AdminDashboardState extends State<AdminDashboard>
                                   child: Text(
                                     data.label,
                                     style: const TextStyle(
-                                      fontSize: AppFontSizes.body,
+                                      fontSize: 10,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black54,
                                     ),
@@ -401,43 +402,57 @@ class _AdminDashboardState extends State<AdminDashboard>
   }
 
   Widget _buildMetricCards(int users, int events, int hotels, int bookings) {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      crossAxisSpacing: 16,
-      mainAxisSpacing: 16,
-      childAspectRatio: 1.1,
-      children: [
-        _buildAnimatedMetricCard(
-          'Active Users',
-          users,
-          Icons.person,
-          const Color.fromARGB(255, 247, 214, 0),
-          0,
-        ),
-        _buildAnimatedMetricCard(
-          'Events',
-          events,
-          Icons.event,
-          const Color.fromARGB(255, 241, 92, 221),
-          200,
-        ),
-        _buildAnimatedMetricCard(
-          'Hotels',
-          hotels,
-          Icons.hotel,
-          const Color.fromARGB(255, 25, 148, 225),
-          400,
-        ),
-        _buildAnimatedMetricCard(
-          'All Bookings',
-          bookings,
-          Icons.book_online,
-          const Color.fromARGB(255, 249, 95, 19),
-          600,
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int crossAxisCount = constraints.maxWidth > 800 ? 4 : 2;
+
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 4,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 1,
+          ),
+          itemBuilder: (context, index) {
+            final metrics = [
+              [
+                'Active Users',
+                users,
+                Icons.person,
+                const Color.fromARGB(255, 247, 214, 0),
+                0,
+              ],
+              ['Events', events, Icons.event, Color.fromARGB(255, 78, 220, 206), 200],
+              [
+                'Hotels',
+                hotels,
+                Icons.hotel,
+                const Color.fromARGB(255, 25, 148, 225),
+                400,
+              ],
+              [
+                'All Bookings',
+                bookings,
+                Icons.book_online,
+                const Color.fromARGB(255, 249, 95, 19),
+                600,
+              ],
+            ];
+
+            final m = metrics[index];
+            return _buildAnimatedMetricCard(
+              m[0] as String,
+              m[1] as int,
+              m[2] as IconData,
+              m[3] as Color,
+              m[4] as int,
+            );
+          },
+        );
+      },
     );
   }
 
@@ -584,10 +599,13 @@ class DonutChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = math.min(size.width, size.height) / 2.5;
-    final strokeWidth = 30.0;
 
-    double startAngle = -math.pi / 2;
+    final radius = math.min(size.width, size.height) / 2.5;
+
+    final strokeWidth = 36.0;
+
+    double rotation = 0.0;
+    double startAngle = -math.pi / 2 + rotation;
 
     for (int i = 0; i < data.length; i++) {
       final sweepAngle = 2 * math.pi * data[i].percentage * animationValue;
@@ -607,6 +625,15 @@ class DonutChartPainter extends CustomPainter {
         paint,
       );
 
+      final linePaint =
+          Paint()
+            ..color = Colors.white
+            ..strokeWidth = 2.0;
+
+      final x = center.dx + radius * math.cos(startAngle);
+      final y = center.dy + radius * math.sin(startAngle);
+      canvas.drawLine(center, Offset(x, y), linePaint);
+
       startAngle += sweepAngle;
     }
 
@@ -614,6 +641,28 @@ class DonutChartPainter extends CustomPainter {
       center,
       radius - strokeWidth / 1.5,
       Paint()..color = Colors.white,
+    );
+
+    final centerText = TextSpan(
+      text: 'Analytics',
+      style: const TextStyle(
+        fontSize: AppFontSizes.subtitle,
+        fontWeight: FontWeight.bold,
+        color: Colors.black87,
+      ),
+    );
+    final centerTextPainter = TextPainter(
+      text: centerText,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+    centerTextPainter.layout();
+    centerTextPainter.paint(
+      canvas,
+      Offset(
+        center.dx - centerTextPainter.width / 2,
+        center.dy - centerTextPainter.height / 2,
+      ),
     );
   }
 

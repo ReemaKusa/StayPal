@@ -27,7 +27,7 @@ class ListEventsView extends StatelessWidget {
 
           return LayoutBuilder(
             builder: (context, constraints) {
-              final isWide = constraints.maxWidth > 720;
+              final crossAxisCount = (constraints.maxWidth ~/ 300).clamp(1, 4);
               return Padding(
                 padding: const EdgeInsets.all(AppPadding.screenPadding),
                 child: Column(
@@ -45,7 +45,7 @@ class ListEventsView extends StatelessWidget {
                       child: GridView.builder(
                         itemCount: events.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: isWide ? 2 : 1,
+                          crossAxisCount:crossAxisCount,
                           crossAxisSpacing: AppSpacing.small,
                           mainAxisSpacing: AppSpacing.small,
                           childAspectRatio: 5 / 4,

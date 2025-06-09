@@ -27,7 +27,7 @@ class ListHotelsView extends StatelessWidget {
 
           return LayoutBuilder(
             builder: (context, constraints) {
-              final isWide = constraints.maxWidth > 720;
+              final crossAxisCount = (constraints.maxWidth ~/ 300).clamp(1, 4);
               return Padding(
                 padding: const EdgeInsets.all(AppPadding.screenPadding),
                 child: Column(
@@ -45,16 +45,17 @@ class ListHotelsView extends StatelessWidget {
                       child: GridView.builder(
                         itemCount: hotels.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: isWide ? 2 : 1,
+                          crossAxisCount: crossAxisCount,
                           crossAxisSpacing: AppSpacing.small,
                           mainAxisSpacing: AppSpacing.small,
                           childAspectRatio: 5 / 4,
                         ),
                         itemBuilder: (context, index) {
                           final hotel = hotels[index];
-                          final imageUrl = hotel.images.isNotEmpty
-                              ? hotel.images.first
-                              : 'https://via.placeholder.com/300x200.png?text=No+Image';
+                          final imageUrl =
+                              hotel.images.isNotEmpty
+                                  ? hotel.images.first
+                                  : 'https://via.placeholder.com/300x200.png?text=No+Image';
 
                           return Stack(
                             children: [
@@ -62,30 +63,32 @@ class ListHotelsView extends StatelessWidget {
                                 color: AppColors.white,
                                 elevation: 4,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppBorderRadius.card),
+                                  borderRadius: BorderRadius.circular(
+                                    AppBorderRadius.card,
+                                  ),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(AppBorderRadius.card),
-                                      ),
-                                      child: Image.network(
-                                        imageUrl,
-                                        height: 150,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                      ),
+                                    Image.network(
+                                      imageUrl,
+                                      height: 150,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
                                     ),
+
                                     Expanded(
                                       child: Padding(
                                         padding: const EdgeInsets.all(10),
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            const SizedBox(height: AppSpacing.small),
+                                            const SizedBox(
+                                              height: AppSpacing.small,
+                                            ),
                                             Text(
                                               hotel.name,
                                               style: const TextStyle(
@@ -95,7 +98,9 @@ class ListHotelsView extends StatelessWidget {
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                             ),
-                                            const SizedBox(height: AppSpacing.xSmall),
+                                            const SizedBox(
+                                              height: AppSpacing.xSmall,
+                                            ),
                                             Text(
                                               hotel.location,
                                               style: const TextStyle(
@@ -103,20 +108,27 @@ class ListHotelsView extends StatelessWidget {
                                                 color: AppColors.grey,
                                               ),
                                             ),
-                                            const SizedBox(height: AppSpacing.xSmall),
+                                            const SizedBox(
+                                              height: AppSpacing.xSmall,
+                                            ),
                                             Text(
                                               hotel.formattedPrice,
                                               style: const TextStyle(
-                                                fontSize: AppFontSizes.bottonfont,
+                                                fontSize:
+                                                    AppFontSizes.bottonfont,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            const SizedBox(height: AppSpacing.small),
+                                            const SizedBox(
+                                              height: AppSpacing.small,
+                                            ),
                                             Text(
                                               hotel.description,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(fontSize: AppFontSizes.body),
+                                              style: const TextStyle(
+                                                fontSize: AppFontSizes.body,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -129,12 +141,16 @@ class ListHotelsView extends StatelessWidget {
                                 top: AppSpacing.small,
                                 right: AppSpacing.small,
                                 child: IconButton(
-                                  icon: const Icon(Icons.edit, color: AppColors.primary),
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: AppColors.primary,
+                                  ),
                                   onPressed: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => EditHotelView(hotel: hotel),
+                                        builder:
+                                            (_) => EditHotelView(hotel: hotel),
                                       ),
                                     );
                                   },
