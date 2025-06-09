@@ -82,8 +82,9 @@ class _AdminDashboardState extends State<AdminDashboard>
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromARGB(255, 244, 152, 124),
-                  Color.fromARGB(255, 247, 113, 72),
+                 
+                  Color.fromARGB(255, 252, 116, 75),
+                   Color.fromARGB(255, 209, 91, 54),
                 ],
               ),
             ),
