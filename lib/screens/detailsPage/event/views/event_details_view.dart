@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:staypal/screens/notification/notification_viewmodel.dart';
 
 class EventDetailsPage extends StatefulWidget {
   final Map<String, dynamic> event;
@@ -32,6 +33,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   bool _isLoading = false;
   final PageController _pageController = PageController();
   int _currentImageIndex = 0;
+  late NotificationViewModel _notificationViewModel;
 
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       model: EventDetailsModel(eventId: widget.eventId, event: widget.event),
       isInitiallyLiked: widget.isInitiallyLiked,
     );
+    _notificationViewModel = NotificationViewModel();
   }
 
   @override
@@ -54,6 +57,53 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to share: ${e.toString()}')),
+      );
+    }
+  }
+
+  Future<void> _toggleLike() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please login to like events')),
+        );
+        return;
+      }
+
+      setState(() {
+        _isLoading = true;
+      });
+
+      await _viewModel.toggleLike();
+
+      if (_viewModel.isLiked) {
+        await _notificationViewModel.addNotification(
+          userId: currentUser.uid,
+          title: 'New Like',
+          message: 'You liked ${_viewModel.model.name} event',
+          type: 'like',
+          actionRoute: '/event/${widget.eventId}',
+          targetName: _viewModel.model.name,
+          targetId: widget.eventId,
+          imageUrls: _viewModel.model.images.isNotEmpty
+              ? _viewModel.model.images
+              : [],
+        );
+      } else {
+        await _notificationViewModel.removeLikeNotification(
+            currentUser.uid, widget.eventId);
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
       );
     }
   }
@@ -375,7 +425,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
   Widget _buildPriceRow(EventDetailsViewModel viewModel) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 5,),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -395,6 +445,15 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               fontWeight: FontWeight.bold,
               color: Colors.deepOrange,
             ),
+          ),
+          const Spacer(),
+          IconButton(
+            icon: Icon(
+              viewModel.isLiked ? Icons.favorite : Icons.favorite_border,
+              color: viewModel.isLiked ? Colors.red : Colors.grey,
+              size: 28,
+            ),
+            onPressed: _toggleLike,
           ),
         ],
       ),
