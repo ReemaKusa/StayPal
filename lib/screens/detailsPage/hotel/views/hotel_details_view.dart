@@ -5,6 +5,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../widgets/custom_nav_bar.dart';
+import '../../../notification/notification_viewmodel.dart';
 import '../../../reviewSection/views/review.dart';
 import 'package:staypal/screens/booking/views/book_hotel_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
