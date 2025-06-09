@@ -68,38 +68,42 @@ class _PurchaseEventTicketViewState extends State<PurchaseEventTicketView> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset('assets/images/success.png', height: 120),
-            const SizedBox(height: 20),
-            const Text(
-              'Thank you for your purchase!',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Your booking reference: $bookingReference',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                minimumSize: const Size.fromHeight(48),
+      builder: (context) => Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset('assets/images/success.png', height: 120),
+              const SizedBox(height: 20),
+              const Text(
+                'Thank you for your purchase!',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.popUntil(context, (route) => route.isFirst);
-              },
-              child: const Text('Done', style: TextStyle(color: Colors.white)),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                'Your booking reference: $bookingReference',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  minimumSize: const Size.fromHeight(48),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                },
+                child: const Text('Done', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -125,36 +129,43 @@ class _PurchaseEventTicketViewState extends State<PurchaseEventTicketView> {
           );
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DropdownButton<Map<String, dynamic>>(
-              value: vm.selectedCard,
-              isExpanded: true,
-              underline: const SizedBox(),
-              onChanged: vm.selectCard,
-              items: vm.userCards.map((card) {
-                final masked = vm.getMaskedCardNumber(card);
-                return DropdownMenuItem<Map<String, dynamic>>(
-                  value: card,
-                  child: Row(
-                    children: [
-                      const Icon(Icons.credit_card, color: AppColors.primary),
-                      const SizedBox(width: 8),
-                      Text(masked),
-                    ],
+        return Card(
+          color: Colors.white,
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DropdownButton<Map<String, dynamic>>(
+                  value: vm.selectedCard,
+                  isExpanded: true,
+                  underline: const SizedBox(),
+                  onChanged: vm.selectCard,
+                  items: vm.userCards.map((card) {
+                    final masked = vm.getMaskedCardNumber(card);
+                    return DropdownMenuItem<Map<String, dynamic>>(
+                      value: card,
+                      child: Row(
+                        children: [
+                          const Icon(Icons.credit_card, color: AppColors.primary),
+                          const SizedBox(width: 8),
+                          Text(masked),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 16),
+                if (vm.showCardDetails && vm.selectedCard != null)
+                  PaymentCardWidget(
+                    cardNumber: vm.selectedCard!['number'] ?? '',
+                    cardHolder: vm.selectedCard!['cardholder'] ?? '',
+                    expiryDate: vm.selectedCard!['expiry'] ?? '',
                   ),
-                );
-              }).toList(),
+              ],
             ),
-            const SizedBox(height: 16),
-            if (vm.showCardDetails && vm.selectedCard != null)
-              PaymentCardWidget(
-                cardNumber: vm.selectedCard!['number'] ?? '',
-                cardHolder: vm.selectedCard!['cardholder'] ?? '',
-                expiryDate: vm.selectedCard!['expiry'] ?? '',
-              ),
-          ],
+          ),
         );
       },
     );
@@ -166,6 +177,7 @@ class _PurchaseEventTicketViewState extends State<PurchaseEventTicketView> {
     return Consumer<PurchaseEventTicketViewModel>(
       builder: (context, vm, child) {
         return Card(
+          color: Colors.white,
           elevation: 2,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -244,6 +256,7 @@ class _PurchaseEventTicketViewState extends State<PurchaseEventTicketView> {
     return Consumer<PurchaseEventTicketViewModel>(
       builder: (context, vm, child) {
         return Card(
+          color: Colors.white,
           elevation: 2,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -300,7 +313,13 @@ class _PurchaseEventTicketViewState extends State<PurchaseEventTicketView> {
     return ChangeNotifierProvider.value(
       value: viewModel,
       child: Scaffold(
-        appBar: AppBar(title: const Text('Checkout'), centerTitle: true),
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text('Checkout'),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+        ),
         body: FutureBuilder<DocumentSnapshot>(
           future: FirebaseFirestore.instance
               .collection('event')
@@ -327,23 +346,26 @@ class _PurchaseEventTicketViewState extends State<PurchaseEventTicketView> {
                   });
                 }
 
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('PAYMENT METHOD', style: theme.textTheme.labelLarge),
-                      const SizedBox(height: 8),
-                      _buildCardInfo(),
-                      const SizedBox(height: 20),
-                      Text('TICKET QUANTITY', style: theme.textTheme.labelLarge),
-                      const SizedBox(height: 8),
-                      _buildQuantityCard(available, maxSelectable),
-                      const SizedBox(height: 20),
-                      _buildTotalCard(),
-                      const SizedBox(height: 20),
-                      _buildPurchaseButton(available),
-                    ],
+                return Container(
+                  color: Colors.white,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('PAYMENT METHOD', style: theme.textTheme.labelLarge),
+                        const SizedBox(height: 8),
+                        _buildCardInfo(),
+                        const SizedBox(height: 20),
+                        Text('TICKET QUANTITY', style: theme.textTheme.labelLarge),
+                        const SizedBox(height: 8),
+                        _buildQuantityCard(available, maxSelectable),
+                        const SizedBox(height: 20),
+                        _buildTotalCard(),
+                        const SizedBox(height: 20),
+                        _buildPurchaseButton(available),
+                      ],
+                    ),
                   ),
                 );
               },
