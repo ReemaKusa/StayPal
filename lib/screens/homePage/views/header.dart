@@ -30,7 +30,7 @@ class HomeHeader extends StatelessWidget {
         if (!isWeb)
           Stack(
             children: [
-              const Icon(Icons.notifications_none, size: 28),
+              const Icon(Icons.place_outlined, size: 28),
               Positioned(
                 right: 0,
                 top: 0,

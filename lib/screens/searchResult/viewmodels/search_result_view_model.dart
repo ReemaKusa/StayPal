@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import './hotel_list.dart';
-import './event_list.dart';
-
 import './like_manager.dart';
-
 
 class SearchResultViewModel with LikeManager {
   bool showHotels = true;
@@ -12,17 +8,20 @@ class SearchResultViewModel with LikeManager {
   String? filterBy;
   bool isNumericSearch = false;
 
-  final CollectionReference hotelsCollection = 
+  final CollectionReference hotelsCollection =
       FirebaseFirestore.instance.collection('hotel');
-      
-  final CollectionReference eventsCollection = 
+
+  final CollectionReference eventsCollection =
       FirebaseFirestore.instance.collection('event');
 
-  final CollectionReference wishlistCollection = 
+  final CollectionReference wishlistCollection =
       FirebaseFirestore.instance.collection('wishlist_testing');
 
   final Map<String, bool> _hotelLikes = {};
   final Map<String, bool> _eventLikes = {};
+
+  List<Map<String, dynamic>> hotelResults = [];
+  List<Map<String, dynamic>> eventResults = [];
 
   Future<void> initializeLikes(BuildContext context) async {
     try {
@@ -35,7 +34,8 @@ class SearchResultViewModel with LikeManager {
       }
     } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error loading favorites')));
+        const SnackBar(content: Text('Error loading favorites')),
+      );
     }
   }
 
@@ -48,6 +48,14 @@ class SearchResultViewModel with LikeManager {
     }
   }
 
-  Widget buildHotelList(BuildContext context) => HotelList(viewModel: this);
-  Widget buildEventList(BuildContext context) => EventList(viewModel: this);
+  List<Map<String, dynamic>> getHotelsAsMapList() => hotelResults;
+  List<Map<String, dynamic>> getEventsAsMapList() => eventResults;
+
+  void setHotelResults(List<Map<String, dynamic>> hotels) {
+    hotelResults = hotels;
+  }
+
+  void setEventResults(List<Map<String, dynamic>> events) {
+    eventResults = events;
+  }
 }

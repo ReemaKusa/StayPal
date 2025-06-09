@@ -32,6 +32,8 @@ dependencies:
   dropdown_button2: ^2.3.9
   firebase_performance: ^0.10.1+6
   confetti: ^0.7.0
+  photo_view: ^0.14.0
+  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:
@@ -48,12 +50,13 @@ flutter:
     - assets/fonts/NotoSans-Regular.ttf
 
 
-flutter_native_splash:
-  color: "#FF5722"
-  image: "assets/icon/flutter_app_logo_base.png"
-  android: true
-  ios: true
-  fullscreen: true
+# flutter_native_splash:
+#   color: "#FF5722"
+#   image: "assets/icon/flutter_app_logo_base.png"
+#   android: true
+#   ios: true
+#   fullscreen: true
+
 
 flutter_icons:
   android: true

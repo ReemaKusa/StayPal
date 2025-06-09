@@ -127,6 +127,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:staypal/theme/app_theme.dart';
 import 'package:staypal/DB/firebase_options.dart';
@@ -134,7 +135,6 @@ import 'package:staypal/DB/firebase_options.dart';
 import 'package:staypal/screens/appSplash/views/splash_screen.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
 import 'package:staypal/screens/profile/views/my_profile.dart';
-import 'package:staypal/screens/profile/views/my_bookings_screenview.dart';
 import 'package:staypal/screens/homePage/views/home_page.dart';
 import 'package:staypal/screens/searchResult/views/search_result_page.dart';
 import 'package:staypal/screens/wishlistPage/views/wishlist_view.dart';
@@ -149,6 +149,7 @@ import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
 import 'package:staypal/screens/hotel_manager/viewmodels/hotel_manager_viewmodel.dart';
 import 'package:staypal/screens/event_organizer/viewmodels/event_organizer_viewmodel.dart';
 import 'package:staypal/welcome.dart';
+import 'package:staypal/widgets/role_landing_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -166,6 +167,12 @@ void main() async {
   );
 }
 
+Future<Widget> _getInitialScreen() async {
+  final prefs = await SharedPreferences.getInstance();
+  final seen = prefs.getBool('seenGetStarted') ?? false;
+  return seen ? HomePage() : WelcomeScreen();
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -175,7 +182,18 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'StayPal',
       theme: AppTheme.lightTheme,
-      // home: MyProfile(),
+      home: FutureBuilder<Widget>(
+        future: _getInitialScreen(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return snapshot.data!;
+          } else {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+        },
+      ),
       // home: MainScreen(),
       // home: AuthEntryScreen(),
       // home: AdminDashboard(),
@@ -183,8 +201,8 @@ class MyApp extends StatelessWidget {
       // home: EventOrganizerView(),
       // home: MyBookingsScreen(),
       // home: EmailVerificationView(),
-      home: SplashScreen(),
-    // home:WelcomeScreen(),
+    //  home: RoleLandingView(),
+      //home: SplashScreen(),
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),
