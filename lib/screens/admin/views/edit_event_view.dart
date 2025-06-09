@@ -79,13 +79,16 @@ class EditEventView extends StatelessWidget {
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.white,
-                                  side: const BorderSide(color: AppColors.white),
                                   padding:  EdgeInsets.symmetric(
                                     vertical: AppPadding.buttonVertical,
                                   ),
                                   shape: RoundedRectangleBorder(
+                                    
+                                    side: BorderSide(color: AppColors.primary,width: 0.5),
                                     borderRadius: BorderRadius.circular(
+                                      
                                       AppBorderRadius.card,
+                                      
                                     ),
                                   ),
                                 ),

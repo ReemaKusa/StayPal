@@ -4,7 +4,7 @@
 // import 'package:staypal/screens/hotel_manager//viewmodels/hotel_manager_viewmodel.dart';
 // import 'package:staypal/screens/event_organizer//views/event_organizer_view.dart';
 // import 'package:staypal/screens/auth/views/auth_entry_view.dart';
-// import 'package:staypal/screens/profile/views/my_bookings_screen.dart';
+// import 'package:staypal/screens/profile/views/my_bookings_view.dart';
 // // import 'package:staypal/screens/profile/booking_complete.dart';
 // import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
 // import 'package:staypal/DB/firebase_options.dart';
@@ -132,7 +132,9 @@ import 'package:staypal/DB/firebase_options.dart';
 import 'package:staypal/screens/appSplash/views/splash_screen.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
 import 'package:staypal/screens/profile/views/my_profile.dart';
+
 //import 'package:staypal/screens/profile/views/my_bookings_screenview.dart';
+
 import 'package:staypal/screens/homePage/views/home_page.dart';
 import 'package:staypal/screens/searchResult/views/search_result_page.dart';
 import 'package:staypal/screens/wishlistPage/views/wishlist_view.dart';
@@ -146,6 +148,7 @@ import 'package:staypal/screens/event_organizer//views/event_organizer_view.dart
 import 'package:staypal/screens/profile/viewmodels/profile_viewmodel.dart';
 import 'package:staypal/screens/hotel_manager/viewmodels/hotel_manager_viewmodel.dart';
 import 'package:staypal/screens/event_organizer/viewmodels/event_organizer_viewmodel.dart';
+import 'package:staypal/welcome.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -181,6 +184,7 @@ class MyApp extends StatelessWidget {
       // home: MyBookingsScreen(),
       // home: EmailVerificationView(),
       home: SplashScreen(),
+    // home:WelcomeScreen(),
       routes: {
         '/wishlist': (context) => WishListPage(),
         '/searchresult': (ctx) => SearchResultPage(),

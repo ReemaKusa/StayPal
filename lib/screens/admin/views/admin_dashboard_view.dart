@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
@@ -43,7 +42,6 @@ class _AdminDashboardState extends State<AdminDashboard>
 
     _animationController!.forward();
 
-    // Load initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _viewModel.loadDashboardData();
     });
@@ -97,8 +95,8 @@ class _AdminDashboardState extends State<AdminDashboard>
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color.fromARGB(255, 244, 152, 124),
-                      Color.fromARGB(255, 247, 113, 72),
+                      Color.fromARGB(255, 216, 101, 65),
+                      Color.fromARGB(255, 248, 114, 73),
                     ],
                   ),
                 ),

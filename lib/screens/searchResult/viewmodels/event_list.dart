@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import './search_result_view_model.dart';
 import '../../detailspage/event/views/event_details_view.dart';
 import 'package:staypal/screens/notification/notification_viewmodel.dart';
-import '../views/listing_card.dart'; 
+import '../views/listing_card.dart';
 
 class EventList extends StatelessWidget {
   final SearchResultViewModel viewModel;
@@ -94,14 +94,15 @@ class EventList extends StatelessWidget {
             return ListingCard(
               title: eventName,
               subtitle: '$location • $date',
-              description: description, 
+              description: description,
               imageUrl: imageUrl,
               isLiked: isLiked,
               onLike: () async {
                 try {
                   await viewModel.toggleEventLike(context, id, data);
+                  final notificationViewModel = NotificationViewModel();
+                  
                   if (!isLiked) {
-                    final notificationViewModel = NotificationViewModel();
                     await notificationViewModel.addNotification(
                       userId: currentUserId,
                       title: 'New Like',
@@ -114,6 +115,8 @@ class EventList extends StatelessWidget {
                           ? List<String>.from(images)
                           : [],
                     );
+                  } else {
+                    await notificationViewModel.removeLikeNotification(currentUserId, id);
                   }
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(

@@ -5,24 +5,20 @@ import 'package:staypal/services/user_service.dart';
 import 'package:staypal/services/booking_service.dart';
 
 class AdminDashboardViewModel extends ChangeNotifier {
-  // Private fields
   String _selectedPage = 'dashboard';
   bool _isLoading = false;
   String? _error;
 
-  // Data fields
   List<dynamic> _hotels = [];
   List<dynamic> _events = [];
   List<dynamic> _users = [];
   int _bookingCount = 0;
 
-  // Services
   final HotelService _hotelService = HotelService();
   final EventService _eventService = EventService();
   final UserService _userService = UserService();
   final BookingService _bookingService = BookingService();
 
-  // Getters
   String get selectedPage => _selectedPage;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -31,19 +27,20 @@ class AdminDashboardViewModel extends ChangeNotifier {
   List<dynamic> get users => _users;
   int get bookingCount => _bookingCount;
 
-  // Get upcoming events (filter out past events)
   List<dynamic> get upcomingEvents {
     final now = DateTime.now();
-    return _events.where((event) {
-      if (event.date == null) return false;
-      // Check if event date is after current date/time
-      return event.date!.isAfter(now);
-    }).take(3).toList();
+    return _events
+        .where((event) {
+          if (event.date == null) return false;
+          return event.date!.isAfter(now);
+        })
+        .take(3)
+        .toList();
   }
 
-  // Chart data
   List<ChartData> get chartData {
-    final total = _users.length + _events.length + _hotels.length + _bookingCount;
+    final total =
+        _users.length + _events.length + _hotels.length + _bookingCount;
     if (total == 0) return [];
 
     return [
@@ -74,7 +71,6 @@ class AdminDashboardViewModel extends ChangeNotifier {
     ];
   }
 
-  // Metric data
   List<MetricData> get metricData => [
     MetricData(
       'Active Users',
@@ -106,7 +102,6 @@ class AdminDashboardViewModel extends ChangeNotifier {
     ),
   ];
 
-  // Methods
   void selectPage(String page) {
     _selectedPage = page;
     notifyListeners();
@@ -144,7 +139,6 @@ class AdminDashboardViewModel extends ChangeNotifier {
   }
 }
 
-// Data classes
 class ChartData {
   final String label;
   final int value;

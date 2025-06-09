@@ -74,9 +74,9 @@ class HotelList extends StatelessWidget {
               onLike: () async {
                 try {
                   await viewModel.toggleHotelLike(context, id, data);
-
+                  final notificationViewModel = NotificationViewModel();
+                  
                   if (!isLiked) {
-                    final notificationViewModel = NotificationViewModel();
                     await notificationViewModel.addNotification(
                       userId: currentUserId,
                       title: 'New Like',
@@ -89,6 +89,8 @@ class HotelList extends StatelessWidget {
                           ? List<String>.from(images)
                           : [],
                     );
+                  } else {
+                    await notificationViewModel.removeLikeNotification(currentUserId, id);
                   }
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
-import 'package:staypal/models/hotel_model.dart';
 import 'package:staypal/screens/admin/viewmodels/list_hotels_viewmodel.dart';
 import 'edit_hotel_view.dart';
 

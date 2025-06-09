@@ -39,6 +39,9 @@ class DialogsUtil {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.grey,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     onPressed: () => Navigator.pop(context),
                     child: const Text(
@@ -49,6 +52,9 @@ class DialogsUtil {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     onPressed: () async {
                       final profileVM = Provider.of<ProfileViewModel>(
@@ -61,8 +67,8 @@ class DialogsUtil {
 
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (_) =>  HomePage()),
-                            (route) => false,
+                        MaterialPageRoute(builder: (_) => HomePage()),
+                        (route) => false,
                       );
                     },
                     child: const Text(
