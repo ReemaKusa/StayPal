@@ -26,7 +26,7 @@ class AuthEntryView extends StatelessWidget {
                   children: [
                     Image.asset(
                       'assets/icon/flutter_app_logo_base.png',
-                      height: 400,
+                      height: 300,
                     ),
                     const SizedBox(height: 0),
                     const Text(
