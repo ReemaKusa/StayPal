@@ -389,7 +389,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           ),
           const SizedBox(width: 12),
           Text(
-            '${viewModel.model.price.toStringAsFixed(2)} ₪',
+            '${viewModel.model.price}',
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
