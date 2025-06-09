@@ -3,9 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
-import 'package:staypal/screens/admin/viewmodels/my_ratings_manager_viewmodel.dart';
-import 'package:staypal/screens/admin/views/hotel_manager_view.dart';
-import 'package:staypal/screens/admin/views/my_bookings_manager_view.dart';
+import 'package:staypal/screens/hotel_manager/viewmodels/my_ratings_manager_viewmodel.dart';
+import 'package:staypal/screens/hotel_manager/views/hotel_manager_view.dart';
+import 'package:staypal/screens/hotel_manager/views/my_bookings_manager_view.dart';
 import 'package:staypal/widgets/drawer.dart';
 
 

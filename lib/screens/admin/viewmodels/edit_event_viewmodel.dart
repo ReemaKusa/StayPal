@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:staypal/constants/app_constants.dart';
 import 'package:staypal/constants/color_constants.dart';
 import 'package:staypal/models/event_model.dart';
-import 'package:staypal/screens/admin/services/event_service.dart';
+import 'package:staypal/services/event_service.dart';
 
 class EditEventViewModel extends ChangeNotifier {
   final formKey = GlobalKey<FormState>();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:staypal/screens/admin/services/hotel_service.dart';
+import 'package:staypal/services/hotel_service.dart';
 
 class AddHotelViewModel extends ChangeNotifier {
   final _hotelService = HotelService();

@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:staypal/screens/homePage/views/home_page.dart';
 import 'package:staypal/screens/admin/views/admin_dashboard_view.dart';
-import 'package:staypal/screens/admin/views/hotel_manager_view.dart';
-import 'package:staypal/screens/admin/views/event_organizer_view.dart';
+import 'package:staypal/screens/hotel_manager/views/hotel_manager_view.dart';
+import 'package:staypal/screens/event_organizer/views/event_organizer_view.dart';
 
 class RoleRouterService {
   Future<Widget> getStartView() async {
