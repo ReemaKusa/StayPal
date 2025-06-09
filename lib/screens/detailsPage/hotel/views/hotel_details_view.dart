@@ -32,6 +32,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
   late Map<String, dynamic> _hotel;
   late bool _isLiked;
   bool _isLoading = false;
+  final NotificationViewModel _notificationViewModel = NotificationViewModel();
 
   @override
   void initState() {
@@ -55,11 +56,41 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
   Future<void> _toggleLike() async {
     setState(() => _isLoading = true);
     try {
-      await FirebaseFirestore.instance
-          .collection('hotel')
-          .doc(widget.hotelId)
-          .update({'isFavorite': !_isLiked});
-      setState(() => _isLiked = !_isLiked);
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final userFavoritesRef = FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('favorites')
+            .doc(widget.hotelId);
+
+        if (_isLiked) {
+          await userFavoritesRef.delete();
+          await _notificationViewModel.removeLikeNotification(user.uid, widget.hotelId);
+        } else {
+          await userFavoritesRef.set({
+            'hotelId': widget.hotelId,
+            'hotelName': _name,
+            'timestamp': FieldValue.serverTimestamp(),
+          });
+          
+          await _notificationViewModel.addNotification(
+            userId: user.uid,
+            title: 'New Like',
+            message: 'You liked $_name hotel',
+            type: 'like',
+            actionRoute: '/hotel/${widget.hotelId}',
+            targetName: _name,
+            targetId: widget.hotelId,
+            imageUrls: _images.isNotEmpty ? List<String>.from(_images) : [],
+          );
+        }
+        setState(() => _isLiked = !_isLiked);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please log in to save favorites')),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to update favorite: ${e.toString()}')),
@@ -114,6 +145,7 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
                         _buildDetailRow(Icons.location_on, _location),
                         const SizedBox(height: 20),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               _price,
@@ -123,11 +155,17 @@ class _HotelDetailsPageState extends State<HotelDetailsPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const Spacer(),
+                            IconButton(
+                              icon: Icon(
+                                _isLiked ? Icons.favorite : Icons.favorite_border,
+                                color: _isLiked ? Colors.red : Colors.grey,
+                                size: 28,
+                              ),
+                              onPressed: _toggleLike,
+                            ),
                           ],
                         ),
                         const SizedBox(height: 20),
-                        // Removed Description
                         _buildSectionTitle('Details'),
                         _buildSectionContent(_details),
                         const SizedBox(height: 20),
