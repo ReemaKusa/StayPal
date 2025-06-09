@@ -127,10 +127,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-
 import 'package:staypal/theme/app_theme.dart';
 import 'package:staypal/DB/firebase_options.dart';
-
 import 'package:staypal/screens/appSplash/views/splash_screen.dart';
 import 'package:staypal/screens/auth/views/auth_entry_view.dart';
 import 'package:staypal/screens/profile/views/my_profile.dart';
