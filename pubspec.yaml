@@ -49,12 +49,13 @@ flutter:
     - assets/fonts/NotoSans-Regular.ttf
 
 
-flutter_native_splash:
-  color: "#FF5722"
-  image: "assets/icon/flutter_app_logo_base.png"
-  android: true
-  ios: true
-  fullscreen: true
+# flutter_native_splash:
+#   color: "#FF5722"
+#   image: "assets/icon/flutter_app_logo_base.png"
+#   android: true
+#   ios: true
+#   fullscreen: true
+
 
 flutter_icons:
   android: true
