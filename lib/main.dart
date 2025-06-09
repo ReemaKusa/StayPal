@@ -59,9 +59,7 @@ class MyApp extends StatelessWidget {
       // home: SplashScreen(),
       // home: HotelManagerView(),
       //home: EventOrganizerView(),
-
       //home: MyBookingsScreen(),
-
       //home:EmailVerificationView(),
       home: SplashScreen(),
       routes: {
